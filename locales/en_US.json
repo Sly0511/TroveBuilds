@@ -1,0 +1,100 @@
+{
+    "title": "Trove Calculation Tool",
+    "tabs": {
+        "0": "Gem Simulator",
+        "1": "Mastery"
+    },
+    "gem_full_names": {
+        "Arcane Fire Gem": "Arcane Fire Gem",
+        "Arcane Water Gem": "Arcane Water Gem",
+        "Arcane Air Gem": "Arcane Air Gem",
+        "Arcane Cosmic Gem": "Arcane Cosmic Gem",
+        "Fierce Fire Gem": "Fierce Fire Gem",
+        "Fierce Water Gem": "Fierce Water Gem",
+        "Fierce Air Gem": "Fierce Air Gem",
+        "Fierce Cosmic Gem": "Fierce Cosmic Gem",
+        "Lesser Fire Gem": "Lesser Fire Gem",
+        "Lesser Water Gem": "Lesser Water Gem",
+        "Lesser Air Gem": "Lesser Air Gem",
+        "Lesser Cosmic Gem": "Lesser Cosmic Gem",
+        "Empowered Fire Gem": "Empowered Fire Gem",
+        "Empowered Water Gem": "Empowered Water Gem",
+        "Empowered Air Gem": "Empowered Air Gem",
+        "Empowered Cosmic Gem": "Empowered Cosmic Gem"
+    },
+    "stats": {
+        "Health Bonus": "Health Bonus",
+        "Damage Bonus": "Damage Bonus",
+        "Power Rank": "Power Rank",
+        "Magic Find": "Magic Find",
+        "Light": "Light",
+        "Physical Damage": "Physical Damage",
+        "Magic Damage": "Magic Damage",
+        "Critical Damage": "Critical Damage",
+        "Critical Hit":  "Critical Hit",
+        "Maximum Health": "Maximum Health",
+        "Maximum Health %": "Maximum Health %"
+    },
+    "gem_tiers": {
+        "Stellar": "Stellar",
+        "Crystal": "Crystal"
+    },
+    "gem_types": {
+        "Empowered": "Empowered",
+        "Lesser": "Lesser"
+    },
+    "gem_restrictions": {
+        "Arcane": "Arcane",
+        "Fierce": "Fierce"
+    },
+    "gem_elements": {
+        "Fire": "Fire",
+        "Water": "Water",
+        "Air": "Air",
+        "Cosmic": "Cosmic"
+    },
+    "gem_dragons": {
+        "Fire": "Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
+        "Water": "Water Primordial Dragon: Palashien, Soul of the Sea",
+        "Air": "Air Primordial Dragon: Scintilla, Spark of the Sky",
+        "Cosmic": "Cosmic Primordial Dragon: ..."
+    },
+    "gem_abilities": {
+        "Explosive Epilogue": "Explosive Epilogue",
+        "Volatile Velocity": "Volatile Velocity",
+        "Cubic Curtain": "Cubic Curtain",
+        "Mired Mojo": "Mired Mojo",
+        "Pyrodisc": "Pyrodisc",
+        "Stunburst": "Stunburst",
+        "Spirit Surge": "Spirit Surge",
+        "Stinging Curse": "Stinging Curse",
+        "Berserker Battler": "Berserker Battler",
+        "Flower Power": "Flower Power",
+        "Empyrean Barrier": "Empyrean Barrier",
+        "Vampirian Vanquisher": "Vampirian Vanquisher"
+    },
+    "mastery": {
+        "mastery_points": "Mastery Points",
+        "mastery_levels": "Mastery Levels",
+        "mastery_buffs": "Mastery Buffs",
+        "geode_mastery_buffs": "Geode Mastery Buffs"
+    },
+    "strings": {
+        "Level": "Level",
+        "Ability": "Ability",
+        "Gem Ability": "Gem Ability",
+        "Stats": "Stats",
+        "Stat": "Stat",
+        "% Augmentation Progress": "% Augmentation Progress"
+    },
+    "messages": {
+        "updated_gem_level": "Gem level changed to {level}",
+        "updated_stats": "Updated Stats",
+        "updated_stat_augmentation": "Updated Stat's Augmentation",
+        "updated_ability": "Updated Ability"
+    },
+    "errors": {
+        "invalid_number": "Please provide a valid number",
+        "max_mastery_1000": "Max mastery is 1000"
+    }
+}

@@ -1,0 +1,3 @@
+flet
+python-i18n[YAML]
+pydantic

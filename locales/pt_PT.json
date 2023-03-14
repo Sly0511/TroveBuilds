@@ -1,0 +1,100 @@
+{
+    "title": "Ferramenta de C\u00e1lculo do Trove",
+    "tabs": {
+        "0": "Simulador de Gemas",
+        "1": "Maestria"
+    },
+    "stats": {
+        "Health Bonus": "# TRANSLATION ERROR: Health Bonus",
+        "Damage Bonus": "# TRANSLATION ERROR: Damage Bonus",
+        "Power Rank": "# TRANSLATION ERROR: Power Rank",
+        "Magic Find": "# TRANSLATION ERROR: Magic Find",
+        "Light": "# TRANSLATION ERROR: Light",
+        "Physical Damage": "# TRANSLATION ERROR: Physical Damage",
+        "Magic Damage": "# TRANSLATION ERROR: Magic Damage",
+        "Critical Damage": "# TRANSLATION ERROR: Critical Damage",
+        "Critical Hit": "# TRANSLATION ERROR: Critical Hit",
+        "Maximum Health": "# TRANSLATION ERROR: Maximum Health",
+        "Maximum Health %": "# TRANSLATION ERROR: Maximum Health %"
+    },
+    "mastery": {
+        "mastery_points": "Pontos de maestria",
+        "mastery_levels": "N\u00edveis de maestria",
+        "mastery_buffs": "Buffs de maestria",
+        "geode_mastery_buffs": "Buffs de maestria de geode"
+    },
+    "errors": {
+        "invalid_number": "Por favor insira um n\u00famero v\u00e1lido",
+        "max_mastery_1000": "Mastria m\u00e1xima \u00e9 1000"
+    },
+    "gem_tiers": {
+        "Stellar": "# TRANSLATION ERROR: Stellar",
+        "Crystal": "# TRANSLATION ERROR: Crystal"
+    },
+    "gem_types": {
+        "Empowered": "# TRANSLATION ERROR: Empowered",
+        "Lesser": "# TRANSLATION ERROR: Lesser"
+    },
+    "gem_abilities": {
+        "Explosive Epilogue": "# TRANSLATION ERROR: Explosive Epilogue",
+        "Volatile Velocity": "# TRANSLATION ERROR: Volatile Velocity",
+        "Cubic Curtain": "# TRANSLATION ERROR: Cubic Curtain",
+        "Mired Mojo": "# TRANSLATION ERROR: Mired Mojo",
+        "Pyrodisc": "# TRANSLATION ERROR: Pyrodisc",
+        "Stunburst": "# TRANSLATION ERROR: Stunburst",
+        "Spirit Surge": "# TRANSLATION ERROR: Spirit Surge",
+        "Stinging Curse": "# TRANSLATION ERROR: Stinging Curse",
+        "Berserker Battler": "# TRANSLATION ERROR: Berserker Battler",
+        "Flower Power": "# TRANSLATION ERROR: Flower Power",
+        "Empyrean Barrier": "# TRANSLATION ERROR: Empyrean Barrier",
+        "Vampirian Vanquisher": "# TRANSLATION ERROR: Vampirian Vanquisher"
+    },
+    "gem_restrictions": {
+        "Arcane": "# TRANSLATION ERROR: Arcane",
+        "Fierce": "# TRANSLATION ERROR: Fierce"
+    },
+    "gem_elements": {
+        "Fire": "# TRANSLATION ERROR: Fire",
+        "Water": "# TRANSLATION ERROR: Water",
+        "Air": "# TRANSLATION ERROR: Air",
+        "Cosmic": "# TRANSLATION ERROR: Cosmic"
+    },
+    "gem_full_names": {
+        "Arcane Fire Gem": "# TRANSLATION ERROR: Arcane Fire Gem",
+        "Arcane Water Gem": "# TRANSLATION ERROR: Arcane Water Gem",
+        "Arcane Air Gem": "# TRANSLATION ERROR: Arcane Air Gem",
+        "Arcane Cosmic Gem": "# TRANSLATION ERROR: Arcane Cosmic Gem",
+        "Fierce Fire Gem": "# TRANSLATION ERROR: Fierce Fire Gem",
+        "Fierce Water Gem": "# TRANSLATION ERROR: Fierce Water Gem",
+        "Fierce Air Gem": "# TRANSLATION ERROR: Fierce Air Gem",
+        "Fierce Cosmic Gem": "# TRANSLATION ERROR: Fierce Cosmic Gem",
+        "Lesser Fire Gem": "# TRANSLATION ERROR: Lesser Fire Gem",
+        "Lesser Water Gem": "# TRANSLATION ERROR: Lesser Water Gem",
+        "Lesser Air Gem": "# TRANSLATION ERROR: Lesser Air Gem",
+        "Lesser Cosmic Gem": "# TRANSLATION ERROR: Lesser Cosmic Gem",
+        "Empowered Fire Gem": "# TRANSLATION ERROR: Empowered Fire Gem",
+        "Empowered Water Gem": "# TRANSLATION ERROR: Empowered Water Gem",
+        "Empowered Air Gem": "# TRANSLATION ERROR: Empowered Air Gem",
+        "Empowered Cosmic Gem": "# TRANSLATION ERROR: Empowered Cosmic Gem"
+    },
+    "strings": {
+        "Stat": "# TRANSLATION ERROR: Stat",
+        "% Augmentation Progress": "# TRANSLATION ERROR: % Augmentation Progress",
+        "Stats": "# TRANSLATION ERROR: Stats",
+        "Ability": "# TRANSLATION ERROR: Ability",
+        "Gem Ability": "# TRANSLATION ERROR: Gem Ability",
+        "Level": "# TRANSLATION ERROR: Level"
+    },
+    "messages": {
+        "updated_stats": "# TRANSLATION ERROR: Updated Stats",
+        "updated_ability": "# TRANSLATION ERROR: Updated Ability",
+        "updated_stat_augmentation": "# TRANSLATION ERROR: Updated Stat's Augmentation",
+        "updated_gem_level": "# TRANSLATION ERROR: Gem level changed to {level}"
+    },
+    "gem_dragons": {
+        "Fire": "# TRANSLATION ERROR: Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
+        "Water": "# TRANSLATION ERROR: Water Primordial Dragon: Palashien, Soul of the Sea",
+        "Air": "# TRANSLATION ERROR: Air Primordial Dragon: Scintilla, Spark of the Sky",
+        "Cosmic": "# TRANSLATION ERROR: Cosmic Primordial Dragon: ..."
+    }
+}

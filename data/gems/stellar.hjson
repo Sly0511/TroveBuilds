@@ -1,0 +1,16 @@
+{
+    "Lesser": {
+        "Damage":         [5390, 2800],   // Base, Increment
+        "CriticalDamage": [77, 40],       // Base, Increment
+        "Light":          [385, 200],     // Base, Increment
+        "HP":             [19250, 10000], // Base, Increment
+        "HP%":            [192.5, 100]    // Base, Increment
+    },
+    "Empowered": {
+        "Damage":         [6314, 3724],   // Base, Increment
+        "CriticalDamage": [90.2, 53.2],   // Base, Increment
+        "Light":          [451, 266],     // Base, Increment
+        "HP":             [22550, 13300], // Base, Increment
+        "HP%":            [225.5, 133]    // Base, Increment
+    }
+}
