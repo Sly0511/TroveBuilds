@@ -14,23 +14,18 @@ class TroveBuilds:
     async def start(self, page: Page, restart=False):
         if not restart:
             self.page = page
-            page.logger = Logger('Trove Builds Core')
+            page.logger = Logger("Trove Builds Core")
             # Load configurations
             self.load_configuration()
         # Setup localization
         self.setup_localization()
         # Build main window
-        page.title = t('title')
+        page.title = t("title")
         page.window_maximizable = True
         page.window_maximized = True
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         # Build tab frames
-        tabs = Tabs(
-            tabs=[
-                Gems(page),
-                Mastery(page)
-            ]
-        )
+        tabs = Tabs(tabs=[Gems(page), Mastery(page)])
         # Push UI elements into view
         await page.add_async(tabs)
 
@@ -47,6 +42,6 @@ class TroveBuilds:
         self.page.logger.info("Updated localization strings")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     AppObj = TroveBuilds()
     AppObj.run()

@@ -1,8 +1,7 @@
 import logging
 import logging.handlers
-import os
 from datetime import datetime
-from pathlib import Path
+
 from utils.path import BasePath
 
 timestamped_log = "logs/{logger_level}_{logger_name}_" + datetime.utcnow().strftime(
@@ -63,9 +62,11 @@ class Logger:
         self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = False
         self.debug_handler = logging.handlers.RotatingFileHandler(
-            BasePath.joinpath(timestamped_log.replace("{logger_name}", name).replace(
-                "{logger_level}", "DEBUG"
-            )),
+            BasePath.joinpath(
+                timestamped_log.replace("{logger_name}", name).replace(
+                    "{logger_level}", "DEBUG"
+                )
+            ),
             encoding="utf-8",
             maxBytes=33554432,
             backupCount=5,
@@ -74,9 +75,11 @@ class Logger:
         self.debug_handler.setLevel(logging.DEBUG)
         self.logger.addHandler(self.debug_handler)
         self.timestamped_handler = logging.handlers.RotatingFileHandler(
-            BasePath.joinpath(timestamped_log.replace("{logger_name}", name).replace(
-                "{logger_level}", "INFO"
-            )),
+            BasePath.joinpath(
+                timestamped_log.replace("{logger_name}", name).replace(
+                    "{logger_level}", "INFO"
+                )
+            ),
             encoding="utf-8",
             maxBytes=33554432,
             backupCount=5,

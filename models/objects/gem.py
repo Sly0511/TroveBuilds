@@ -1,15 +1,15 @@
 import base64
+from copy import copy
 from enum import Enum
 from json import loads
 from random import randint, choice
 from typing import Any
-from copy import copy
+from uuid import UUID, uuid4
 
 from i18n import t
 from pydantic import BaseModel, Field
 
 from utils.calculations.gems import max_levels
-from uuid import UUID, uuid4
 
 
 class Stat(Enum):
@@ -89,14 +89,7 @@ class Gem(BaseModel):
     @property
     def pseudo_name(self):
         return t(
-            "gem_full_names." +
-            " ".join(
-                [
-                    self.type.value,
-                    self.element.value,
-                    "Gem"
-                ]
-            )
+            "gem_full_names." + " ".join([self.type.value, self.element.value, "Gem"])
         )
 
     @property
@@ -109,7 +102,7 @@ class Gem(BaseModel):
         return cls(**data)
 
     def save_gem(self):
-        return base64.b64encode(self.json().encode('utf-8'))
+        return base64.b64encode(self.json().encode("utf-8"))
 
 
 class LesserGem(Gem):
@@ -118,21 +111,15 @@ class LesserGem(Gem):
     @property
     def name(self):
         return t(
-            "gem_full_names." +
-            " ".join(
-                [
-                    self.restriction.value,
-                    self.element.value,
-                    "Gem"
-                ]
-            )
+            "gem_full_names."
+            + " ".join([self.restriction.value, self.element.value, "Gem"])
         )
 
     @classmethod
     def random_gem(cls, tier: GemTier = None, element: GemElement = None):
         tier = tier or choice([c for c in GemTier])
         max_level = max_levels[tier.name]
-        level = randint(1, max_level+1)
+        level = randint(1, max_level + 1)
         type = GemType.lesser
         element = element or choice([c for c in GemElement])
         restriction = choice([c for c in GemRestriction])
@@ -144,14 +131,7 @@ class LesserGem(Gem):
         for i, stat_name in enumerate(stat_names):
             boosts = randint(0, max_boosts)
             max_boosts -= boosts
-            stats.append(
-                [
-                    i,
-                    stat_name.value,
-                    boosts,
-                    round(randint(0, 100)/100, 2)
-                ]
-            )
+            stats.append([i, stat_name.value, boosts, round(randint(0, 100) / 100, 2)])
         if max_boosts:
             stats[-1][2] += max_boosts
         return cls(
@@ -160,7 +140,7 @@ class LesserGem(Gem):
             type=GemType.lesser,
             element=element,
             stats=stats,
-            restriction=restriction
+            restriction=restriction,
         )
 
     @classmethod
@@ -178,14 +158,7 @@ class LesserGem(Gem):
         for i, stat_name in enumerate(stat_names):
             boosts = randint(0, max_boosts)
             max_boosts -= boosts
-            stats.append(
-                [
-                    i,
-                    stat_name.value,
-                    boosts,
-                    1.0
-                ]
-            )
+            stats.append([i, stat_name.value, boosts, 1.0])
         if max_boosts:
             stats[-1][2] += max_boosts
         return cls(
@@ -194,7 +167,7 @@ class LesserGem(Gem):
             type=GemType.lesser,
             element=element,
             stats=stats,
-            restriction=restriction
+            restriction=restriction,
         )
 
     def change_restriction(self, restriction: GemRestriction):
@@ -230,16 +203,22 @@ class EmpoweredGem(Gem):
 
     @property
     def possible_abilities(self):
-        return list(ElementalGemAbility) if self.element != GemElement.cosmic else list(CosmicGemAbility)
+        return (
+            list(ElementalGemAbility)
+            if self.element != GemElement.cosmic
+            else list(CosmicGemAbility)
+        )
 
     @classmethod
     def random_gem(cls, tier: GemTier = None, element: GemElement = None):
         tier = tier or choice([c for c in GemTier])
         max_level = max_levels[tier.name]
-        level = randint(1, max_level+1)
+        level = randint(1, max_level + 1)
         type = GemType.empowered
         element = element or choice([c for c in GemElement])
-        ability_set = ElementalGemAbility if element != GemElement.cosmic else CosmicGemAbility
+        ability_set = (
+            ElementalGemAbility if element != GemElement.cosmic else CosmicGemAbility
+        )
         ability = choice(list(ability_set))
         stat_names = generate_gem_stats(type, None, element)
         max_boosts = divmod(level, 5)[0]
@@ -250,12 +229,7 @@ class EmpoweredGem(Gem):
             boosts = randint(0, max_boosts)
             max_boosts -= boosts
             stats.append(
-                [
-                    i,
-                    stat_name.value,
-                    boosts,
-                    round(randint(0, 1000)/1000, 3)
-                ]
+                [i, stat_name.value, boosts, round(randint(0, 1000) / 1000, 3)]
             )
         if max_boosts:
             stats[-1][2] += max_boosts
@@ -265,7 +239,7 @@ class EmpoweredGem(Gem):
             type=type,
             element=element,
             stats=stats,
-            ability=ability
+            ability=ability,
         )
 
     @classmethod
@@ -274,7 +248,9 @@ class EmpoweredGem(Gem):
         level = max_levels[tier.name]
         type = GemType.empowered
         element = element or choice([c for c in GemElement])
-        ability_set = ElementalGemAbility if element != GemElement.cosmic else CosmicGemAbility
+        ability_set = (
+            ElementalGemAbility if element != GemElement.cosmic else CosmicGemAbility
+        )
         ability = choice(list(ability_set))
         stat_names = generate_gem_stats(type, None, element)
         max_boosts = divmod(level, 5)[0]
@@ -284,14 +260,7 @@ class EmpoweredGem(Gem):
         for i, stat_name in enumerate(stat_names):
             boosts = randint(0, max_boosts)
             max_boosts -= boosts
-            stats.append(
-                [
-                    i,
-                    stat_name.value,
-                    boosts,
-                    1.0
-                ]
-            )
+            stats.append([i, stat_name.value, boosts, 1.0])
         if max_boosts:
             stats[-1][2] += max_boosts
         return cls(
@@ -300,7 +269,7 @@ class EmpoweredGem(Gem):
             type=type,
             element=element,
             stats=stats,
-            ability=ability
+            ability=ability,
         )
 
     @property

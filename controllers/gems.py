@@ -1,14 +1,36 @@
+import asyncio
 from random import choice
 
-from flet import ResponsiveRow, Column, Row, Container, Card, Image, Text, TextField, TextStyle, Border, BorderSide, \
-    Dropdown, dropdown, Slider, Switch
+from flet import (
+    ResponsiveRow,
+    Column,
+    Row,
+    Container,
+    Card,
+    Image,
+    Text,
+    TextField,
+    TextStyle,
+    Border,
+    BorderSide,
+    Dropdown,
+    dropdown,
+    Slider,
+    Switch,
+)
 from i18n import t
-import asyncio
 
 from models.objects import Controller
-from models.objects.gem import LesserGem, EmpoweredGem, GemElement, GemTier, GemRestriction, Stat
-from utils.functions import throttle
+from models.objects.gem import (
+    LesserGem,
+    EmpoweredGem,
+    GemElement,
+    GemTier,
+    GemRestriction,
+    Stat,
+)
 from utils.calculations.gems import get_stat_values
+from utils.functions import throttle
 from utils.path import BasePath
 
 
@@ -21,7 +43,12 @@ class GemsController(Controller):
         # Build a gem set
         if not hasattr(self, "gem_set"):
             self.gem_set = []
-            for element in [GemElement.fire, GemElement.water, GemElement.air, GemElement.cosmic]:
+            for element in [
+                GemElement.fire,
+                GemElement.water,
+                GemElement.air,
+                GemElement.cosmic,
+            ]:
                 element_set = []
                 for gem_builder in [EmpoweredGem, LesserGem, LesserGem]:
                     while gem := gem_builder.maxed_gem(GemTier.stellar, element):
@@ -43,10 +70,10 @@ class GemsController(Controller):
                 controls=[
                     Switch(
                         value=True,
-                        label=t('gem_dragons.' + element.value),
+                        label=t("gem_dragons." + element.value),
                         data=element,
                         on_change=self.on_primordial_change,
-                        col=3
+                        col=3,
                     )
                     for element in GemElement
                 ]
@@ -59,21 +86,46 @@ class GemsController(Controller):
                     Container(
                         Row(
                             controls=[
-                                Image(BasePath.joinpath(f'assets/images/gems/{gem.element.name}_{gem.type.name}.png'), width=50),
-                                Text(gem.name, size=20)
+                                Image(
+                                    BasePath.joinpath(
+                                        f"assets/images/gems/{gem.element.name}_{gem.type.name}.png"
+                                    ),
+                                    width=50,
+                                ),
+                                Text(gem.name, size=20),
                             ]
                         ),
                         data=gem,
                         on_click=self.on_gem_click,
                         border=Border(
-                            BorderSide(2, color="transparent" if self.selected_gem != gem else "green"),
-                            BorderSide(2, color="transparent" if self.selected_gem != gem else "green"),
-                            BorderSide(2, color="transparent" if self.selected_gem != gem else "green"),
-                            BorderSide(2, color="transparent" if self.selected_gem != gem else "green")
+                            BorderSide(
+                                2,
+                                color="transparent"
+                                if self.selected_gem != gem
+                                else "green",
+                            ),
+                            BorderSide(
+                                2,
+                                color="transparent"
+                                if self.selected_gem != gem
+                                else "green",
+                            ),
+                            BorderSide(
+                                2,
+                                color="transparent"
+                                if self.selected_gem != gem
+                                else "green",
+                            ),
+                            BorderSide(
+                                2,
+                                color="transparent"
+                                if self.selected_gem != gem
+                                else "green",
+                            ),
                         ),
-                        border_radius=6
+                        border_radius=6,
                     ),
-                    col=4
+                    col=4,
                 )
                 row.controls.append(gem_control)
                 self.gem_controls.append(gem_control)
@@ -85,9 +137,13 @@ class GemsController(Controller):
         stats = {}
         gems = [g for gs in self.gem_set for g in gs]
         for gem in gems:
-            primordial = gem.element in [c.data for c in self.general_controls.controls if c.value]
+            primordial = gem.element in [
+                c.data for c in self.general_controls.controls if c.value
+            ]
             for stat in gem.stats:
-                min_value, max_value, diff = get_stat_values(gem.tier.name, gem.type.name, stat[1], gem.level, stat[2])
+                min_value, max_value, diff = get_stat_values(
+                    gem.tier.name, gem.type.name, stat[1], gem.level, stat[2]
+                )
                 value = min_value + diff * stat[3]
                 if stat[1] not in stats.keys():
                     stats[stat[1]] = [0, 0]
@@ -100,21 +156,21 @@ class GemsController(Controller):
                     *[
                         Row(
                             controls=[
-                                Text(value=t('stats.' + stat)),
-                                Text(value=round(value[0], 2))
+                                Text(value=t("stats." + stat)),
+                                Text(value=round(value[0], 2)),
                             ]
                         )
                         for stat, value in stats.items()
-                    ]
+                    ],
                 ],
             ),
-            col=4
+            col=4,
         )
         self.gem_report.controls.extend(
             [
                 stats_card,
                 Card(Text("Augmentation Costs", size=18), col=4),
-                Card(Text("WIP", size=18), col=4)
+                Card(Text("WIP", size=18), col=4),
             ]
         )
         asyncio.create_task(self.page.update_async())
@@ -154,7 +210,13 @@ class GemsController(Controller):
             unused_abilities = [
                 a
                 for a in self.selected_gem.possible_abilities
-                if a not in [g.ability for gs in self.gem_set for g in gs if isinstance(g, EmpoweredGem)]
+                if a
+                not in [
+                    g.ability
+                    for gs in self.gem_set
+                    for g in gs
+                    if isinstance(g, EmpoweredGem)
+                ]
             ]
             options = [
                 dropdown.Option(key=a.name, text=t("gem_abilities." + a.value))
@@ -165,7 +227,7 @@ class GemsController(Controller):
                     options=options,
                     label=t("gem_abilities." + self.selected_gem.ability.value),
                     on_change=self.on_gem_ability_change,
-                    col=4
+                    col=4,
                 )
             )
         elif isinstance(self.selected_gem, LesserGem):
@@ -179,7 +241,7 @@ class GemsController(Controller):
                     options=[dropdown.Option(restricition)],
                     label=t("gem_restrictions." + self.selected_gem.restriction.value),
                     on_change=self.on_restriction_change,
-                    col=4
+                    col=4,
                 )
             )
         meta_row.controls.append(
@@ -190,7 +252,7 @@ class GemsController(Controller):
                 divisions=self.selected_gem.max_level - 1,
                 label="Level {value}",
                 on_change=self.on_gem_level_change,
-                col=8
+                col=8,
             )
         )
         for i, stat in enumerate(self.selected_gem.stats, 1):
@@ -203,7 +265,7 @@ class GemsController(Controller):
                 label=t("stats." + str(stat[1])),
                 options=options,
                 disabled=stat[1] == Stat.light.value,
-                on_change=self.on_stat_change
+                on_change=self.on_stat_change,
             )
             stat_row = ResponsiveRow(
                 controls=[
@@ -213,41 +275,55 @@ class GemsController(Controller):
                         helper_style=TextStyle(color="red"),
                         value=f"{round(stat[3] * 100, 2)}",
                         on_change=self.on_stat_augmentation_update,
-                        label=t("strings.% Augmentation Progress")
+                        label=t("strings.% Augmentation Progress"),
                     ),
                     Row(
                         controls=[
                             Container(
                                 Image(
-                                    src=BasePath.joinpath("assets/images/gems/chaosflare.png"),
+                                    src=BasePath.joinpath(
+                                        "assets/images/gems/chaosflare.png"
+                                    ),
                                     data=stat[0],
-                                    width=30
+                                    width=30,
                                 ),
                                 data=stat[0],
                                 on_click=self.on_stat_boost_change,
-                                visible=bool(stat[2])
+                                visible=bool(stat[2]),
                             ),
                             Row(
                                 controls=[
                                     Image(
-                                        src=BasePath.joinpath("assets/images/gems/boost.png"),
-                                        width=25
+                                        src=BasePath.joinpath(
+                                            "assets/images/gems/boost.png"
+                                        ),
+                                        width=25,
                                     )
                                     for _ in range(stat[2])
-                                ] or [Image(src=BasePath.joinpath("assets/images/empty.png"), width=25)]
-                            )
+                                ]
+                                or [
+                                    Image(
+                                        src=BasePath.joinpath(
+                                            "assets/images/empty.png"
+                                        ),
+                                        width=25,
+                                    )
+                                ]
+                            ),
                         ]
-                    )
+                    ),
                 ],
                 col=4,
-                expand=True
+                expand=True,
             )
             self.gem_editor.controls.append(stat_row)
 
     @throttle
     async def on_gem_level_change(self, event):
         self.selected_gem.level = int(event.control.value)
-        self.page.snack_bar.content.value = t("messages.updated_gem_level").format(level=self.selected_gem.level)
+        self.page.snack_bar.content.value = t("messages.updated_gem_level").format(
+            level=self.selected_gem.level
+        )
         self.page.snack_bar.open = True
         self.calculate_gem_report()
 
@@ -265,7 +341,7 @@ class GemsController(Controller):
         ][0]
         self.setup_controls(self.selected_gem)
         await self.build_editor()
-        self.page.snack_bar.content.value = t('messages.updated_ability')
+        self.page.snack_bar.content.value = t("messages.updated_ability")
         self.page.snack_bar.open = True
         await self.page.update_async()
 
@@ -284,11 +360,11 @@ class GemsController(Controller):
             if value > 1:
                 raise ValueError
         except ValueError:
-            event.control.helper_text = t('errors.invalid_number')
+            event.control.helper_text = t("errors.invalid_number")
             event.control.border_color = "red"
         else:
             self.selected_gem.stats[event.control.data][3] = value
-            self.page.snack_bar.content.value = t('messages.updated_stat_augmentation')
+            self.page.snack_bar.content.value = t("messages.updated_stat_augmentation")
             self.page.snack_bar.open = True
         self.calculate_gem_report()
 

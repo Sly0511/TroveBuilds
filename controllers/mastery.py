@@ -2,14 +2,19 @@ from math import ceil
 
 from flet import Text, TextField, TextStyle
 from i18n import t
+
 from models.objects import Controller
 from utils.functions import throttle
 
 
 class MasteryController(Controller):
     def setup_controls(self):
-        self.points_input = TextField(label=t("mastery.mastery_points"), helper_style=TextStyle(color="red"))
-        self.level_input = TextField(label=t("mastery.mastery_levels"), helper_style=TextStyle(color="red"))
+        self.points_input = TextField(
+            label=t("mastery.mastery_points"), helper_style=TextStyle(color="red")
+        )
+        self.level_input = TextField(
+            label=t("mastery.mastery_levels"), helper_style=TextStyle(color="red")
+        )
         self.mastery_buffs = Text(t("mastery.mastery_buffs"))
         self.geode_buffs = Text(t("mastery.geode_mastery_buffs"))
 
@@ -95,9 +100,9 @@ class MasteryController(Controller):
                 increment = 100
             elif i > 300:
                 increment = 150 + ceil((i - 300) * 0.5)
-            if i == level+1:
-                if i-1 > 300:
-                    increment = 150 + ceil((i-1 - 300) * 0.5)
+            if i == level + 1:
+                if i - 1 > 300:
+                    increment = 150 + ceil((i - 1 - 300) * 0.5)
                 break
             points += increment
         return increment, points

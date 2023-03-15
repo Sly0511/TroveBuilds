@@ -42,25 +42,13 @@ def crystal_level_increments(level: int):
             return 0
 
 
-max_levels = {
-    "radiant": 23,
-    "stellar": 25
-}
+max_levels = {"radiant": 23, "stellar": 25}
 
 
 gem_min_max = {
-    "radiant": {
-        "lesser": [85, 113],
-        "empowered": [113, 150]
-    },
-    "stellar": {
-        "lesser": [150, 200],
-        "empowered": [200, 266]
-    },
-    "crystal": {
-        "lesser": [240, 320],
-        "empowered": [200, 266]
-    }
+    "radiant": {"lesser": [85, 113], "empowered": [113, 150]},
+    "stellar": {"lesser": [150, 200], "empowered": [200, 266]},
+    "crystal": {"lesser": [240, 320], "empowered": [200, 266]},
 }
 
 
@@ -71,18 +59,20 @@ stat_multipliers = {
     "Critical Hit": [0.02, 0.02],
     "Maximum Health %": [0.5, 0.5],
     "Maximum Health": [50, 50],
-    "Light": [1, 1]
+    "Light": [1, 1],
 }
 
 
 level_increments = {
     "radiant": radiant_level_increments,
     "stellar": stellar_level_increments,
-    "crystal": crystal_level_increments
+    "crystal": crystal_level_increments,
 }
 
 
-def get_stat_values(gem_tier: str, gem_type: str, stat: str, level: int, boosts: int = 0):
+def get_stat_values(
+    gem_tier: str, gem_type: str, stat: str, level: int, boosts: int = 0
+):
     min_val, max_val = stat_multipliers[stat]
     min_inc, max_inc = gem_min_max[gem_tier][gem_type]
     # Get initial stats

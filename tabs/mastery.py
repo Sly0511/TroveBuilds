@@ -1,4 +1,3 @@
-import flet_core.icons as ico
 from flet import Tab, Container, Column, Row, VerticalDivider
 from i18n import t
 
@@ -19,17 +18,11 @@ class Mastery(Tab):
                             VerticalDivider(),
                             ctrl.geode_buffs,
                         ],
-                        vertical_alignment="start"
-                    )
+                        vertical_alignment="start",
+                    ),
                 ]
             ),
             expand=True,
-            padding=10
+            padding=10,
         )
-        super().__init__(
-            text=t('tabs.1'),
-            content=ctrl.container
-        )
-
-
-
+        super().__init__(text=t("tabs.1"), content=ctrl.container)
