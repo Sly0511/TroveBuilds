@@ -1,5 +1,8 @@
 import asyncio
 import datetime
+from random import randint
+
+__all__ = ["throttle", "split_boosts"]
 
 
 def throttle(actual_handler, data={}, delay=0.5):
@@ -26,3 +29,10 @@ def throttle(actual_handler, data={}, delay=0.5):
             await actual_handler(e, i)
 
     return wrapper
+
+
+def split_boosts(n):
+    a = randint(0, n)
+    b = randint(0, n - a)
+    c = n - a - b
+    return [a, b, c]

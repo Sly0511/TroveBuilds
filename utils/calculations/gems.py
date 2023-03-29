@@ -121,9 +121,6 @@ level_increments = {
 def get_stat_values(
     gem_tier: str, gem_type: str, stat: str, level: int, boosts: int = 0
 ):
-    minimum_level = boosts * 5
-    if level < minimum_level:
-        raise ValueError
     min_val, max_val = stat_multipliers[gem_tier][stat]
     min_inc, max_inc = gem_min_max[gem_tier][stat][gem_type]
     # Get initial stats

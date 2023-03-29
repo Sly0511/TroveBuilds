@@ -51,7 +51,9 @@ class GemsController(Controller):
             ]:
                 element_set = []
                 for gem_builder in [EmpoweredGem, LesserGem, LesserGem]:
-                    while gem := gem_builder.maxed_gem(tier=GemTier.crystal, element=element):
+                    while gem := gem_builder.random_gem(
+                        tier=GemTier.crystal, element=element
+                    ):
                         if isinstance(gem, EmpoweredGem):
                             if gem.ability in used_abilities:
                                 continue
@@ -142,13 +144,17 @@ class GemsController(Controller):
             ]
             for stat in gem.stats:
                 min_value, max_value, diff = get_stat_values(
-                    gem.tier.name, gem.type.name, stat[1], gem.level, stat[2]
+                    gem.tier.name,
+                    gem.type.name,
+                    stat.name.value,
+                    gem.level,
+                    stat.boosts,
                 )
-                value = min_value + diff * stat[3]
-                if stat[1] not in stats.keys():
-                    stats[stat[1]] = [0, 0]
-                stats[stat[1]][0] += value * (1.1 if primordial else 1)
-                stats[stat[1]][1] += max_value * 1.1
+                value = min_value + diff * stat.percentage
+                if stat.name.value not in stats.keys():
+                    stats[stat.name.value] = [0, 0]
+                stats[stat.name.value][0] += value * (1.1 if primordial else 1)
+                stats[stat.name.value][1] += max_value * 1.1
         stats_card = Card(
             Column(
                 controls=[
@@ -157,7 +163,7 @@ class GemsController(Controller):
                         Row(
                             controls=[
                                 Text(value=t("stats." + stat)),
-                                Text(value=round(value[0], 2)),
+                                Text(value=str(round(value[0], 2))),
                             ]
                         )
                         for stat, value in stats.items()
@@ -261,35 +267,64 @@ class GemsController(Controller):
                 for s in self.selected_gem.possible_change_stats
             ]
             stat_select = Dropdown(
-                data=stat[0],
-                label=t("stats." + str(stat[1])),
+                data=stat,
+                label=t("stats." + stat.name.value),
                 options=options,
-                disabled=stat[1] == Stat.light.value,
+                disabled=stat.name.value == Stat.light.value,
                 on_change=self.on_stat_change,
             )
             stat_row = ResponsiveRow(
                 controls=[
                     stat_select,
-                    TextField(
-                        data=stat[0],
-                        helper_style=TextStyle(color="red"),
-                        value=f"{round(stat[3] * 100, 2)}",
-                        on_change=self.on_stat_augmentation_update,
-                        label=t("strings.% Augmentation Progress"),
+                    Text(
+                        data=stat,
+                        value=f"{stat.display_percentage}" + t("strings.% Augmentation Progress")
                     ),
                     Row(
                         controls=[
                             Container(
                                 Image(
                                     src=BasePath.joinpath(
-                                        "assets/images/gems/chaosflare.png"
+                                        "assets/images/gems/augment_01.png"
                                     ),
-                                    data=stat[0],
                                     width=30,
                                 ),
-                                data=stat[0],
+                                data=stat,
+                                on_click=self.on_rough_augment,
+                                disabled=stat.is_maxed,
+                            ),
+                            Container(
+                                Image(
+                                    src=BasePath.joinpath(
+                                        "assets/images/gems/augment_02.png"
+                                    ),
+                                    width=30,
+                                ),
+                                data=stat,
+                                on_click=self.on_precise_augment,
+                                disabled=stat.is_maxed,
+                            ),
+                            Container(
+                                Image(
+                                    src=BasePath.joinpath(
+                                        "assets/images/gems/augment_03.png"
+                                    ),
+                                    width=30,
+                                ),
+                                data=stat,
+                                on_click=self.on_superior_augment,
+                                disabled=stat.is_maxed,
+                            ),
+                            Container(
+                                Image(
+                                    src=BasePath.joinpath(
+                                        "assets/images/gems/chaosflare.png"
+                                    ),
+                                    width=30,
+                                ),
+                                data=stat,
                                 on_click=self.on_stat_boost_change,
-                                visible=bool(stat[2]),
+                                disabled=not bool(stat.boosts),
                             ),
                             Row(
                                 controls=[
@@ -299,7 +334,7 @@ class GemsController(Controller):
                                         ),
                                         width=25,
                                     )
-                                    for _ in range(stat[2])
+                                    for _ in range(stat.boosts)
                                 ]
                                 or [
                                     Image(
@@ -320,12 +355,13 @@ class GemsController(Controller):
 
     @throttle
     async def on_gem_level_change(self, event):
-        self.selected_gem.level = int(event.control.value)
+        self.selected_gem.set_level(int(event.control.value))
         self.page.snack_bar.content.value = t("messages.updated_gem_level").format(
             level=self.selected_gem.level
         )
         self.page.snack_bar.open = True
-        self.calculate_gem_report()
+        await self.build_editor()
+        await self.page.update_async()
 
     async def on_restriction_change(self, event):
         self.selected_gem.change_restriction(GemRestriction(event.control.value))
@@ -346,35 +382,29 @@ class GemsController(Controller):
         await self.page.update_async()
 
     async def on_stat_change(self, event):
-        self.selected_gem.stats[event.control.data][1] = event.control.value
+        event.control.data.name = Stat(event.control.value)
         self.setup_controls(self.selected_gem)
         await self.build_editor()
         await self.page.update_async()
 
-    @throttle
-    async def on_stat_augmentation_update(self, event):
-        event.control.helper_text = None
-        event.control.border_color = None
-        try:
-            value = abs(float(event.control.value)) / 100
-            if value > 1:
-                raise ValueError
-        except ValueError:
-            event.control.helper_text = t("errors.invalid_number")
-            event.control.border_color = "red"
-        else:
-            self.selected_gem.stats[event.control.data][3] = value
-            self.page.snack_bar.content.value = t("messages.updated_stat_augmentation")
-            self.page.snack_bar.open = True
-        self.calculate_gem_report()
-
     async def on_stat_boost_change(self, event):
-        gem_index = event.control.data
-        self.selected_gem.stats[gem_index][2] -= 1
-        stat_indexes = list(range(len(self.selected_gem.stats)))
-        stat_indexes.remove(gem_index)
-        stat_boosted_index = choice(stat_indexes)
-        self.selected_gem.stats[stat_boosted_index][2] += 1
+        stats = [s for s in self.selected_gem.stats if s != event.control.data]
+        event.control.data.move_boost_to(choice(stats))
         self.setup_controls(self.selected_gem)
+        await self.build_editor()
+        await self.page.update_async()
+
+    async def on_rough_augment(self, event):
+        event.control.data.add_rough_focus()
+        await self.build_editor()
+        await self.page.update_async()
+
+    async def on_precise_augment(self, event):
+        event.control.data.add_precise_focus()
+        await self.build_editor()
+        await self.page.update_async()
+
+    async def on_superior_augment(self, event):
+        event.control.data.add_superior_focus()
         await self.build_editor()
         await self.page.update_async()
