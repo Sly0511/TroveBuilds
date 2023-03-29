@@ -85,9 +85,16 @@
         "Gem Ability": "Gem Ability",
         "Stats": "Stats",
         "Stat": "Stat",
-        "% Augmentation Progress": "% Augmentation Progress"
+        "% Augmentation Progress": "% Augmentation Progress",
+        "Change Ability": "Change Ability"
     },
     "messages": {
+        "maxed_gem_levels": "All gems have had their level maxed out.",
+        "mined_gem_levels": "All gems have had their level set to 1.",
+        "augmented_all_gems": "All gems have fully augmented.",
+        "deaugmented_all_gems": "All gems have de-augmented.",
+        "changed_all_magic": "All gems have had their Physical damage stat changed to Magic Damage",
+        "changed_all_physical": "All gems have had their Magic damage stat changed to Physical Damage",
         "updated_gem_level": "Gem level changed to {level}",
         "updated_stats": "Updated Stats",
         "updated_stat_augmentation": "Updated Stat's Augmentation",

@@ -83,13 +83,20 @@
         "Stats": "# TRANSLATION ERROR: Stats",
         "Ability": "# TRANSLATION ERROR: Ability",
         "Gem Ability": "# TRANSLATION ERROR: Gem Ability",
-        "Level": "# TRANSLATION ERROR: Level"
+        "Level": "# TRANSLATION ERROR: Level",
+        "Change Ability": "# TRANSLATION ERROR: Change Ability"
     },
     "messages": {
         "updated_stats": "# TRANSLATION ERROR: Updated Stats",
         "updated_ability": "# TRANSLATION ERROR: Updated Ability",
         "updated_stat_augmentation": "# TRANSLATION ERROR: Updated Stat's Augmentation",
-        "updated_gem_level": "# TRANSLATION ERROR: Gem level changed to {level}"
+        "updated_gem_level": "# TRANSLATION ERROR: Gem level changed to {level}",
+        "maxed_gem_levels": "# TRANSLATION ERROR: All gems have had their level maxed out.",
+        "mined_gem_levels": "# TRANSLATION ERROR: All gems have had their level set to 1.",
+        "changed_all_magic": "# TRANSLATION ERROR: All gems have had their Physical damage stat changed to Magic Damage",
+        "changed_all_physical": "# TRANSLATION ERROR: All gems have had their Magic damage stat changed to Physical Damage",
+        "augmented_all_gems": "# TRANSLATION ERROR: All gems have fully augmented.",
+        "deaugmented_all_gems": "# TRANSLATION ERROR: All gems have de-augmented."
     },
     "gem_dragons": {
         "Fire": "# TRANSLATION ERROR: Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",

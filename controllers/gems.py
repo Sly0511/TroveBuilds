@@ -9,14 +9,13 @@ from flet import (
     Card,
     Image,
     Text,
-    TextField,
-    TextStyle,
     Border,
     BorderSide,
     Dropdown,
     dropdown,
     Slider,
     Switch,
+    ElevatedButton
 )
 from i18n import t
 
@@ -26,10 +25,11 @@ from models.objects.gem import (
     EmpoweredGem,
     GemElement,
     GemTier,
+    GemType,
     GemRestriction,
     Stat,
 )
-from utils.calculations.gems import get_stat_values
+from utils.calculations.gems import max_levels
 from utils.functions import throttle
 from utils.path import BasePath
 
@@ -68,16 +68,47 @@ class GemsController(Controller):
             self.gem_holder.controls.clear()
             self.gem_editor.controls.clear()
         if not hasattr(self, "general_controls"):
-            self.general_controls = ResponsiveRow(
+            self.general_controls = Column(
                 controls=[
-                    Switch(
-                        value=True if element != element.cosmic else False,
-                        label=t("gem_dragons." + element.value),
-                        data=element,
-                        on_change=self.on_primordial_change,
-                        col=3,
+                    ResponsiveRow(
+                        controls=[
+                            Row(
+                                controls=[
+                                    ElevatedButton("Min Level", on_click=self.on_min_level),
+                                    ElevatedButton("Max Level", on_click=self.on_max_level)
+                                ],
+                                col=4
+                            ),
+                            Row(
+                                controls=[
+                                    ElevatedButton("Min Augmentation", on_click=self.on_min_augmentation),
+                                    ElevatedButton("Max Augmentation", on_click=self.on_max_augmentation)
+                                ],
+                                col=4
+                            ),
+                            Row(
+                                controls=[
+                                    ElevatedButton("All Magic", on_click=self.on_all_magic),
+                                    ElevatedButton("All Physical", on_click=self.on_all_physical)
+                                ],
+                                col=4
+                            )
+                        ],
+                        data="shortcuts_bar"
+                    ),
+                    ResponsiveRow(
+                        controls=[
+                            Switch(
+                                value=True if element != element.cosmic else False,
+                                label=t("gem_dragons." + element.value),
+                                data=element,
+                                on_change=self.on_primordial_change,
+                                col=3,
+                            )
+                            for element in GemElement
+                        ],
+                        data="dragon_controls"
                     )
-                    for element in GemElement
                 ]
             )
         self.gem_controls = []
@@ -136,25 +167,19 @@ class GemsController(Controller):
 
     def calculate_gem_report(self):
         self.gem_report.controls.clear()
-        stats = {}
+        stats = {"Power Rank": [0, 0]}
         gems = [g for gs in self.gem_set for g in gs]
+        dragon_controls = [c for c in self.general_controls.controls if c.data == "dragon_controls"][0]
         for gem in gems:
             primordial = gem.element in [
-                c.data for c in self.general_controls.controls if c.value
+                c.data for c in dragon_controls.controls if c.value
             ]
             for stat in gem.stats:
-                min_value, max_value, diff = get_stat_values(
-                    gem.tier.name,
-                    gem.type.name,
-                    stat.name.value,
-                    gem.level,
-                    stat.boosts,
-                )
-                value = min_value + diff * stat.percentage
                 if stat.name.value not in stats.keys():
                     stats[stat.name.value] = [0, 0]
-                stats[stat.name.value][0] += value * (1.1 if primordial else 1)
-                stats[stat.name.value][1] += max_value * 1.1
+                stats[stat.name.value][0] += stat.value * (1.1 if primordial else 1)
+                stats[stat.name.value][1] += stat.max_value * (1.1 if primordial else 1)
+            stats["Power Rank"][0] += gem.power_rank * (1.1 if primordial else 1)
         stats_card = Card(
             Column(
                 controls=[
@@ -224,16 +249,18 @@ class GemsController(Controller):
                     if isinstance(g, EmpoweredGem)
                 ]
             ]
+            unused_abilities.append(self.selected_gem.ability)
             options = [
                 dropdown.Option(key=a.name, text=t("gem_abilities." + a.value))
                 for a in unused_abilities
             ]
             meta_row.controls.append(
                 Dropdown(
+                    value=self.selected_gem.ability.name,
                     options=options,
-                    label=t("gem_abilities." + self.selected_gem.ability.value),
+                    label=t("Change ability"),
                     on_change=self.on_gem_ability_change,
-                    col=4,
+                    col=3,
                 )
             )
         elif isinstance(self.selected_gem, LesserGem):
@@ -247,9 +274,17 @@ class GemsController(Controller):
                     options=[dropdown.Option(restricition)],
                     label=t("gem_restrictions." + self.selected_gem.restriction.value),
                     on_change=self.on_restriction_change,
-                    col=4,
+                    col=3,
                 )
             )
+        meta_row.controls.append(
+            Text(
+                t("Level") + f" {self.selected_gem.level}",
+                size=18,
+                text_align="right",
+                col=1
+            )
+        )
         meta_row.controls.append(
             Slider(
                 min=1,
@@ -354,12 +389,98 @@ class GemsController(Controller):
             self.gem_editor.controls.append(stat_row)
 
     @throttle
+    async def on_max_level(self, _):
+        for gs in self.gem_set:
+            for gem in gs:
+                gem.set_level(max_levels[gem.tier.name])
+        self.page.snack_bar.content.value = t("messages.maxed_gem_levels")
+        self.page.snack_bar.open = True
+        self.setup_controls(self.selected_gem)
+        if self.selected_gem is not None:
+            await self.build_editor()
+        await self.page.update_async()
+
+    @throttle
+    async def on_min_level(self, _):
+        for gs in self.gem_set:
+            for gem in gs:
+                gem.set_level(1)
+        self.page.snack_bar.content.value = t("messages.mined_gem_levels")
+        self.page.snack_bar.open = True
+        self.setup_controls(self.selected_gem)
+        if self.selected_gem is not None:
+            await self.build_editor()
+        await self.page.update_async()
+
+    @throttle
+    async def on_max_augmentation(self, _):
+        for gs in self.gem_set:
+            for gem in gs:
+                for stat in gem.stats:
+                    while not stat.is_maxed:
+                        stat.add_superior_focus()
+        self.page.snack_bar.content.value = t("messages.augmented_all_gems")
+        self.page.snack_bar.open = True
+        self.setup_controls(self.selected_gem)
+        if self.selected_gem is not None:
+            await self.build_editor()
+        await self.page.update_async()
+
+    @throttle
+    async def on_min_augmentation(self, _):
+        for gs in self.gem_set:
+            for gem in gs:
+                for stat in gem.stats:
+                    stat.reset_augments()
+        self.page.snack_bar.content.value = t("messages.deaugmented_all_gems")
+        self.page.snack_bar.open = True
+        self.setup_controls(self.selected_gem)
+        if self.selected_gem is not None:
+            await self.build_editor()
+        await self.page.update_async()
+
+    @throttle
+    async def on_all_magic(self, _):
+        for gs in self.gem_set:
+            for gem in gs:
+                if gem.type == GemType.lesser:
+                    gem.change_restriction(GemRestriction.arcane)
+                else:
+                    for stat in gem.stats:
+                        if stat.name == Stat.physical_damage:
+                            stat.name = Stat.magic_damage
+        self.page.snack_bar.content.value = t("messages.changed_all_magic")
+        self.page.snack_bar.open = True
+        self.setup_controls(self.selected_gem)
+        if self.selected_gem is not None:
+            await self.build_editor()
+        await self.page.update_async()
+
+    @throttle
+    async def on_all_physical(self, _):
+        for gs in self.gem_set:
+            for gem in gs:
+                if gem.type == GemType.lesser:
+                    gem.change_restriction(GemRestriction.fierce)
+                else:
+                    for stat in gem.stats:
+                        if stat.name == Stat.magic_damage:
+                            stat.name = Stat.physical_damage
+        self.page.snack_bar.content.value = t("messages.changed_all_physical")
+        self.page.snack_bar.open = True
+        self.setup_controls(self.selected_gem)
+        if self.selected_gem is not None:
+            await self.build_editor()
+        await self.page.update_async()
+
+    @throttle
     async def on_gem_level_change(self, event):
         self.selected_gem.set_level(int(event.control.value))
         self.page.snack_bar.content.value = t("messages.updated_gem_level").format(
             level=self.selected_gem.level
         )
         self.page.snack_bar.open = True
+        self.calculate_gem_report()
         await self.build_editor()
         await self.page.update_async()
 
@@ -396,15 +517,18 @@ class GemsController(Controller):
 
     async def on_rough_augment(self, event):
         event.control.data.add_rough_focus()
+        self.calculate_gem_report()
         await self.build_editor()
         await self.page.update_async()
 
     async def on_precise_augment(self, event):
         event.control.data.add_precise_focus()
+        self.calculate_gem_report()
         await self.build_editor()
         await self.page.update_async()
 
     async def on_superior_augment(self, event):
         event.control.data.add_superior_focus()
+        self.calculate_gem_report()
         await self.build_editor()
         await self.page.update_async()

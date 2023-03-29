@@ -1,4 +1,4 @@
-def radiant_level_increments(_: str, level: int):
+def radiant_level_increments(level: int):
     match level:
         case 1 | 5 | 10 | 15:
             return 0
@@ -12,7 +12,7 @@ def radiant_level_increments(_: str, level: int):
             return 0
 
 
-def stellar_level_increments(_: str, level: int):
+def stellar_level_increments(level: int):
     match level:
         case 1 | 5 | 10 | 15:
             return 0
@@ -26,10 +26,8 @@ def stellar_level_increments(_: str, level: int):
             return 0
 
 
-def crystal_level_increments(stat: str, level: int):
+def crystal_level_increments(level: int):
     pr = 7
-    if stat == "Light":
-        pr = 5
     match level:
         case 1 | 5 | 10 | 15:
             return 0
@@ -75,7 +73,7 @@ gem_min_max = {
         "Critical Hit": {"lesser": [560 / 3, 770 / 3], "empowered": [700 / 3, 910 / 3]},
         "Maximum Health %": {"lesser": [245, 315], "empowered": [315, 385]},
         "Maximum Health": {"lesser": [245, 315], "empowered": [315, 385]},
-        "Light": {"lesser": [200, 275], "empowered": [250, 300]},
+        "Light": {"lesser": [280, 385], "empowered": [350, 420]},
     },
 }
 
@@ -106,7 +104,21 @@ stat_multipliers = {
         "Critical Hit": [0.3 / 14, 0.3 / 14],
         "Maximum Health %": [0.5, 0.5],
         "Maximum Health": [50, 50],
-        "Light": [1, 1],
+        "Light": [5/7, 5/7],
+    },
+}
+
+
+gem_container_pr = {
+    "lesser": {
+        "radiant": [85, 113],
+        "stellar": [150, 200],
+        "crystal": [175, 250],
+    },
+    "empowered": {
+        "radiant": [113, 150],
+        "stellar": [200, 266],
+        "crystal": [220, 280],
     },
 }
 
@@ -116,26 +128,3 @@ level_increments = {
     "stellar": stellar_level_increments,
     "crystal": crystal_level_increments,
 }
-
-
-def get_stat_values(
-    gem_tier: str, gem_type: str, stat: str, level: int, boosts: int = 0
-):
-    min_val, max_val = stat_multipliers[gem_tier][stat]
-    min_inc, max_inc = gem_min_max[gem_tier][stat][gem_type]
-    # Get initial stats
-    stat_output = [0, 0]
-    stat_output[0] = min_inc * min_val
-    stat_output[1] = max_inc * max_val
-    # Calculate level stats
-    for l, _ in enumerate(range(level), 1):
-        level_increment = level_increments[gem_tier](stat, l)
-        stat_output[0] += level_increment * min_val
-        stat_output[1] += level_increment * max_val
-    # Calculate boosts
-    for boost in range(boosts):
-        stat_output[0] += min_inc * min_val
-        stat_output[1] += max_inc * max_val
-    min_stat = round(stat_output[0], 2)
-    max_stat = round(stat_output[1], 2)
-    return min_stat, max_stat, round(max_stat - min_stat, 2)
