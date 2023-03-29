@@ -1,3 +1,19 @@
+"""
+The accuracy in this code was possible due to the great help of SummerHaas (Summer#9392)
+Huge thanks to them for explaining and helping me understand gems to a much deeper level.
+
+The code below attempts to simulate how gems work internally in the game in a much more
+accurate manner, simulating the existing containers and possible overflows that occur.
+
+While not possible to see through the sugar-coated interface in-game it will allow for
+power rank calculations to be accurate as well as stats and augmentation percentages.
+
+Thanks again Summer for the information you shared.
+
+Here's some content Summer works on with other Trovians
+https://trove.summerhaas.com/ Make sure to check out their incredible work.
+"""
+
 import base64
 from copy import copy
 from enum import Enum
@@ -27,6 +43,82 @@ all_gem_stats = [s for s in Stat if s not in excluded_stats]
 arcane_gem_stats = all_gem_stats + [Stat.magic_damage]
 fierce_gem_stats = all_gem_stats + [Stat.physical_damage]
 empowered_gem_stats = all_gem_stats + [Stat.physical_damage, Stat.magic_damage]
+
+
+class GemStatContainer(BaseModel):
+    base: int
+    rough: int
+    precise: int
+    superior: int
+
+    @property
+    def total(self) -> int:
+        return sum([self.base, self.rough, self.precise * 2, self.superior * 5])
+
+
+class GemStat(BaseModel):
+    name: str
+    boosts: int
+    containers: list[GemStatContainer]
+
+
+
+    @property
+    def percentage(self) -> float:
+        max_augments = 40 + 40 * self.boosts
+        augmented = sum(c.total for c in self.containers)
+        augmented = augmented if augmented <= max_augments else max_augments
+        percentage = augmented / max_augments
+        return percentage if percentage <= 1 else 1
+
+    @property
+    def is_maxed(self) -> bool:
+        return self.percentage == 1
+
+    def reset_augments(self):
+        for container in self.containers:
+            container.rough = 0
+            container.precise = 0
+            container.superior = 0
+
+    def add_rough_focus(self):
+        for container in self.containers[:self.boosts+1]:
+            if container.total < 40:
+                container.rough += 1
+        return self.is_maxed
+
+    def add_precise_focus(self):
+        for container in self.containers[:self.boosts+1]:
+            if container.total < 40:
+                container.precise += 1
+        return self.is_maxed
+
+    def add_superior_focus(self):
+        for container in self.containers[:self.boosts+1]:
+            if container.total < 40:
+                container.superior += 1
+        return self.is_maxed
+
+    @classmethod
+    def random(cls, name: str, boosts: int):
+        stat = cls(
+            name,
+            boosts,
+            [
+                GemStatContainer(*[randint(0, 40), 0, 0, 0])
+                for _ in range(boosts)
+            ],
+        )
+        return stat
+
+    @classmethod
+    def maxed(cls, name: str, boosts: int):
+        stat = cls.random(name, boosts)
+        # Just keep adding boosts to a randomly generated gem
+        # This way a gem can be "downgraded" into being low level again
+        while not stat.is_maxed:
+            stat.add_rough_focus()
+        return stat
 
 
 class GemTier(Enum):

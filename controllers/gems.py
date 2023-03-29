@@ -51,7 +51,7 @@ class GemsController(Controller):
             ]:
                 element_set = []
                 for gem_builder in [EmpoweredGem, LesserGem, LesserGem]:
-                    while gem := gem_builder.maxed_gem(GemTier.crystal, element):
+                    while gem := gem_builder.maxed_gem(tier=GemTier.crystal, element=element):
                         if isinstance(gem, EmpoweredGem):
                             if gem.ability in used_abilities:
                                 continue
