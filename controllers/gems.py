@@ -51,7 +51,7 @@ class GemsController(Controller):
             ]:
                 element_set = []
                 for gem_builder in [EmpoweredGem, LesserGem, LesserGem]:
-                    while gem := gem_builder.maxed_gem(GemTier.stellar, element):
+                    while gem := gem_builder.maxed_gem(GemTier.crystal, element):
                         if isinstance(gem, EmpoweredGem):
                             if gem.ability in used_abilities:
                                 continue
@@ -69,7 +69,7 @@ class GemsController(Controller):
             self.general_controls = ResponsiveRow(
                 controls=[
                     Switch(
-                        value=True,
+                        value=True if element != element.cosmic else False,
                         label=t("gem_dragons." + element.value),
                         data=element,
                         on_change=self.on_primordial_change,

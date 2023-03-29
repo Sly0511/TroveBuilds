@@ -14,8 +14,7 @@ class Gems(Tab):
                     ctrl.general_controls,
                     ctrl.gem_holder,
                     ctrl.gem_editor,
-                ],
-                scroll="auto",
+                ]
             )
         )
         super().__init__(text=t("tabs.0"), content=ctrl.container)

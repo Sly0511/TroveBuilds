@@ -32,7 +32,7 @@ empowered_gem_stats = all_gem_stats + [Stat.physical_damage, Stat.magic_damage]
 class GemTier(Enum):
     radiant = "radiant"
     stellar = "stellar"
-    # crystal = "crystal" # Disabled until tables are updated
+    crystal = "crystal"
 
 
 class GemType(Enum):

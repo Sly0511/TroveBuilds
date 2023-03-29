@@ -23,6 +23,7 @@ class TroveBuilds:
         page.title = t("title")
         page.window_maximizable = True
         page.window_maximized = True
+        page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         # Build tab frames
         tabs = Tabs(tabs=[Gems(page), Mastery(page)])

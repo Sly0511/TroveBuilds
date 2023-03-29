@@ -15,8 +15,10 @@ class LocalizationManager:
     def __init__(self, page):
         # Point localization locations
         load_path.append(str(BasePath.joinpath("locales")))
-        # Set localization file format
+        # Set localization filename format
         set("filename_format", "{locale}.{format}")
+        # Set localization file format
+        set("file_format", "json")
         # Remove the root key for locales
         set("skip_locale_root_data", True)
         # Add available languages into the list of locales

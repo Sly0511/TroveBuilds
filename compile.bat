@@ -1,0 +1,1 @@
+pyinstaller --noconsole --onefile --add-data="assets;assets" --add-data="data;data" --add-data="locales;locales" main.py
