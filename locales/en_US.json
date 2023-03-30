@@ -86,7 +86,9 @@
         "Stats": "Stats",
         "Stat": "Stat",
         "% Augmentation Progress": "% Augmentation Progress",
-        "Change Ability": "Change Ability"
+        "Change Ability": "Change Ability",
+        "Change Restriction": "Change Restriction",
+        "Change Stat": "Change Stat"
     },
     "messages": {
         "maxed_gem_levels": "All gems have had their level maxed out.",

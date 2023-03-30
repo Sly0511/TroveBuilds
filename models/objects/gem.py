@@ -27,11 +27,19 @@ from uuid import UUID, uuid4
 from i18n import t
 from pydantic import BaseModel, Field
 
-from utils.calculations.gems import max_levels, stat_multipliers, gem_min_max, gem_container_pr, level_increments
+from utils.calculations.gems import (
+    max_levels,
+    stat_multipliers,
+    gem_min_max,
+    gem_container_pr,
+    level_increments,
+)
 from utils.functions import split_boosts
 
 
 class Stat(Enum):
+    """This class enumerates the various stats available in gems."""
+
     light = "Light"
     physical_damage = "Physical Damage"
     magic_damage = "Magic Damage"
@@ -49,6 +57,8 @@ empowered_gem_stats = all_gem_stats + [Stat.physical_damage, Stat.magic_damage]
 
 
 class GemStatContainer(BaseModel):
+    """This class simulates a stat container."""
+
     base: int
     rough: int
     precise: int
@@ -60,6 +70,8 @@ class GemStatContainer(BaseModel):
 
 
 class GemStat(BaseModel):
+    """This class simulates a stat in a gem."""
+
     uuid: UUID = Field(default_factory=uuid4)
     name: Stat
     gem: BaseModel
@@ -73,16 +85,19 @@ class GemStat(BaseModel):
 
     @property
     def boosts(self) -> int:
+        """This property returns the amount of extra containers."""
+
         return len(self.containers) - 1
 
     @property
     def percentage(self) -> float:
-        """This calculates true percentage of gem while respecting each
+        """This property calculates true percentage of gem while respecting each
         containers' overflow
 
         Since each container can exceed 100% this will allow that to happen
         Counting from first to last container the amount of boosts
         While limiting the amount of boosts dynamically through boost count"""
+
         max_augments = 40 + 40 * self.boosts
         augmented = sum(c.total for c in self.containers)
         augmented = min(augmented, max_augments)
@@ -93,12 +108,17 @@ class GemStat(BaseModel):
 
     @property
     def display_percentage(self) -> float:
-        """I don't want have to do this every time."""
+        """This method returns the percentage for display in a 100% manner."""
+
         return round(self.percentage * 100, 2)
 
     def get_values(self):
+        """Returns the calculated values for the current stat."""
+
         min_val, max_val = stat_multipliers[self.gem.tier.name][self.name.value]
-        min_inc, max_inc = gem_min_max[self.gem.tier.name][self.name.value][self.gem.type.name]
+        min_inc, max_inc = gem_min_max[self.gem.tier.name][self.name.value][
+            self.gem.type.name
+        ]
         # Get initial stats
         stat_output = [0, 0]
         stat_output[0] = min_inc * min_val
@@ -110,8 +130,12 @@ class GemStat(BaseModel):
             power_rank += level_increment
             stat_output[0] += level_increment * min_val
             stat_output[1] += level_increment * max_val
-        min_container_pr, max_container_pr = gem_container_pr[self.gem.type.name][self.gem.tier.name]
-        container_pr = min_container_pr + (max_container_pr - min_container_pr) * self.percentage
+        min_container_pr, max_container_pr = gem_container_pr[self.gem.type.name][
+            self.gem.tier.name
+        ]
+        container_pr = (
+            min_container_pr + (max_container_pr - min_container_pr) * self.percentage
+        )
         power_rank += container_pr
         # Calculate boosts
         for boost in range(self.boosts):
@@ -124,26 +148,38 @@ class GemStat(BaseModel):
 
     @property
     def min_value(self):
+        """Returns the calculated value of the 100% augmentation value."""
+
         return self.get_values()[0]
 
     @property
     def max_value(self):
+        """Returns the calculated value of the 0% augmentation value."""
+
         return self.get_values()[1]
 
     @property
     def difference_value(self):
+        """Returns the calculated difference between 0% and 100% augmentation values."""
+
         return self.get_values()[2]
 
     @property
     def value(self):
+        """Returns the calculated stat value."""
+
         return self.min_value + self.difference_value * self.percentage
 
     @property
     def power_rank(self):
+        """Returns the calculated power rank of the gem."""
+
         return self.get_values()[3]
 
     @property
     def is_maxed(self) -> bool:
+        """Returns a boolean value indicating whether gem has max augmentation or not."""
+
         return self.percentage == 1
 
     def reset_augments(self) -> None:
@@ -164,18 +200,20 @@ class GemStat(BaseModel):
         )
 
     def remove_boost(self) -> None:
-        """Remove the last container"""
+        """Remove the last container."""
 
         self.containers.remove(self.containers[-1])
 
     def move_boost_to(self, stat) -> None:
-        """Put the last container into another stat"""
+        """Put the last container into another stat."""
 
         container = self.containers[-1]
         self.containers.remove(container)
         stat.containers.append(container)
 
     def add_rough_focus(self) -> bool:
+        """Adds a rough focus to the first container under 40 augments."""
+
         for container in self.containers:
             if container.total < 40:
                 container.rough += 1
@@ -183,6 +221,8 @@ class GemStat(BaseModel):
         return self.is_maxed
 
     def add_precise_focus(self) -> bool:
+        """Adds a precise focus to the first container under 40 augments."""
+
         for container in self.containers:
             if container.total < 40:
                 container.precise += 1
@@ -190,6 +230,8 @@ class GemStat(BaseModel):
         return self.is_maxed
 
     def add_superior_focus(self) -> bool:
+        """Adds a superior focus to the first container under 40 augments."""
+
         for container in self.containers:
             if container.total < 40:
                 container.superior += 1
@@ -270,9 +312,7 @@ class Gem(BaseModel):
     stats: list[GemStat]
 
     def __eq__(self, other):
-        if not hasattr(other, "uuid"):
-            return False
-        return self.uuid == other.uuid
+        return self.uuid == getattr(other, "uuid", None)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -289,7 +329,9 @@ class Gem(BaseModel):
 
     @property
     def power_rank(self):
-        return sum([s.power_rank for s in self.stats]) + (0 if self.type == GemType.lesser else 100)
+        return sum([s.power_rank for s in self.stats]) + (
+            0 if self.type == GemType.lesser else 100
+        )
 
     def set_level(self, level: int):
         self.level = level

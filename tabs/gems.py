@@ -12,8 +12,7 @@ class Gems(Tab):
                 controls=[
                     ctrl.gem_report,
                     ctrl.general_controls,
-                    ctrl.gem_holder,
-                    ctrl.gem_editor,
+                    ctrl.gem_altar
                 ]
             )
         )
