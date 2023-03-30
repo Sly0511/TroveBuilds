@@ -372,7 +372,7 @@ class LesserGem(Gem):
     def random_gem(cls, tier: GemTier = None, element: GemElement = None):
         tier = tier or choice([c for c in GemTier])
         max_level = max_levels[tier.name]
-        level = randint(1, max_level + 1)
+        level = randint(1, max_level)
         type = GemType.lesser
         element = element or choice([c for c in GemElement])
         restriction = choice([c for c in GemRestriction])
@@ -421,8 +421,7 @@ class LesserGem(Gem):
                 if stat.name == Stat.magic_damage:
                     stat.name = Stat.physical_damage
 
-    @property
-    def possible_change_stats(self):
+    def possible_change_stats(self, _: Stat):
         stats = []
         if self.restriction == GemRestriction.arcane:
             stats.extend(arcane_gem_stats)
@@ -454,7 +453,7 @@ class EmpoweredGem(Gem):
     def random_gem(cls, tier: GemTier = None, element: GemElement = None):
         tier = tier or choice([c for c in GemTier])
         max_level = max_levels[tier.name]
-        level = randint(1, max_level + 1)
+        level = randint(1, max_level)
         type = GemType.empowered
         element = element or choice([c for c in GemElement])
         ability_set = (
@@ -499,14 +498,15 @@ class EmpoweredGem(Gem):
             gem.stats.append(GemStat.maxed(stat_name, boost_count, gem))
         return gem
 
-    @property
-    def possible_change_stats(self):
+    def possible_change_stats(self, cstat: Stat):
         stats = []
-        stats.extend(empowered_gem_stats)
-        for stat in self.stats:
-            for pstat in copy(stats):
-                if stat.name.value == pstat.value:
-                    stats.remove(pstat)
+        stats_in_use = [s.name for s in self.stats]
+        damage_types = [Stat.magic_damage, Stat.physical_damage]
+        for stat in empowered_gem_stats:
+            if stat not in stats_in_use:
+                if cstat.name not in damage_types and stat in damage_types:
+                    continue
+                stats.append(stat)
         return stats
 
 

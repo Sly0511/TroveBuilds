@@ -257,13 +257,13 @@ class GemsController(Controller):
                 stat_row = ResponsiveRow(
                     controls=[
                         Dropdown(
+                            value=stat.name.value,
                             data=stat,
-                            label=t("stats." + stat.name.value),
                             options=[
                                 dropdown.Option(s.value)
-                                for s in self.selected_gem.possible_change_stats
-                            ],
-                            disabled=stat.name.value == Stat.light.value,
+                                for s in self.selected_gem.possible_change_stats(stat)
+                            ] + [dropdown.Option(stat.name.value)],
+                            disabled=stat.name == Stat.light,
                             on_change=self.on_stat_change,
                             col=6
                         ),
