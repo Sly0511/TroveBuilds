@@ -1,109 +1,148 @@
 {
     "title": "# TRANSLATION ERROR: Trove Calculation Tool",
     "tabs": {
-        "0": "# TRANSLATION ERROR: Gem Simulator",
-        "1": "# TRANSLATION ERROR: Mastery"
+        "0": "Juwelen Kalkulator",
+        "1": "Beherrschungsrang",
+        "2": "# TRANSLATION ERROR: Star Chart"
     },
     "stats": {
-        "Health Bonus": "# TRANSLATION ERROR: Health Bonus",
-        "Damage Bonus": "# TRANSLATION ERROR: Damage Bonus",
-        "Power Rank": "# TRANSLATION ERROR: Power Rank",
-        "Magic Find": "# TRANSLATION ERROR: Magic Find",
-        "Light": "# TRANSLATION ERROR: Light",
-        "Physical Damage": "# TRANSLATION ERROR: Physical Damage",
-        "Magic Damage": "# TRANSLATION ERROR: Magic Damage",
-        "Critical Damage": "# TRANSLATION ERROR: Critical Damage",
-        "Critical Hit": "# TRANSLATION ERROR: Critical Hit",
-        "Maximum Health": "# TRANSLATION ERROR: Maximum Health",
-        "Maximum Health %": "# TRANSLATION ERROR: Maximum Health %"
+        "Health Bonus": "Gesundheits Bonus",
+        "Damage Bonus": "Schadens Bonus",
+        "Power Rank": "Machtrang",
+        "Magic Find": "Magiegesp\u00fcr",
+        "Light": "Licht",
+        "Physical Damage": "Physischer Schaden",
+        "Magic Damage": "Magischer Schaden",
+        "Critical Damage": "Kritischer Schaden",
+        "Critical Hit": "Kritischer Treffer",
+        "Maximum Health": "Max. Gesundheit",
+        "Maximum Health %": "Max. Gesundheit %"
     },
     "mastery": {
-        "mastery_points": "# TRANSLATION ERROR: Mastery Points",
-        "mastery_levels": "# TRANSLATION ERROR: Mastery Levels",
-        "mastery_buffs": "# TRANSLATION ERROR: Mastery Buffs",
-        "geode_mastery_buffs": "# TRANSLATION ERROR: Geode Mastery Buffs"
+        "mastery_points": "Beherrschungspunkte",
+        "mastery_levels": "Beherrschungsrang",
+        "mastery_buffs": "Beherrschungs Bonus",
+        "geode_mastery_buffs": "Geode Beherrschungs Bonus"
     },
     "errors": {
-        "invalid_number": "# TRANSLATION ERROR: Please provide a valid number",
-        "max_mastery_1000": "# TRANSLATION ERROR: Max mastery is 1000"
+        "invalid_number": "Bitte geben Sie eine g\u00fcltige Nummer ein",
+        "max_mastery_1000": "Max. Beherrschungsrang ist 1000"
     },
     "gem_tiers": {
-        "Stellar": "# TRANSLATION ERROR: Stellar",
-        "Crystal": "# TRANSLATION ERROR: Crystal"
+        "Stellar": "Stellar",
+        "Crystal": "Kristall"
     },
     "gem_types": {
-        "Empowered": "# TRANSLATION ERROR: Empowered",
-        "Lesser": "# TRANSLATION ERROR: Lesser"
+        "Empowered": "Machtvoller",
+        "Lesser": "Kleiner"
     },
     "gem_abilities": {
-        "Explosive Epilogue": "# TRANSLATION ERROR: Explosive Epilogue",
-        "Volatile Velocity": "# TRANSLATION ERROR: Volatile Velocity",
-        "Cubic Curtain": "# TRANSLATION ERROR: Cubic Curtain",
-        "Mired Mojo": "# TRANSLATION ERROR: Mired Mojo",
-        "Pyrodisc": "# TRANSLATION ERROR: Pyrodisc",
-        "Stunburst": "# TRANSLATION ERROR: Stunburst",
-        "Spirit Surge": "# TRANSLATION ERROR: Spirit Surge",
-        "Stinging Curse": "# TRANSLATION ERROR: Stinging Curse",
-        "Berserker Battler": "# TRANSLATION ERROR: Berserker Battler",
-        "Flower Power": "# TRANSLATION ERROR: Flower Power",
-        "Empyrean Barrier": "# TRANSLATION ERROR: Empyrean Barrier",
-        "Vampirian Vanquisher": "# TRANSLATION ERROR: Vampirian Vanquisher"
+        "Explosive Epilogue": "Explosiver Epilog",
+        "Volatile Velocity": "Volatile Velozit\u00e4t",
+        "Cubic Curtain": "Kubischer Schild",
+        "Mired Mojo": "Stasishagel",
+        "Pyrodisc": "Pyroscheibe",
+        "Stunburst": "Stasissalve",
+        "Spirit Surge": "Geisterwelle",
+        "Stinging Curse": "Stechender Fluch",
+        "Berserker Battler": "Kampfberserker",
+        "Flower Power": "Flower-Power",
+        "Empyrean Barrier": "Lichthimmelbarriere",
+        "Vampirian Vanquisher": "Vampirischer Bezwinger"
     },
     "gem_restrictions": {
-        "Arcane": "# TRANSLATION ERROR: Arcane",
-        "Fierce": "# TRANSLATION ERROR: Fierce"
+        "Arcane": "Arkaner",
+        "Fierce": "Wilder"
     },
     "gem_elements": {
-        "Fire": "# TRANSLATION ERROR: Fire",
-        "Water": "# TRANSLATION ERROR: Water",
-        "Air": "# TRANSLATION ERROR: Air",
-        "Cosmic": "# TRANSLATION ERROR: Cosmic"
+        "Fire": "Feuer",
+        "Water": "Wasser",
+        "Air": "Luft",
+        "Cosmic": "Kosmisch"
     },
     "gem_full_names": {
-        "Arcane Fire Gem": "# TRANSLATION ERROR: Arcane Fire Gem",
-        "Arcane Water Gem": "# TRANSLATION ERROR: Arcane Water Gem",
-        "Arcane Air Gem": "# TRANSLATION ERROR: Arcane Air Gem",
-        "Arcane Cosmic Gem": "# TRANSLATION ERROR: Arcane Cosmic Gem",
-        "Fierce Fire Gem": "# TRANSLATION ERROR: Fierce Fire Gem",
-        "Fierce Water Gem": "# TRANSLATION ERROR: Fierce Water Gem",
-        "Fierce Air Gem": "# TRANSLATION ERROR: Fierce Air Gem",
-        "Fierce Cosmic Gem": "# TRANSLATION ERROR: Fierce Cosmic Gem",
-        "Lesser Fire Gem": "# TRANSLATION ERROR: Lesser Fire Gem",
-        "Lesser Water Gem": "# TRANSLATION ERROR: Lesser Water Gem",
-        "Lesser Air Gem": "# TRANSLATION ERROR: Lesser Air Gem",
-        "Lesser Cosmic Gem": "# TRANSLATION ERROR: Lesser Cosmic Gem",
-        "Empowered Fire Gem": "# TRANSLATION ERROR: Empowered Fire Gem",
-        "Empowered Water Gem": "# TRANSLATION ERROR: Empowered Water Gem",
-        "Empowered Air Gem": "# TRANSLATION ERROR: Empowered Air Gem",
-        "Empowered Cosmic Gem": "# TRANSLATION ERROR: Empowered Cosmic Gem"
+        "Arcane Fire Gem": "Arkaner Feuerjuwel",
+        "Arcane Water Gem": "Arkaner Wasserjuwel",
+        "Arcane Air Gem": "Arkaner Luftjuwel",
+        "Arcane Cosmic Gem": "Arkaner Kosmischerjuwel",
+        "Fierce Fire Gem": "Wilder Feuerjuwel",
+        "Fierce Water Gem": "Wilder Wasserjuwel",
+        "Fierce Air Gem": "Wilder Luftjuwel",
+        "Fierce Cosmic Gem": "Wilder Kosmischerjuwel",
+        "Lesser Fire Gem": "Kleiner Feuerjuwel",
+        "Lesser Water Gem": "Kleiner Wasserjuwel",
+        "Lesser Air Gem": "Kleiner Luftjuwel",
+        "Lesser Cosmic Gem": "Kleiner Kosmischerjuwel",
+        "Empowered Fire Gem": "Machtvoller Feuerjuwel",
+        "Empowered Water Gem": "Machtvoller Wasserjuwel",
+        "Empowered Air Gem": "Machtvoller Luftjuwel",
+        "Empowered Cosmic Gem": "Machtvoller Kosmischerjuwel"
     },
     "strings": {
-        "Stat": "# TRANSLATION ERROR: Stat",
-        "% Augmentation Progress": "# TRANSLATION ERROR: % Augmentation Progress",
-        "Stats": "# TRANSLATION ERROR: Stats",
-        "Ability": "# TRANSLATION ERROR: Ability",
-        "Gem Ability": "# TRANSLATION ERROR: Gem Ability",
-        "Level": "# TRANSLATION ERROR: Level",
-        "Change Ability": "# TRANSLATION ERROR: Change Ability",
-        "Change Restriction": "# TRANSLATION ERROR: Change Restriction",
-        "Change Stat": "# TRANSLATION ERROR: Change Stat"
+        "Stat": "Wert",
+        "% Augmentation Progress": "% Verbesserungs Fortschritt",
+        "Stats": "Werte",
+        "Ability": "F\u00e4higkeit",
+        "Gem Ability": "Juwelenf\u00e4higkeit",
+        "Level": "Level",
+        "Change Ability": "F\u00e4higkeit Wechseln",
+        "Change Restriction": "Beschr\u00e4nkung Aufheben",
+        "Change Stat": "Wert \u00c4ndern",
+        "Lvl": "Lvl"
     },
     "messages": {
-        "updated_stats": "# TRANSLATION ERROR: Updated Stats",
-        "updated_ability": "# TRANSLATION ERROR: Updated Ability",
-        "updated_stat_augmentation": "# TRANSLATION ERROR: Updated Stat's Augmentation",
-        "updated_gem_level": "# TRANSLATION ERROR: Gem level changed to {level}",
-        "maxed_gem_levels": "# TRANSLATION ERROR: All gems have had their level maxed out.",
-        "mined_gem_levels": "# TRANSLATION ERROR: All gems have had their level set to 1.",
-        "changed_all_magic": "# TRANSLATION ERROR: All gems have had their Physical damage stat changed to Magic Damage",
-        "changed_all_physical": "# TRANSLATION ERROR: All gems have had their Magic damage stat changed to Physical Damage",
-        "augmented_all_gems": "# TRANSLATION ERROR: All gems have fully augmented.",
-        "deaugmented_all_gems": "# TRANSLATION ERROR: All gems have de-augmented."
+        "updated_stats": "Werte Aktualisiert",
+        "updated_ability": "F\u00e4higkeit Aktualisiert",
+        "updated_stat_augmentation": "Verbesserungs Fortschritt Aktualisiert",
+        "updated_gem_level": "Juwelen Level aktualisiert zu {level}",
+        "maxed_gem_levels": "Alle Juwelen wurden auf die maximale Stufe erh\u00f6ht.",
+        "mined_gem_levels": "Alle Juwelen wurden auf Level 1 gesetzt.",
+        "changed_all_magic": "Alle Juwelen wurden von Physischem zu Magischem Schaden ge\u00e4ndert",
+        "changed_all_physical": "Alle Juwelen wurden von Magischem zu Physischem Schaden ge\u00e4ndert",
+        "augmented_all_gems": "Alle Juwelen wurden vollst\u00e4ndig aufgewertet.",
+        "deaugmented_all_gems": "Der Fortschritt aller Juwelen wurden vollst\u00e4ndig zur\u00fcckgesetzt.",
+        "fived_levels": "# TRANSLATION ERROR: All gems have had their level set to 5.",
+        "tened_levels": "# TRANSLATION ERROR: All gems have had their level set to 10.",
+        "fifteened_levels": "# TRANSLATION ERROR: All gems have had their level set to 15.",
+        "zeroed_all_gems": "# TRANSLATION ERROR: All gems have been zero-ed in augmentation (This is irreversible, reroll gems to get new ones).",
+        "changed_all_damage": "# TRANSLATION ERROR: All gems have had their stats tuned for damage.",
+        "changed_all_health": "# TRANSLATION ERROR: All gems have had their stats tuned for health."
     },
     "gem_dragons": {
-        "Fire": "# TRANSLATION ERROR: Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
-        "Water": "# TRANSLATION ERROR: Water Primordial Dragon: Palashien, Soul of the Sea",
-        "Air": "# TRANSLATION ERROR: Air Primordial Dragon: Scintilla, Spark of the Sky",
-        "Cosmic": "# TRANSLATION ERROR: Cosmic Primordial Dragon: ..."
+        "Fire": "Feuerurdrache: Za'Hadeen, Herz der Flamme",
+        "Water": "Wasserurdrache: Palashien, Seele der See",
+        "Air": "Lufturdrache: Scintilla, Funke des Firmaments",
+        "Cosmic": "Kosmischerurdrache: ..."
+    },
+    "resources": {
+        "flux": "Flux",
+        "bound_brilliance": "Bound Brillanzb\u00fcndler",
+        "heart_of_darkness": "Herz der Finsternis",
+        "fire_gem_dust": "Feuerjuwelenstaub",
+        "water_gem_dust": "Wasserjuwelenstaub",
+        "air_gem_dust": "Luftjuwelenstaub",
+        "diamond_dragonite": "Diamantdrachit",
+        "titan_soul": "Titanseele"
+    },
+    "augments": {
+        "rough": "Grober Fokus des Baumeisters",
+        "precise": "Akkurater Fokus des Baumeisters",
+        "superior": "Pr\u00e4zisionsfokus des Baumeisters",
+        "chaos_contained_flare": "# TRANSLATION ERROR: Chaos Contained Flare",
+        "chaos_contained_spark": "# TRANSLATION ERROR: Chaos Contained Spark"
+    },
+    "buttons": {
+        "min_level": "Min. Level",
+        "all_five_level": "Alle 5 Level",
+        "all_ten_level": "Alle 10 Level",
+        "all_fifteen_level": "Alle 15 Level",
+        "max_level": "Max. Level",
+        "zero_augmentation": "Verbesserungs Fortschritt auf Null setzen",
+        "min_augmentation": "Min. Verbesserungs Fortschritt",
+        "max_augmentation": "Max. Verbesserungs Fortschritt",
+        "all_magic": "Alle Juwelen zu Magischem Schaden ändern",
+        "all_physical": "Alle Juwelen zu Physischem Schaden ändern",
+        "all_damage": "Voller Schaden",
+        "all_health": "Volle Max. Gesundheit"
     }
 }

@@ -6,8 +6,10 @@ class Controller:
 
     def setup_controls(self):
         """Method for setting up controls"""
-        ...
+
+        raise NotImplementedError
 
     def setup_events(self):
         """Method for setting up events"""
-        ...
+
+        raise NotImplementedError

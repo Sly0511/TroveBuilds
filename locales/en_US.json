@@ -2,7 +2,8 @@
     "title": "Trove Calculation Tool",
     "tabs": {
         "0": "Gem Simulator",
-        "1": "Mastery"
+        "1": "Mastery",
+        "2": "Star Chart"
     },
     "gem_full_names": {
         "Arcane Fire Gem": "Arcane Fire Gem",
@@ -79,8 +80,26 @@
         "mastery_buffs": "Mastery Buffs",
         "geode_mastery_buffs": "Geode Mastery Buffs"
     },
+    "augments": {
+        "rough": "Builder's Rough Focus",
+        "precise": "Builder's Precise Focus",
+        "superior": "Builder's Superior Focus",
+        "chaos_contained_flare": "Chaos Contained Flare",
+        "chaos_contained_spark": "Chaos Contained Spark"
+    },
+    "resources": {
+        "flux": "Flux",
+        "bound_brilliance": "Bound Brilliance",
+        "heart_of_darkness": "Heart of Darkness",
+        "fire_gem_dust": "Fire Gem Dust",
+        "water_gem_dust": "Water Gem Dust",
+        "air_gem_dust": "Air Gem Dust",
+        "diamond_dragonite": "Diamond Dragonite",
+        "titan_soul": "Titan Soul"
+    },
     "strings": {
         "Level": "Level",
+        "Lvl": "Lvl",
         "Ability": "Ability",
         "Gem Ability": "Gem Ability",
         "Stats": "Stats",
@@ -92,15 +111,35 @@
     },
     "messages": {
         "maxed_gem_levels": "All gems have had their level maxed out.",
+        "fived_levels": "All gems have had their level set to 5.",
+        "tened_levels": "All gems have had their level set to 10.",
+        "fifteened_levels": "All gems have had their level set to 15.",
         "mined_gem_levels": "All gems have had their level set to 1.",
         "augmented_all_gems": "All gems have fully augmented.",
-        "deaugmented_all_gems": "All gems have de-augmented.",
+        "deaugmented_all_gems": "All gems have been de-augmented.",
+        "zeroed_all_gems": "All gems have been zero-ed in augmentation (This is irreversible, reroll gems to get new ones).",
         "changed_all_magic": "All gems have had their Physical damage stat changed to Magic Damage",
         "changed_all_physical": "All gems have had their Magic damage stat changed to Physical Damage",
+        "changed_all_damage": "All gems have had their stats tuned for damage.",
+        "changed_all_health": "All gems have had their stats tuned for health.",
         "updated_gem_level": "Gem level changed to {level}",
         "updated_stats": "Updated Stats",
         "updated_stat_augmentation": "Updated Stat's Augmentation",
         "updated_ability": "Updated Ability"
+    },
+    "buttons": {
+        "min_level": "Min level",
+        "all_five_level": "All 5 Level",
+        "all_ten_level": "All 10 Level",
+        "all_fifteen_level": "All 15 Level",
+        "max_level": "Max level",
+        "zero_augmentation": "Zero Augmentation",
+        "min_augmentation": "Min Augmentation",
+        "max_augmentation": "Max Augmentation",
+        "all_magic": "All Magic",
+        "all_physical": "All Physical",
+        "all_damage": "Full Damage",
+        "all_health": "Full Health"
     },
     "errors": {
         "invalid_number": "Please provide a valid number",

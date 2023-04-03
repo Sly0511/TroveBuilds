@@ -6,7 +6,7 @@ The code below attempts to simulate how gems work internally in the game in a mu
 accurate manner, simulating the existing containers and possible overflows that occur.
 
 While not possible to see through the sugar-coated interface in-game it will allow for
-power rank calculations to be accurate as well as stats and augmentation percentages.
+power rank data to be accurate as well as stats and augmentation percentages.
 
 Thanks again Summer for the information you shared.
 
@@ -27,7 +27,7 @@ from uuid import UUID, uuid4
 from i18n import t
 from pydantic import BaseModel, Field
 
-from utils.calculations.gems import (
+from utils.data.gems import (
     max_levels,
     stat_multipliers,
     gem_min_max,
@@ -90,6 +90,19 @@ class GemStat(BaseModel):
         return len(self.containers) - 1
 
     @property
+    def max_augments(self) -> int:
+        """This property calculates the maximum amount of augments a gem can hold"""
+
+        return 40 + 40 * self.boosts
+
+    @property
+    def current_augments(self) -> int:
+        """This property calculates the current amount of augments in place"""
+
+        augmented = sum(c.total for c in self.containers)
+        return min(augmented, self.max_augments)
+
+    @property
     def percentage(self) -> float:
         """This property calculates true percentage of gem while respecting each
         containers' overflow
@@ -98,12 +111,9 @@ class GemStat(BaseModel):
         Counting from first to last container the amount of boosts
         While limiting the amount of boosts dynamically through boost count"""
 
-        max_augments = 40 + 40 * self.boosts
-        augmented = sum(c.total for c in self.containers)
-        augmented = min(augmented, max_augments)
         percentage = 0
-        if augmented:
-            percentage = augmented / max_augments
+        if self.current_augments:
+            percentage = self.current_augments / self.max_augments
         return min(1, percentage)
 
     @property
@@ -181,6 +191,15 @@ class GemStat(BaseModel):
         """Returns a boolean value indicating whether gem has max augmentation or not."""
 
         return self.percentage == 1
+
+    def zero_augments(self) -> None:
+        """Make all augments zero base on all containers"""
+
+        for container in self.containers:
+            container.base = 0
+            container.rough = 0
+            container.precise = 0
+            container.superior = 0
 
     def reset_augments(self) -> None:
         """Remove all augments from all the containers"""
@@ -280,6 +299,13 @@ class GemElement(Enum):
     cosmic = "Cosmic"
 
 
+class GemColor(Enum):
+    fire = "ff3434"
+    water = "22e9ff"
+    air = "ffe34f"
+    cosmic = "125353"
+
+
 class GemRestriction(Enum):
     arcane = "Arcane"
     fierce = "Fierce"
@@ -333,6 +359,10 @@ class Gem(BaseModel):
             0 if self.type == GemType.lesser else 100
         )
 
+    @property
+    def color(self):
+        return GemColor[self.element.name]
+
     def set_level(self, level: int):
         self.level = level
         max_boosts = min(3, divmod(level, 5)[0])
@@ -371,8 +401,7 @@ class LesserGem(Gem):
     @classmethod
     def random_gem(cls, tier: GemTier = None, element: GemElement = None):
         tier = tier or choice([c for c in GemTier])
-        max_level = max_levels[tier.name]
-        level = randint(1, max_level)
+        level = 1
         type = GemType.lesser
         element = element or choice([c for c in GemElement])
         restriction = choice([c for c in GemRestriction])
@@ -388,27 +417,6 @@ class LesserGem(Gem):
         )
         for i, (stat_name, boost_count) in enumerate(zip(stat_names, boosts)):
             gem.stats.append(GemStat.random(stat_name, boost_count, gem))
-        return gem
-
-    @classmethod
-    def maxed_gem(cls, tier: GemTier = None, element: GemElement = None):
-        tier = tier or choice([c for c in GemTier])
-        level = max_levels[tier.name]
-        type = GemType.lesser
-        element = element or choice([c for c in GemElement])
-        restriction = choice([c for c in GemRestriction])
-        stat_names = generate_gem_stats(type, restriction, element)
-        boosts = split_boosts(min(3, divmod(level, 5)[0]))
-        gem = cls(
-            level=level,
-            tier=tier,
-            type=type,
-            element=element,
-            stats=[],
-            restriction=restriction,
-        )
-        for i, (stat_name, boost_count) in enumerate(zip(stat_names, boosts)):
-            gem.stats.append(GemStat.maxed(stat_name, boost_count, gem))
         return gem
 
     def change_restriction(self, restriction: GemRestriction):
@@ -452,8 +460,7 @@ class EmpoweredGem(Gem):
     @classmethod
     def random_gem(cls, tier: GemTier = None, element: GemElement = None):
         tier = tier or choice([c for c in GemTier])
-        max_level = max_levels[tier.name]
-        level = randint(1, max_level)
+        level = 1
         type = GemType.empowered
         element = element or choice([c for c in GemElement])
         ability_set = (
@@ -474,30 +481,6 @@ class EmpoweredGem(Gem):
             gem.stats.append(GemStat.random(stat_name, boost_count, gem))
         return gem
 
-    @classmethod
-    def maxed_gem(cls, tier: GemTier = None, element: GemElement = None):
-        tier = tier or choice([c for c in GemTier])
-        level = max_levels[tier.name]
-        type = GemType.empowered
-        element = element or choice([c for c in GemElement])
-        ability_set = (
-            ElementalGemAbility if element != GemElement.cosmic else CosmicGemAbility
-        )
-        ability = choice(list(ability_set))
-        stat_names = generate_gem_stats(type, None, element)
-        boosts = split_boosts(min(3, divmod(level, 5)[0]))
-        gem = cls(
-            level=level,
-            tier=tier,
-            type=type,
-            element=element,
-            stats=[],
-            ability=ability,
-        )
-        for i, (stat_name, boost_count) in enumerate(zip(stat_names, boosts)):
-            gem.stats.append(GemStat.maxed(stat_name, boost_count, gem))
-        return gem
-
     def possible_change_stats(self, cstat: Stat):
         stats = []
         stats_in_use = [s.name for s in self.stats]
@@ -510,16 +493,18 @@ class EmpoweredGem(Gem):
         return stats
 
 
-def generate_gem_stats(type: GemType, restriction: GemRestriction, element: GemElement):
+def generate_gem_stats(
+    gem_type: GemType, restriction: GemRestriction, element: GemElement
+):
     stats = []
-    if type == GemType.lesser:
+    if gem_type == GemType.lesser:
         if restriction == GemRestriction.arcane:
             available_stats = arcane_gem_stats
         elif restriction == GemRestriction.fierce:
             available_stats = fierce_gem_stats
         if element == GemElement.cosmic:
             stats.append(Stat.light)
-    elif type == GemType.empowered:
+    elif gem_type == GemType.empowered:
         available_stats = empowered_gem_stats
         if element == GemElement.cosmic:
             stats.append(Stat.light)

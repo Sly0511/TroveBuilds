@@ -41,6 +41,13 @@ def crystal_level_increments(level: int):
             return 0
 
 
+level_increments = {
+    "radiant": radiant_level_increments,
+    "stellar": stellar_level_increments,
+    "crystal": crystal_level_increments,
+}
+
+
 max_levels = {"radiant": 23, "stellar": 25, "crystal": 30}
 
 
@@ -104,7 +111,7 @@ stat_multipliers = {
         "Critical Hit": [0.3 / 14, 0.3 / 14],
         "Maximum Health %": [0.5, 0.5],
         "Maximum Health": [50, 50],
-        "Light": [5/7, 5/7],
+        "Light": [5 / 7, 5 / 7],
     },
 }
 
@@ -123,8 +130,28 @@ gem_container_pr = {
 }
 
 
-level_increments = {
-    "radiant": radiant_level_increments,
-    "stellar": stellar_level_increments,
-    "crystal": crystal_level_increments,
+augment_costs = {
+    "rough": {
+        "weight": 1,
+        "costs": {"bound_brilliance": 1, "heart_of_darkness": 4, "flux": 1200},
+    },
+    "precise": {
+        "weight": 2,
+        "costs": {
+            "bound_brilliance": 1,
+            "fire_gem_dust": 3000,
+            "water_gem_dust": 3000,
+            "air_gem_dust": 3000,
+            "flux": 2000,
+        },
+    },
+    "superior": {
+        "weight": 5,
+        "costs": {
+            "bound_brilliance": 1,
+            "diamond_dragonite": 30,
+            "titan_soul": 3,
+            "flux": 50000,
+        },
+    },
 }

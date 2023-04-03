@@ -14,6 +14,7 @@ class TroveBuilds:
     async def start(self, page: Page, restart=False):
         if not restart:
             self.page = page
+            self.page.restart = self.restart
             page.logger = Logger("Trove Builds Core")
             # Load configurations
             self.load_configuration()
@@ -26,9 +27,12 @@ class TroveBuilds:
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         # Build tab frames
-        tabs = Tabs(tabs=[Gems(page), Mastery(page)])
+        self.page.tabs = Tabs(
+            tabs=[Configurations(page), Gems(page), StarChart(page), Mastery(page)],
+            selected_index=self.page.tabs.selected_index if hasattr(self.page, "tabs") else 1,
+        )
         # Push UI elements into view
-        await page.add_async(tabs)
+        await page.add_async(self.page.tabs)
 
     async def restart(self):
         await self.page.clean_async()

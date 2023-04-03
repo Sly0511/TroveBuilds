@@ -2,20 +2,21 @@
     "title": "Ferramenta de C\u00e1lculo do Trove",
     "tabs": {
         "0": "Simulador de Gemas",
-        "1": "Maestria"
+        "1": "Maestria",
+        "2": "Gr\u00e1fico de Estrelas"
     },
     "stats": {
-        "Health Bonus": "# TRANSLATION ERROR: Health Bonus",
-        "Damage Bonus": "# TRANSLATION ERROR: Damage Bonus",
-        "Power Rank": "# TRANSLATION ERROR: Power Rank",
+        "Health Bonus": "Vida M\u00e1xima B\u00f3nus",
+        "Damage Bonus": "B\u00f3nus de Dano",
+        "Power Rank": "Ranque de Poder",
         "Magic Find": "# TRANSLATION ERROR: Magic Find",
-        "Light": "# TRANSLATION ERROR: Light",
-        "Physical Damage": "# TRANSLATION ERROR: Physical Damage",
-        "Magic Damage": "# TRANSLATION ERROR: Magic Damage",
-        "Critical Damage": "# TRANSLATION ERROR: Critical Damage",
-        "Critical Hit": "# TRANSLATION ERROR: Critical Hit",
-        "Maximum Health": "# TRANSLATION ERROR: Maximum Health",
-        "Maximum Health %": "# TRANSLATION ERROR: Maximum Health %"
+        "Light": "Luz",
+        "Physical Damage": "Dano F\u00edsico",
+        "Magic Damage": "Dano M\u00e1gico",
+        "Critical Damage": "Dano Cr\u00edtico",
+        "Critical Hit": "Chance Cr\u00edtica",
+        "Maximum Health": "Vida M\u00e1xima",
+        "Maximum Health %": "Vida M\u00e1xima %"
     },
     "mastery": {
         "mastery_points": "Pontos de maestria",
@@ -28,82 +29,120 @@
         "max_mastery_1000": "Mastria m\u00e1xima \u00e9 1000"
     },
     "gem_tiers": {
-        "Stellar": "# TRANSLATION ERROR: Stellar",
-        "Crystal": "# TRANSLATION ERROR: Crystal"
+        "Stellar": "Estelar",
+        "Crystal": "Cristal"
     },
     "gem_types": {
-        "Empowered": "# TRANSLATION ERROR: Empowered",
-        "Lesser": "# TRANSLATION ERROR: Lesser"
+        "Empowered": "Maior",
+        "Lesser": "Menor"
     },
     "gem_abilities": {
-        "Explosive Epilogue": "# TRANSLATION ERROR: Explosive Epilogue",
-        "Volatile Velocity": "# TRANSLATION ERROR: Volatile Velocity",
-        "Cubic Curtain": "# TRANSLATION ERROR: Cubic Curtain",
-        "Mired Mojo": "# TRANSLATION ERROR: Mired Mojo",
-        "Pyrodisc": "# TRANSLATION ERROR: Pyrodisc",
-        "Stunburst": "# TRANSLATION ERROR: Stunburst",
-        "Spirit Surge": "# TRANSLATION ERROR: Spirit Surge",
-        "Stinging Curse": "# TRANSLATION ERROR: Stinging Curse",
-        "Berserker Battler": "# TRANSLATION ERROR: Berserker Battler",
-        "Flower Power": "# TRANSLATION ERROR: Flower Power",
-        "Empyrean Barrier": "# TRANSLATION ERROR: Empyrean Barrier",
-        "Vampirian Vanquisher": "# TRANSLATION ERROR: Vampirian Vanquisher"
+        "Explosive Epilogue": "Conclus\u00e3o Explosiva",
+        "Volatile Velocity": "Velocidade Vol\u00e1til",
+        "Cubic Curtain": "Curtina C\u00fabica",
+        "Mired Mojo": "Mired Mojo",
+        "Pyrodisc": "Pirodisco",
+        "Stunburst": "Estouro Atordoante",
+        "Spirit Surge": "Surgimento Espiritual",
+        "Stinging Curse": "Picando a maldi\u00e7\u00e3o",
+        "Berserker Battler": "Berserker Battler",
+        "Flower Power": "Flower Power",
+        "Empyrean Barrier": "Empyrean Barrier",
+        "Vampirian Vanquisher": "Vampirian Vanquisher"
     },
     "gem_restrictions": {
-        "Arcane": "# TRANSLATION ERROR: Arcane",
-        "Fierce": "# TRANSLATION ERROR: Fierce"
+        "Arcane": "Arcana",
+        "Fierce": "Feroz"
     },
     "gem_elements": {
-        "Fire": "# TRANSLATION ERROR: Fire",
-        "Water": "# TRANSLATION ERROR: Water",
-        "Air": "# TRANSLATION ERROR: Air",
-        "Cosmic": "# TRANSLATION ERROR: Cosmic"
+        "Fire": "Fogo",
+        "Water": "\u00c1gua",
+        "Air": "Ar",
+        "Cosmic": "C\u00f3smico"
     },
     "gem_full_names": {
-        "Arcane Fire Gem": "# TRANSLATION ERROR: Arcane Fire Gem",
-        "Arcane Water Gem": "# TRANSLATION ERROR: Arcane Water Gem",
-        "Arcane Air Gem": "# TRANSLATION ERROR: Arcane Air Gem",
-        "Arcane Cosmic Gem": "# TRANSLATION ERROR: Arcane Cosmic Gem",
-        "Fierce Fire Gem": "# TRANSLATION ERROR: Fierce Fire Gem",
-        "Fierce Water Gem": "# TRANSLATION ERROR: Fierce Water Gem",
-        "Fierce Air Gem": "# TRANSLATION ERROR: Fierce Air Gem",
-        "Fierce Cosmic Gem": "# TRANSLATION ERROR: Fierce Cosmic Gem",
-        "Lesser Fire Gem": "# TRANSLATION ERROR: Lesser Fire Gem",
-        "Lesser Water Gem": "# TRANSLATION ERROR: Lesser Water Gem",
-        "Lesser Air Gem": "# TRANSLATION ERROR: Lesser Air Gem",
-        "Lesser Cosmic Gem": "# TRANSLATION ERROR: Lesser Cosmic Gem",
-        "Empowered Fire Gem": "# TRANSLATION ERROR: Empowered Fire Gem",
-        "Empowered Water Gem": "# TRANSLATION ERROR: Empowered Water Gem",
-        "Empowered Air Gem": "# TRANSLATION ERROR: Empowered Air Gem",
-        "Empowered Cosmic Gem": "# TRANSLATION ERROR: Empowered Cosmic Gem"
+        "Arcane Fire Gem": "Gema de Fogo Arcana",
+        "Arcane Water Gem": "Gema de \u00c1gua Arcana",
+        "Arcane Air Gem": "Gema de Ar Arcana",
+        "Arcane Cosmic Gem": "Gem C\u00f3smica Arcana",
+        "Fierce Fire Gem": "Gema de Fogo Feroz",
+        "Fierce Water Gem": "Gema de \u00c1gua Feroz",
+        "Fierce Air Gem": "Gema de Ar Feroz",
+        "Fierce Cosmic Gem": "Gema C\u00f3smica Feroz",
+        "Lesser Fire Gem": "Gema de Fogo Menor",
+        "Lesser Water Gem": "Gema de \u00c1gua Menor",
+        "Lesser Air Gem": "Gema de Ar Menor",
+        "Lesser Cosmic Gem": "Gema C\u00f3smica Menor",
+        "Empowered Fire Gem": "Gema de Fogo Maior",
+        "Empowered Water Gem": "Gema de \u00c1gua Maior",
+        "Empowered Air Gem": "Gema de Ar Maior",
+        "Empowered Cosmic Gem": "Gema de C\u00f3smica Maior"
     },
     "strings": {
-        "Stat": "# TRANSLATION ERROR: Stat",
-        "% Augmentation Progress": "# TRANSLATION ERROR: % Augmentation Progress",
-        "Stats": "# TRANSLATION ERROR: Stats",
-        "Ability": "# TRANSLATION ERROR: Ability",
-        "Gem Ability": "# TRANSLATION ERROR: Gem Ability",
-        "Level": "# TRANSLATION ERROR: Level",
-        "Change Ability": "# TRANSLATION ERROR: Change Ability",
-        "Change Restriction": "# TRANSLATION ERROR: Change Restriction",
-        "Change Stat": "# TRANSLATION ERROR: Change Stat"
+        "Stat": "Atributo",
+        "% Augmentation Progress": "% Progresso de Aumenta\u00e7\u00e3o",
+        "Stats": "Atributos",
+        "Ability": "Habilidade",
+        "Gem Ability": "Habilidade de Gema",
+        "Level": "N\u00edvel",
+        "Lvl": "Nvl",
+        "Change Ability": "Alterar habilidade",
+        "Change Restriction": "Alterar restri\u00e7\u00e3o",
+        "Change Stat": "Alterar atributo"
     },
     "messages": {
-        "updated_stats": "# TRANSLATION ERROR: Updated Stats",
-        "updated_ability": "# TRANSLATION ERROR: Updated Ability",
-        "updated_stat_augmentation": "# TRANSLATION ERROR: Updated Stat's Augmentation",
-        "updated_gem_level": "# TRANSLATION ERROR: Gem level changed to {level}",
-        "maxed_gem_levels": "# TRANSLATION ERROR: All gems have had their level maxed out.",
-        "mined_gem_levels": "# TRANSLATION ERROR: All gems have had their level set to 1.",
-        "changed_all_magic": "# TRANSLATION ERROR: All gems have had their Physical damage stat changed to Magic Damage",
-        "changed_all_physical": "# TRANSLATION ERROR: All gems have had their Magic damage stat changed to Physical Damage",
-        "augmented_all_gems": "# TRANSLATION ERROR: All gems have fully augmented.",
-        "deaugmented_all_gems": "# TRANSLATION ERROR: All gems have de-augmented."
+        "updated_stats": "Atributos alterados.",
+        "updated_ability": "Habilidade alterada",
+        "updated_stat_augmentation": "Alterado a aumenta\u00e7\u00e3o do atributo.",
+        "updated_gem_level": "N\u00edvel de gema alterado para {level}",
+        "maxed_gem_levels": "Todas as gemas tiveram o seu n\u00edvel maximizado.",
+        "mined_gem_levels": "Todas as gemas tiveram o seu n\u00edvel alterado para 1.",
+        "changed_all_magic": "Todas as gemas tiveram o seu Dano F\u00edsico alterado para Dano M\u00e1gico.",
+        "changed_all_physical": "Todas as gemas tiveram o seu Dano M\u00e1gico alterado para Dano F\u00edsico.",
+        "augmented_all_gems": "Todas as gemas foram aumentadas.",
+        "deaugmented_all_gems": "Todas as gemas tiveram suas aumenta\u00e7\u00f5es removidas.",
+        "fifteened_levels": "Todas as gemas tiveram o seu n\u00edvel alterado para 15.",
+        "fived_levels": "Todas as gemas tiveram o seu n\u00edvel alterado para 5.",
+        "tened_levels": "Todas as gemas tiveram o seu n\u00edvel alterado para 10.",
+        "zeroed_all_gems": "# TRANSLATION ERROR: All gems have been zero-ed in augmentation (This is irreversible, reroll gems to get new ones).",
+        "changed_all_damage": "Todas as gemas tiveram os seus atributos configurados para dano.",
+        "changed_all_health": "Todas as gemas tiveram os seus atributos configurados para vida m\u00e1xima."
     },
     "gem_dragons": {
-        "Fire": "# TRANSLATION ERROR: Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
-        "Water": "# TRANSLATION ERROR: Water Primordial Dragon: Palashien, Soul of the Sea",
-        "Air": "# TRANSLATION ERROR: Air Primordial Dragon: Scintilla, Spark of the Sky",
-        "Cosmic": "# TRANSLATION ERROR: Cosmic Primordial Dragon: ..."
+        "Fire": "Drag\u00e3o Primordial de Fogo: Za'Hadeen, Cora\u00e7\u00e3o da Chama",
+        "Water": "Drag\u00e3o Primordial da \u00c1gua: Palashien, Alma do Mar",
+        "Air": "Drag\u00e3o Primordial do Ar: Scintilla, Centelha do C\u00e9u",
+        "Cosmic": "Drag\u00e3o Primordial C\u00f3smico: ..."
+    },
+    "resources": {
+        "flux": "Fluxo",
+        "bound_brilliance": "Brilho Confinado",
+        "heart_of_darkness": "Cora\u00e7\u00e3o das Trevas",
+        "fire_gem_dust": "P\u00f3 de Gema de Fogo",
+        "water_gem_dust": "P\u00f3 de Gema de \u00c1gua",
+        "air_gem_dust": "P\u00f3 de Gema de Ar",
+        "diamond_dragonite": "Dragonita de Diamante",
+        "titan_soul": "Alma de Tit\u00e3"
+    },
+    "augments": {
+        "rough": "Foco Irregular do Construtor",
+        "precise": "Foco Preciso do Construtor",
+        "superior": "Foco Superior do Construtor",
+        "chaos_contained_flare": "# TRANSLATION ERROR: Chaos Contained Flare",
+        "chaos_contained_spark": "# TRANSLATION ERROR: Chaos Contained Spark"
+    },
+    "buttons": {
+        "min_level": "N\u00edvel M\u00ednimo",
+        "all_fifteen_level": "Todos N\u00edvel 15",
+        "max_level": "N\u00edvel M\u00e1ximo",
+        "zero_augmentation": "Aumenta\u00e7\u00e3o Zero",
+        "min_augmentation": "Aumenta\u00e7\u00e3o M\u00ednima",
+        "max_augmentation": "Aumenta\u00e7\u00e3o M\u00e1xima",
+        "all_magic": "Todos M\u00e1gico",
+        "all_physical": "Todos F\u00edsico",
+        "all_damage": "Dano Total",
+        "all_health": "Vida Total",
+        "all_five_level": "Todos N\u00edvel 5",
+        "all_ten_level": "Todos N\u00edvel 10"
     }
 }

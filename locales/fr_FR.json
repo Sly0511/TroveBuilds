@@ -2,7 +2,8 @@
     "title": "# TRANSLATION ERROR: Trove Calculation Tool",
     "tabs": {
         "0": "# TRANSLATION ERROR: Gem Simulator",
-        "1": "# TRANSLATION ERROR: Mastery"
+        "1": "# TRANSLATION ERROR: Mastery",
+        "2": "# TRANSLATION ERROR: Star Chart"
     },
     "stats": {
         "Health Bonus": "# TRANSLATION ERROR: Health Bonus",
@@ -86,7 +87,8 @@
         "Level": "# TRANSLATION ERROR: Level",
         "Change Ability": "# TRANSLATION ERROR: Change Ability",
         "Change Restriction": "# TRANSLATION ERROR: Change Restriction",
-        "Change Stat": "# TRANSLATION ERROR: Change Stat"
+        "Change Stat": "# TRANSLATION ERROR: Change Stat",
+        "Lvl": "# TRANSLATION ERROR: Lvl"
     },
     "messages": {
         "updated_stats": "# TRANSLATION ERROR: Updated Stats",
@@ -98,12 +100,49 @@
         "changed_all_magic": "# TRANSLATION ERROR: All gems have had their Physical damage stat changed to Magic Damage",
         "changed_all_physical": "# TRANSLATION ERROR: All gems have had their Magic damage stat changed to Physical Damage",
         "augmented_all_gems": "# TRANSLATION ERROR: All gems have fully augmented.",
-        "deaugmented_all_gems": "# TRANSLATION ERROR: All gems have de-augmented."
+        "deaugmented_all_gems": "# TRANSLATION ERROR: All gems have been de-augmented.",
+        "fifteened_levels": "# TRANSLATION ERROR: All gems have had their level set to 15.",
+        "fived_levels": "# TRANSLATION ERROR: All gems have had their level set to 5.",
+        "tened_levels": "# TRANSLATION ERROR: All gems have had their level set to 10.",
+        "zeroed_all_gems": "# TRANSLATION ERROR: All gems have been zero-ed in augmentation (This is irreversible, reroll gems to get new ones).",
+        "changed_all_damage": "# TRANSLATION ERROR: All gems have had their stats tuned for damage.",
+        "changed_all_health": "# TRANSLATION ERROR: All gems have had their stats tuned for health."
     },
     "gem_dragons": {
         "Fire": "# TRANSLATION ERROR: Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
         "Water": "# TRANSLATION ERROR: Water Primordial Dragon: Palashien, Soul of the Sea",
         "Air": "# TRANSLATION ERROR: Air Primordial Dragon: Scintilla, Spark of the Sky",
         "Cosmic": "# TRANSLATION ERROR: Cosmic Primordial Dragon: ..."
+    },
+    "resources": {
+        "flux": "# TRANSLATION ERROR: Flux",
+        "bound_brilliance": "# TRANSLATION ERROR: Bound Brilliance",
+        "heart_of_darkness": "# TRANSLATION ERROR: Heart of Darkness",
+        "fire_gem_dust": "# TRANSLATION ERROR: Fire Gem Dust",
+        "water_gem_dust": "# TRANSLATION ERROR: Water Gem Dust",
+        "air_gem_dust": "# TRANSLATION ERROR: Air Gem Dust",
+        "diamond_dragonite": "# TRANSLATION ERROR: Diamond Dragonite",
+        "titan_soul": "# TRANSLATION ERROR: Titan Soul"
+    },
+    "augments": {
+        "rough": "# TRANSLATION ERROR: Builder's Rough Focus",
+        "precise": "# TRANSLATION ERROR: Builder's Precise Focus",
+        "superior": "# TRANSLATION ERROR: Builder's Superior Focus",
+        "chaos_contained_flare": "# TRANSLATION ERROR: Chaos Contained Flare",
+        "chaos_contained_spark": "# TRANSLATION ERROR: Chaos Contained Spark"
+    },
+    "buttons": {
+        "min_level": "# TRANSLATION ERROR: Min level",
+        "all_fifteen_level": "# TRANSLATION ERROR: All 15 Level",
+        "max_level": "# TRANSLATION ERROR: Max level",
+        "zero_augmentation": "# TRANSLATION ERROR: Zero Augmentation",
+        "min_augmentation": "# TRANSLATION ERROR: Min Augmentation",
+        "max_augmentation": "# TRANSLATION ERROR: Max Augmentation",
+        "all_magic": "# TRANSLATION ERROR: All Magic",
+        "all_physical": "# TRANSLATION ERROR: All Physical",
+        "all_damage": "# TRANSLATION ERROR: Full Damage",
+        "all_health": "# TRANSLATION ERROR: Full Health",
+        "all_five_level": "# TRANSLATION ERROR: All 5 Level",
+        "all_ten_level": "# TRANSLATION ERROR: All 10 Level"
     }
 }
