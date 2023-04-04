@@ -2,14 +2,14 @@ from flet import app, Page, Tabs, SnackBar, Text
 from i18n import t
 
 from models import Config
-from tabs import Gems, Mastery
+from tabs import Configurations, Gems, Mastery, StarChart
 from utils.localization import LocalizationManager
 from utils.logger import Logger
 
 
 class TroveBuilds:
     def run(self):
-        app(target=self.start)
+        app(target=self.start, assets_dir="assets")
 
     async def start(self, page: Page, restart=False):
         if not restart:

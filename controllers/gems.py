@@ -18,7 +18,7 @@ from flet import (
     Switch,
     ElevatedButton,
     Draggable,
-    DragTarget
+    DragTarget,
 )
 from i18n import t
 
@@ -70,27 +70,32 @@ class GemsController(Controller):
                 controls=[
                     ResponsiveRow(
                         controls=[
-                            Row(
+                            Column(
                                 controls=[
                                     ElevatedButton(
-                                        t("buttons.min_level"), on_click=self.on_min_level
+                                        t("buttons.min_level"),
+                                        on_click=self.on_min_level,
                                     ),
                                     ElevatedButton(
-                                        t("buttons.all_five_level"), on_click=self.on_five_level
+                                        t("buttons.all_five_level"),
+                                        on_click=self.on_five_level,
                                     ),
                                     ElevatedButton(
-                                        t("buttons.all_ten_level"), on_click=self.on_ten_level
+                                        t("buttons.all_ten_level"),
+                                        on_click=self.on_ten_level,
                                     ),
                                     ElevatedButton(
-                                        t("buttons.all_fifteen_level"), on_click=self.on_fifteen_level
+                                        t("buttons.all_fifteen_level"),
+                                        on_click=self.on_fifteen_level,
                                     ),
                                     ElevatedButton(
-                                        t("buttons.max_level"), on_click=self.on_max_level
+                                        t("buttons.max_level"),
+                                        on_click=self.on_max_level,
                                     ),
                                 ],
-                                col=4,
+                                col=2,
                             ),
-                            Row(
+                            Column(
                                 controls=[
                                     ElevatedButton(
                                         t("buttons.zero_augmentation"),
@@ -105,24 +110,28 @@ class GemsController(Controller):
                                         on_click=self.on_max_augmentation,
                                     ),
                                 ],
-                                col=4,
+                                col=2,
                             ),
-                            Row(
+                            Column(
                                 controls=[
                                     ElevatedButton(
-                                        t("buttons.all_magic"), on_click=self.on_all_magic
+                                        t("buttons.all_magic"),
+                                        on_click=self.on_all_magic,
                                     ),
                                     ElevatedButton(
-                                        t("buttons.all_physical"), on_click=self.on_all_physical
+                                        t("buttons.all_physical"),
+                                        on_click=self.on_all_physical,
                                     ),
                                     ElevatedButton(
-                                        t("buttons.all_damage"), on_click=self.on_full_damage
+                                        t("buttons.all_damage"),
+                                        on_click=self.on_full_damage,
                                     ),
                                     ElevatedButton(
-                                        t("buttons.all_health"), on_click=self.on_full_health
+                                        t("buttons.all_health"),
+                                        on_click=self.on_full_health,
                                     ),
                                 ],
-                                col=4,
+                                col=2,
                             ),
                         ],
                         data="shortcuts_bar",
@@ -190,9 +199,7 @@ class GemsController(Controller):
                                             else "green",
                                         ),
                                         BorderSide(
-                                            4
-                                            if self.selected_gem != gem
-                                            else 2,
+                                            4 if self.selected_gem != gem else 2,
                                             color="#" + gem.color.value
                                             if self.selected_gem != gem
                                             else "green",
@@ -302,7 +309,7 @@ class GemsController(Controller):
                             data=stat,
                             value=f"{stat.display_percentage}"
                             + t("strings.% Augmentation Progress"),
-                            col=3,
+                            col=2,
                         ),
                         Row(
                             controls=[
@@ -311,7 +318,7 @@ class GemsController(Controller):
                                         src=BasePath.joinpath(
                                             "assets/images/gems/augment_01.png"
                                         ),
-                                        width=30,
+                                        width=25,
                                     ),
                                     data=stat,
                                     tooltip=t("augments.rough"),
@@ -352,6 +359,7 @@ class GemsController(Controller):
                                     data=stat.uuid,
                                     tooltip=t("augments.chaos_contained_spark"),
                                     on_click=self.on_stat_random_change,
+                                    disabled=stat.name == Stat.light,
                                 ),
                                 Container(
                                     Image(
@@ -379,10 +387,11 @@ class GemsController(Controller):
                                                             "assets/images/gems/boost.png"
                                                         ),
                                                         width=18,
-                                                    )
+                                                    ),
                                                 )
                                                 for i in range(stat.boosts)
-                                            ] + [
+                                            ]
+                                            + [
                                                 Draggable(
                                                     content=Image(
                                                         src=BasePath.joinpath(
@@ -390,7 +399,7 @@ class GemsController(Controller):
                                                         ),
                                                         width=18,
                                                     ),
-                                                    disabled=True
+                                                    disabled=True,
                                                 )
                                                 for i in range(3 - stat.boosts)
                                             ]
@@ -398,8 +407,8 @@ class GemsController(Controller):
                                     ),
                                     on_accept=self.drop_boost,
                                     on_will_accept=self.will_drop_boost,
-                                    on_leave=self.cancel_drop_boost
-                                )
+                                    on_leave=self.cancel_drop_boost,
+                                ),
                             ],
                             col=3,
                         ),
@@ -415,7 +424,7 @@ class GemsController(Controller):
                 stat_row = ResponsiveRow(
                     controls=[
                         Dropdown(label=t("strings.Change Stat"), col=6),
-                        Text(value=f"0" + t("strings.% Augmentation Progress"), col=3),
+                        Text(value=f"0" + t("strings.% Augmentation Progress"), col=2),
                         Row(
                             controls=[
                                 Container(
@@ -423,7 +432,7 @@ class GemsController(Controller):
                                         src=BasePath.joinpath(
                                             "assets/images/gems/augment_01.png"
                                         ),
-                                        width=30,
+                                        width=25,
                                     )
                                 ),
                                 Container(
@@ -455,7 +464,7 @@ class GemsController(Controller):
                                         src=BasePath.joinpath(
                                             "assets/images/gems/chaosflare.png"
                                         ),
-                                        width=23
+                                        width=23,
                                     )
                                 ),
                             ],
@@ -480,9 +489,7 @@ class GemsController(Controller):
         await self.page.update_async()
 
     async def will_drop_boost(self, event):
-        event.control.content.border = flet_core.border.all(
-            2, "#2c749e"
-        )
+        event.control.content.border = flet_core.border.all(2, "#2c749e")
         await self.page.update_async()
 
     async def cancel_drop_boost(self, event):
@@ -689,8 +696,12 @@ class GemsController(Controller):
     @throttle
     async def on_full_damage(self, _):
         stats = []
-        lesser_gems = [gem for gs in self.gem_set for gem in gs if gem.type == GemType.lesser]
-        restrictions = len([g for g in lesser_gems if g.restriction == GemRestriction.arcane])
+        lesser_gems = [
+            gem for gs in self.gem_set for gem in gs if gem.type == GemType.lesser
+        ]
+        restrictions = len(
+            [g for g in lesser_gems if g.restriction == GemRestriction.arcane]
+        )
         if restrictions == len(lesser_gems):
             restriction = GemRestriction.arcane
             stats.append(Stat.magic_damage)

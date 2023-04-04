@@ -486,10 +486,17 @@ class EmpoweredGem(Gem):
         stats_in_use = [s.name for s in self.stats]
         damage_types = [Stat.magic_damage, Stat.physical_damage]
         for stat in empowered_gem_stats:
-            if stat not in stats_in_use:
-                if cstat.name not in damage_types and stat in damage_types:
+            if stat in stats_in_use:
+                continue
+            if cstat.name not in damage_types and stat in damage_types:
+                for dstat in damage_types:
+                    br = False
+                    if dstat in stats_in_use:
+                        br = True
+                        break
+                if br:
                     continue
-                stats.append(stat)
+            stats.append(stat)
         return stats
 
 
