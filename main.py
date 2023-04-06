@@ -1,4 +1,4 @@
-from flet import app, Page, Tabs, SnackBar, Text
+from flet import app, Page, Tabs, SnackBar, Text, WEB_BROWSER
 from i18n import t
 
 from models import Config
@@ -9,7 +9,7 @@ from utils.logger import Logger
 
 class TroveBuilds:
     def run(self):
-        app(target=self.start, assets_dir="assets")
+        app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=13010)
 
     async def start(self, page: Page, restart=False):
         if not restart:
@@ -24,6 +24,7 @@ class TroveBuilds:
         page.title = t("title")
         page.window_maximizable = True
         page.window_maximized = True
+        page.window_resizable = False
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         # Build tab frames

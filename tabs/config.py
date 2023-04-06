@@ -9,5 +9,6 @@ class Configurations(Tab):
         ctrl = ConfigController(page=page)
         ctrl.container = Container(
             content=ctrl.settings,
+            padding=10,
         )
         super().__init__(content=ctrl.container, icon=ico.SETTINGS_SHARP)

@@ -5,61 +5,6 @@
         "1": "# TRANSLATION ERROR: Mastery",
         "2": "# TRANSLATION ERROR: Star Chart"
     },
-    "stats": {
-        "Health Bonus": "# TRANSLATION ERROR: Health Bonus",
-        "Damage Bonus": "# TRANSLATION ERROR: Damage Bonus",
-        "Power Rank": "# TRANSLATION ERROR: Power Rank",
-        "Magic Find": "# TRANSLATION ERROR: Magic Find",
-        "Light": "# TRANSLATION ERROR: Light",
-        "Physical Damage": "# TRANSLATION ERROR: Physical Damage",
-        "Magic Damage": "# TRANSLATION ERROR: Magic Damage",
-        "Critical Damage": "# TRANSLATION ERROR: Critical Damage",
-        "Critical Hit": "# TRANSLATION ERROR: Critical Hit",
-        "Maximum Health": "# TRANSLATION ERROR: Maximum Health",
-        "Maximum Health %": "# TRANSLATION ERROR: Maximum Health %"
-    },
-    "mastery": {
-        "mastery_points": "# TRANSLATION ERROR: Mastery Points",
-        "mastery_levels": "# TRANSLATION ERROR: Mastery Levels",
-        "mastery_buffs": "# TRANSLATION ERROR: Mastery Buffs",
-        "geode_mastery_buffs": "# TRANSLATION ERROR: Geode Mastery Buffs"
-    },
-    "errors": {
-        "invalid_number": "# TRANSLATION ERROR: Please provide a valid number",
-        "max_mastery_1000": "# TRANSLATION ERROR: Max mastery is 1000"
-    },
-    "gem_tiers": {
-        "Stellar": "# TRANSLATION ERROR: Stellar",
-        "Crystal": "# TRANSLATION ERROR: Crystal"
-    },
-    "gem_types": {
-        "Empowered": "# TRANSLATION ERROR: Empowered",
-        "Lesser": "# TRANSLATION ERROR: Lesser"
-    },
-    "gem_abilities": {
-        "Explosive Epilogue": "# TRANSLATION ERROR: Explosive Epilogue",
-        "Volatile Velocity": "# TRANSLATION ERROR: Volatile Velocity",
-        "Cubic Curtain": "# TRANSLATION ERROR: Cubic Curtain",
-        "Mired Mojo": "# TRANSLATION ERROR: Mired Mojo",
-        "Pyrodisc": "# TRANSLATION ERROR: Pyrodisc",
-        "Stunburst": "# TRANSLATION ERROR: Stunburst",
-        "Spirit Surge": "# TRANSLATION ERROR: Spirit Surge",
-        "Stinging Curse": "# TRANSLATION ERROR: Stinging Curse",
-        "Berserker Battler": "# TRANSLATION ERROR: Berserker Battler",
-        "Flower Power": "# TRANSLATION ERROR: Flower Power",
-        "Empyrean Barrier": "# TRANSLATION ERROR: Empyrean Barrier",
-        "Vampirian Vanquisher": "# TRANSLATION ERROR: Vampirian Vanquisher"
-    },
-    "gem_restrictions": {
-        "Arcane": "# TRANSLATION ERROR: Arcane",
-        "Fierce": "# TRANSLATION ERROR: Fierce"
-    },
-    "gem_elements": {
-        "Fire": "# TRANSLATION ERROR: Fire",
-        "Water": "# TRANSLATION ERROR: Water",
-        "Air": "# TRANSLATION ERROR: Air",
-        "Cosmic": "# TRANSLATION ERROR: Cosmic"
-    },
     "gem_full_names": {
         "Arcane Fire Gem": "# TRANSLATION ERROR: Arcane Fire Gem",
         "Arcane Water Gem": "# TRANSLATION ERROR: Arcane Water Gem",
@@ -78,41 +23,69 @@
         "Empowered Air Gem": "# TRANSLATION ERROR: Empowered Air Gem",
         "Empowered Cosmic Gem": "# TRANSLATION ERROR: Empowered Cosmic Gem"
     },
-    "strings": {
-        "Stat": "# TRANSLATION ERROR: Stat",
-        "% Augmentation Progress": "# TRANSLATION ERROR: % Augmentation",
-        "Stats": "# TRANSLATION ERROR: Stats",
-        "Ability": "# TRANSLATION ERROR: Ability",
-        "Gem Ability": "# TRANSLATION ERROR: Gem Ability",
-        "Level": "# TRANSLATION ERROR: Level",
-        "Change Ability": "# TRANSLATION ERROR: Change Ability",
-        "Change Restriction": "# TRANSLATION ERROR: Change Restriction",
-        "Change Stat": "# TRANSLATION ERROR: Change Stat",
-        "Lvl": "# TRANSLATION ERROR: Lvl"
+    "stats": {
+        "Health Bonus": "# TRANSLATION ERROR: Health Bonus",
+        "Damage Bonus": "# TRANSLATION ERROR: Damage Bonus",
+        "Power Rank": "# TRANSLATION ERROR: Power Rank",
+        "Magic Find": "# TRANSLATION ERROR: Magic Find",
+        "Light": "# TRANSLATION ERROR: Light",
+        "Physical Damage": "# TRANSLATION ERROR: Physical Damage",
+        "Magic Damage": "# TRANSLATION ERROR: Magic Damage",
+        "Critical Damage": "# TRANSLATION ERROR: Critical Damage",
+        "Critical Hit": "# TRANSLATION ERROR: Critical Hit",
+        "Maximum Health": "# TRANSLATION ERROR: Maximum Health",
+        "Maximum Health %": "# TRANSLATION ERROR: Maximum Health %"
     },
-    "messages": {
-        "updated_stats": "# TRANSLATION ERROR: Updated Stats",
-        "updated_ability": "# TRANSLATION ERROR: Updated Ability",
-        "updated_stat_augmentation": "# TRANSLATION ERROR: Updated Stat's Augmentation",
-        "updated_gem_level": "# TRANSLATION ERROR: Gem level changed to {level}",
-        "maxed_gem_levels": "# TRANSLATION ERROR: All gems have had their level maxed out.",
-        "mined_gem_levels": "# TRANSLATION ERROR: All gems have had their level set to 1.",
-        "changed_all_magic": "# TRANSLATION ERROR: All gems have had their Physical damage stat changed to Magic Damage",
-        "changed_all_physical": "# TRANSLATION ERROR: All gems have had their Magic damage stat changed to Physical Damage",
-        "augmented_all_gems": "# TRANSLATION ERROR: All gems have fully augmented.",
-        "deaugmented_all_gems": "# TRANSLATION ERROR: All gems have been de-augmented.",
-        "fifteened_levels": "# TRANSLATION ERROR: All gems have had their level set to 15.",
-        "fived_levels": "# TRANSLATION ERROR: All gems have had their level set to 5.",
-        "tened_levels": "# TRANSLATION ERROR: All gems have had their level set to 10.",
-        "zeroed_all_gems": "# TRANSLATION ERROR: All gems have been zero-ed in augmentation (This is irreversible, reroll gems to get new ones).",
-        "changed_all_damage": "# TRANSLATION ERROR: All gems have had their stats tuned for damage.",
-        "changed_all_health": "# TRANSLATION ERROR: All gems have had their stats tuned for health."
+    "gem_tiers": {
+        "Stellar": "# TRANSLATION ERROR: Stellar",
+        "Crystal": "# TRANSLATION ERROR: Crystal"
+    },
+    "gem_types": {
+        "Empowered": "# TRANSLATION ERROR: Empowered",
+        "Lesser": "# TRANSLATION ERROR: Lesser"
+    },
+    "gem_restrictions": {
+        "Arcane": "# TRANSLATION ERROR: Arcane",
+        "Fierce": "# TRANSLATION ERROR: Fierce"
+    },
+    "gem_elements": {
+        "Fire": "# TRANSLATION ERROR: Fire",
+        "Water": "# TRANSLATION ERROR: Water",
+        "Air": "# TRANSLATION ERROR: Air",
+        "Cosmic": "# TRANSLATION ERROR: Cosmic"
     },
     "gem_dragons": {
         "Fire": "# TRANSLATION ERROR: Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
         "Water": "# TRANSLATION ERROR: Water Primordial Dragon: Palashien, Soul of the Sea",
         "Air": "# TRANSLATION ERROR: Air Primordial Dragon: Scintilla, Spark of the Sky",
         "Cosmic": "# TRANSLATION ERROR: Cosmic Primordial Dragon: ..."
+    },
+    "gem_abilities": {
+        "Explosive Epilogue": "# TRANSLATION ERROR: Explosive Epilogue",
+        "Volatile Velocity": "# TRANSLATION ERROR: Volatile Velocity",
+        "Cubic Curtain": "# TRANSLATION ERROR: Cubic Curtain",
+        "Mired Mojo": "# TRANSLATION ERROR: Mired Mojo",
+        "Pyrodisc": "# TRANSLATION ERROR: Pyrodisc",
+        "Stunburst": "# TRANSLATION ERROR: Stunburst",
+        "Spirit Surge": "# TRANSLATION ERROR: Spirit Surge",
+        "Stinging Curse": "# TRANSLATION ERROR: Stinging Curse",
+        "Berserker Battler": "# TRANSLATION ERROR: Berserker Battler",
+        "Flower Power": "# TRANSLATION ERROR: Flower Power",
+        "Empyrean Barrier": "# TRANSLATION ERROR: Empyrean Barrier",
+        "Vampirian Vanquisher": "# TRANSLATION ERROR: Vampirian Vanquisher"
+    },
+    "mastery": {
+        "mastery_points": "# TRANSLATION ERROR: Mastery Points",
+        "mastery_levels": "# TRANSLATION ERROR: Mastery Levels",
+        "mastery_buffs": "# TRANSLATION ERROR: Mastery Buffs",
+        "geode_mastery_buffs": "# TRANSLATION ERROR: Geode Mastery Buffs"
+    },
+    "augments": {
+        "rough": "# TRANSLATION ERROR: Builder's Rough Focus",
+        "precise": "# TRANSLATION ERROR: Builder's Precise Focus",
+        "superior": "# TRANSLATION ERROR: Builder's Superior Focus",
+        "chaos_contained_flare": "# TRANSLATION ERROR: Chaos Contained Flare",
+        "chaos_contained_spark": "# TRANSLATION ERROR: Chaos Contained Spark"
     },
     "resources": {
         "flux": "# TRANSLATION ERROR: Flux",
@@ -124,15 +97,41 @@
         "diamond_dragonite": "# TRANSLATION ERROR: Diamond Dragonite",
         "titan_soul": "# TRANSLATION ERROR: Titan Soul"
     },
-    "augments": {
-        "rough": "# TRANSLATION ERROR: Builder's Rough Focus",
-        "precise": "# TRANSLATION ERROR: Builder's Precise Focus",
-        "superior": "# TRANSLATION ERROR: Builder's Superior Focus",
-        "chaos_contained_flare": "# TRANSLATION ERROR: Chaos Contained Flare",
-        "chaos_contained_spark": "# TRANSLATION ERROR: Chaos Contained Spark"
+    "strings": {
+        "Level": "# TRANSLATION ERROR: Level",
+        "Lvl": "# TRANSLATION ERROR: Lvl",
+        "Ability": "# TRANSLATION ERROR: Ability",
+        "Gem Ability": "# TRANSLATION ERROR: Gem Ability",
+        "Stats": "# TRANSLATION ERROR: Stats",
+        "Stat": "# TRANSLATION ERROR: Stat",
+        "Value": "# TRANSLATION ERROR: Value",
+        "% Augmentation Progress": "# TRANSLATION ERROR: % Augmentation",
+        "Change Ability": "# TRANSLATION ERROR: Change Ability",
+        "Change Restriction": "# TRANSLATION ERROR: Change Restriction",
+        "Change Stat": "# TRANSLATION ERROR: Change Stat"
+    },
+    "messages": {
+        "maxed_gem_levels": "# TRANSLATION ERROR: All gems have had their level maxed out.",
+        "fived_levels": "# TRANSLATION ERROR: All gems have had their level set to 5.",
+        "tened_levels": "# TRANSLATION ERROR: All gems have had their level set to 10.",
+        "fifteened_levels": "# TRANSLATION ERROR: All gems have had their level set to 15.",
+        "mined_gem_levels": "# TRANSLATION ERROR: All gems have had their level set to 1.",
+        "augmented_all_gems": "# TRANSLATION ERROR: All gems have fully augmented.",
+        "deaugmented_all_gems": "# TRANSLATION ERROR: All gems have been de-augmented.",
+        "zeroed_all_gems": "# TRANSLATION ERROR: All gems have been zero-ed in augmentation (This is irreversible, reroll gems to get new ones).",
+        "changed_all_magic": "# TRANSLATION ERROR: All gems have had their Physical damage stat changed to Magic Damage",
+        "changed_all_physical": "# TRANSLATION ERROR: All gems have had their Magic damage stat changed to Physical Damage",
+        "changed_all_damage": "# TRANSLATION ERROR: All gems have had their stats tuned for damage.",
+        "changed_all_health": "# TRANSLATION ERROR: All gems have had their stats tuned for health.",
+        "updated_gem_level": "# TRANSLATION ERROR: Gem level changed to {level}",
+        "updated_stats": "# TRANSLATION ERROR: Updated Stats",
+        "updated_stat_augmentation": "# TRANSLATION ERROR: Updated Stat's Augmentation",
+        "updated_ability": "# TRANSLATION ERROR: Updated Ability"
     },
     "buttons": {
         "min_level": "# TRANSLATION ERROR: Min level",
+        "all_five_level": "# TRANSLATION ERROR: All 5 Level",
+        "all_ten_level": "# TRANSLATION ERROR: All 10 Level",
         "all_fifteen_level": "# TRANSLATION ERROR: All 15 Level",
         "max_level": "# TRANSLATION ERROR: Max level",
         "zero_augmentation": "# TRANSLATION ERROR: Zero Augmentation",
@@ -141,8 +140,18 @@
         "all_magic": "# TRANSLATION ERROR: All Magic",
         "all_physical": "# TRANSLATION ERROR: All Physical",
         "all_damage": "# TRANSLATION ERROR: Full Damage",
-        "all_health": "# TRANSLATION ERROR: Full Health",
-        "all_five_level": "# TRANSLATION ERROR: All 5 Level",
-        "all_ten_level": "# TRANSLATION ERROR: All 10 Level"
+        "all_health": "# TRANSLATION ERROR: Full Health"
+    },
+    "errors": {
+        "invalid_number": "# TRANSLATION ERROR: Please provide a valid number",
+        "max_mastery_1000": "# TRANSLATION ERROR: Max mastery is 1000"
+    },
+    "about": {
+        "developer": "# TRANSLATION ERROR: Application developed by Sly",
+        "copyright": "# TRANSLATION ERROR: Copyright (c) 2023 - Sly",
+        "license": "# TRANSLATION ERROR: MIT License",
+        "description": "# TRANSLATION ERROR: This application has the goal of bringing the calculations that Trove does server side over to the user.\nIt mimics how the systems work at their core and brings them into one piece of fan-made software.",
+        "disclaimer": "# TRANSLATION ERROR: I honestly don't play this game, I legitimately just use this game as a way to learn more about coding and specially with this project, interface development.",
+        "github_disclaimer": "# TRANSLATION ERROR: I have made the code for this application open-source simply to keep transparency about the code, I use a very dirty method of compiling the application into a executable using a Python library and that may trigger some antivirus softwares"
     }
 }

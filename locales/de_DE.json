@@ -88,7 +88,8 @@
         "Change Ability": "F\u00e4higkeit Wechseln",
         "Change Restriction": "Beschr\u00e4nkung Aufheben",
         "Change Stat": "Wert \u00c4ndern",
-        "Lvl": "Lvl"
+        "Lvl": "Lvl",
+        "Value": "# TRANSLATION ERROR: Value"
     },
     "messages": {
         "updated_stats": "Werte Aktualisiert",
@@ -140,9 +141,17 @@
         "zero_augmentation": "Verbesserungs Fortschritt auf Null setzen",
         "min_augmentation": "Min. Verbesserungs Fortschritt",
         "max_augmentation": "Max. Verbesserungs Fortschritt",
-        "all_magic": "Alle Juwelen zu Magischem Schaden ändern",
-        "all_physical": "Alle Juwelen zu Physischem Schaden ändern",
+        "all_magic": "Alle Juwelen zu Magischem Schaden \u00e4ndern",
+        "all_physical": "Alle Juwelen zu Physischem Schaden \u00e4ndern",
         "all_damage": "Voller Schaden",
         "all_health": "Volle Max. Gesundheit"
+    },
+    "about": {
+        "developer": "# TRANSLATION ERROR: Application developed by Sly",
+        "copyright": "# TRANSLATION ERROR: Copyright (c) 2023 - Sly",
+        "license": "# TRANSLATION ERROR: MIT License",
+        "description": "# TRANSLATION ERROR: This application has the goal of bringing the calculations that Trove does server side over to the user.\nIt mimics how the systems work at their core and brings them into one piece of fan-made software.",
+        "disclaimer": "# TRANSLATION ERROR: I honestly don't play this game, I legitimately just use this game as a way to learn more about coding and specially with this project, interface development.",
+        "github_disclaimer": "# TRANSLATION ERROR: I have made the code for this application open-source simply to keep transparency about the code, I use a very dirty method of compiling the application into a executable using a Python library and that may trigger some antivirus softwares"
     }
 }
