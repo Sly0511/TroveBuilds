@@ -30,7 +30,9 @@ class TroveBuilds:
         # Build tab frames
         self.page.tabs = Tabs(
             tabs=[Configurations(page), Gems(page), StarChart(page), Mastery(page)],
-            selected_index=self.page.tabs.selected_index if hasattr(self.page, "tabs") else 1,
+            selected_index=self.page.tabs.selected_index
+            if hasattr(self.page, "tabs")
+            else 1,
         )
         # Push UI elements into view
         await page.add_async(self.page.tabs)

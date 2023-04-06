@@ -140,10 +140,21 @@
         "all_magic": "All Magic",
         "all_physical": "All Physical",
         "all_damage": "Full Damage",
-        "all_health": "Full Health"
+        "all_health": "Full Health",
+        "all_radiant": "Full Radiant",
+        "all_stellar": "Full Stellar",
+        "all_crystal": "Full Crystal"
     },
     "errors": {
         "invalid_number": "Please provide a valid number",
         "max_mastery_1000": "Max mastery is 1000"
+    },
+    "about": {
+        "developer": "Application developed by Sly",
+        "copyright": "Copyright (c) 2023 - Sly",
+        "license": "MIT License",
+        "description": "This application has the goal of bringing the calculations that Trove does server side over to the user.\nIt mimics how the systems work at their core and brings them into one piece of fan-made software.",
+        "disclaimer": "I honestly don't play this game, I legitimately just use this game as a way to learn more about coding and specially with this project, interface development.",
+        "github_disclaimer": "I have made the code for this application open-source simply to keep transparency about the code, I use a very dirty method of compiling the application into a executable using a Python library and that may trigger some antivirus softwares"
     }
 }

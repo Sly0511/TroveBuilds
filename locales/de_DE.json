@@ -144,7 +144,10 @@
         "all_magic": "Alle Juwelen zu Magischem Schaden \u00e4ndern",
         "all_physical": "Alle Juwelen zu Physischem Schaden \u00e4ndern",
         "all_damage": "Voller Schaden",
-        "all_health": "Volle Max. Gesundheit"
+        "all_health": "Volle Max. Gesundheit",
+        "all_radiant": "# TRANSLATION ERROR: Full Radiant",
+        "all_stellar": "# TRANSLATION ERROR: Full Stellar",
+        "all_crystal": "# TRANSLATION ERROR: Full Crystal"
     },
     "about": {
         "developer": "# TRANSLATION ERROR: Application developed by Sly",

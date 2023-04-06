@@ -140,7 +140,10 @@
         "all_magic": "# TRANSLATION ERROR: All Magic",
         "all_physical": "# TRANSLATION ERROR: All Physical",
         "all_damage": "# TRANSLATION ERROR: Full Damage",
-        "all_health": "# TRANSLATION ERROR: Full Health"
+        "all_health": "# TRANSLATION ERROR: Full Health",
+        "all_radiant": "# TRANSLATION ERROR: Full Radiant",
+        "all_stellar": "# TRANSLATION ERROR: Full Stellar",
+        "all_crystal": "# TRANSLATION ERROR: Full Crystal"
     },
     "errors": {
         "invalid_number": "# TRANSLATION ERROR: Please provide a valid number",

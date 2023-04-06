@@ -40,10 +40,7 @@ class ConfigController(Controller):
     async def on_language_change(self, event):
         lang = Locale(event.control.value)
         self.page.app_config.locale = lang
-        self.page.snack_bar.content.value = "Switched to " + lang.name.replace("_", " ")
-        self.page.snack_bar.open = True
         for control in self.page.controls:
             control.disabled = True
         await self.page.update_async()
-        await asyncio.sleep(1.5)
         await self.page.restart()

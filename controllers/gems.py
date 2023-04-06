@@ -1,4 +1,5 @@
 import asyncio
+from copy import copy
 from random import choice
 
 import flet_core.colors
@@ -25,6 +26,7 @@ from flet import (
     DataCell,
     Tabs,
     Tab,
+    Stack
 )
 from i18n import t
 
@@ -60,9 +62,7 @@ class GemsController(Controller):
             ]:
                 element_set = []
                 for gem_builder in [EmpoweredGem, LesserGem, LesserGem]:
-                    while gem := gem_builder.random_gem(
-                        tier=GemTier.crystal, element=element
-                    ):
+                    while gem := gem_builder.random_gem(element=element):
                         if isinstance(gem, EmpoweredGem):
                             if gem.ability in used_abilities:
                                 continue
@@ -139,6 +139,23 @@ class GemsController(Controller):
                                 ],
                                 col=2,
                             ),
+                            Column(
+                                controls=[
+                                    ElevatedButton(
+                                        t("buttons.all_radiant"),
+                                        on_click=self.on_full_radiant,
+                                    ),
+                                    ElevatedButton(
+                                        t("buttons.all_stellar"),
+                                        on_click=self.on_full_stellar,
+                                    ),
+                                    ElevatedButton(
+                                        t("buttons.all_crystal"),
+                                        on_click=self.on_full_crystal,
+                                    ),
+                                ],
+                                col=2,
+                            ),
                         ],
                         data="shortcuts_bar",
                     ),
@@ -170,16 +187,32 @@ class GemsController(Controller):
                                     Row(
                                         controls=[
                                             Image(
-                                                BasePath.joinpath(
-                                                    f"assets/images/gems/{gem.element.name}_{gem.type.name}.png"
-                                                ),
-                                                width=50,
+                                                "assets/images/empty.png",
+                                                width=1
+                                            ),
+                                            Stack(
+                                                controls=[
+                                                    Image(
+                                                        BasePath.joinpath(
+                                                            f"assets/images/rarity/{gem.tier.name}_frame.png"
+                                                        ),
+                                                        width=44,
+                                                    ),
+                                                    Image(
+                                                        BasePath.joinpath(
+                                                            f"assets/images/gems/old_{gem.element.name}_{gem.type.name}.png"
+                                                        ),
+                                                        width=32,
+                                                        left=6,
+                                                        top=7
+                                                    ),
+                                                ],
                                             ),
                                             Text(
                                                 t("strings.Lvl")
                                                 + f": {gem.level} "
                                                 + gem.name,
-                                                size=16,
+                                                size=15,
                                             ),
                                         ]
                                     ),
@@ -790,6 +823,42 @@ class GemsController(Controller):
                         stat.name = new_stat
         self.page.snack_bar.content.value = t("messages.changed_all_health")
         self.page.snack_bar.open = True
+        self.setup_controls(self.selected_gem)
+        await self.page.update_async()
+
+    async def on_full_radiant(self, event):
+        for gs in self.gem_set:
+            for i, gem in enumerate(copy(gs)):
+                if gem.tier != GemTier.radiant:
+                    if gem.type == GemType.empowered:
+                        gem = EmpoweredGem.random_gem(tier=GemTier.radiant, element=gem.element)
+                    elif gem.type == GemType.lesser:
+                        gem = LesserGem.random_gem(tier=GemTier.radiant, element=gem.element)
+                    gs[i] = gem
+        self.setup_controls(self.selected_gem)
+        await self.page.update_async()
+
+    async def on_full_stellar(self, event):
+        for gs in self.gem_set:
+            for i, gem in enumerate(copy(gs)):
+                if gem.tier != GemTier.stellar:
+                    if gem.type == GemType.empowered:
+                        gem = EmpoweredGem.random_gem(tier=GemTier.stellar, element=gem.element)
+                    elif gem.type == GemType.lesser:
+                        gem = LesserGem.random_gem(tier=GemTier.stellar, element=gem.element)
+                    gs[i] = gem
+        self.setup_controls(self.selected_gem)
+        await self.page.update_async()
+
+    async def on_full_crystal(self, event):
+        for gs in self.gem_set:
+            for i, gem in enumerate(copy(gs)):
+                if gem.tier != GemTier.crystal:
+                    if gem.type == GemType.empowered:
+                        gem = EmpoweredGem.random_gem(tier=GemTier.crystal, element=gem.element)
+                    elif gem.type == GemType.lesser:
+                        gem = LesserGem.random_gem(tier=GemTier.crystal, element=gem.element)
+                    gs[i] = gem
         self.setup_controls(self.selected_gem)
         await self.page.update_async()
 

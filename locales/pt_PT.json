@@ -144,6 +144,17 @@
         "all_damage": "Dano Total",
         "all_health": "Vida Total",
         "all_five_level": "Todos N\u00edvel 5",
-        "all_ten_level": "Todos N\u00edvel 10"
+        "all_ten_level": "Todos N\u00edvel 10",
+        "all_radiant": "Todos Radiante",
+        "all_stellar": "Todos Estelar",
+        "all_crystal": "Todos Cristal"
+    },
+    "about": {
+        "developer": "# TRANSLATION ERROR: Application developed by Sly",
+        "copyright": "# TRANSLATION ERROR: Copyright (c) 2023 - Sly",
+        "license": "# TRANSLATION ERROR: MIT License",
+        "description": "# TRANSLATION ERROR: This application has the goal of bringing the calculations that Trove does server side over to the user.\nIt mimics how the systems work at their core and brings them into one piece of fan-made software.",
+        "disclaimer": "# TRANSLATION ERROR: I honestly don't play this game, I legitimately just use this game as a way to learn more about coding and specially with this project, interface development.",
+        "github_disclaimer": "# TRANSLATION ERROR: I have made the code for this application open-source simply to keep transparency about the code, I use a very dirty method of compiling the application into a executable using a Python library and that may trigger some antivirus softwares"
     }
 }
