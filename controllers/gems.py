@@ -19,6 +19,12 @@ from flet import (
     ElevatedButton,
     Draggable,
     DragTarget,
+    DataTable,
+    DataRow,
+    DataColumn,
+    DataCell,
+    Tabs,
+    Tab,
 )
 from i18n import t
 
@@ -519,16 +525,26 @@ class GemsController(Controller):
         stats_card = Card(
             Column(
                 controls=[
-                    Text(t("strings.Stats"), size=18),
-                    *[
-                        Row(
-                            controls=[
-                                Text(value=t("stats." + stat)),
-                                Text(value=str(round(value[0], 2))),
-                            ]
-                        )
-                        for stat, value in stats.items()
-                    ],
+                    DataTable(
+                        columns=[
+                            DataColumn(Text(t("strings.Stats"), size=18)),
+                            DataColumn(Text(t("strings.Value"), size=18), numeric=True),
+                        ],
+                        rows=[
+                            DataRow(
+                                cells=[
+                                    DataCell(Text(t("stats." + stat), size=15)),
+                                    DataCell(
+                                        Text(str(round(value[0], 2))),
+                                        on_tap=self.copy_to_clipboard,
+                                    ),
+                                ]
+                            )
+                            for stat, value in stats.items()
+                        ],
+                        data_row_height=30,
+                        heading_row_height=30,
+                    )
                 ],
             ),
             col=4,
@@ -570,10 +586,31 @@ class GemsController(Controller):
             costs["high"] = {}
             for key, value in augment_costs[augment]["costs"].items():
                 costs["high"][key] = value * high[augment]
+        costs_card = Column(
+            controls=[
+                Text(t("Augmentation Costs"), size=18),
+                Tabs(
+                    tabs=[
+                        Tab(
+                            text="Low Cost",
+                            content=Text("Hello")
+                        ),
+                        Tab(
+                            text="Medium Cost",
+                        ),
+                        Tab(
+                            text="High Cost",
+                        ),
+                    ],
+                ),
+            ],
+            horizontal_alignment="center",
+            col=4,
+        )
         self.gem_report.controls.extend(
             [
                 stats_card,
-                Card(Text("Augmentation Costs", size=18), col=4),
+                costs_card,
                 Card(Text("WIP", size=18), col=4),
             ]
         )
@@ -742,11 +779,15 @@ class GemsController(Controller):
         stats.append(Stat.critical_hit)
         for gs in self.gem_set:
             for gem in gs:
+                if gem.element == GemElement.cosmic:
+                    zipped_stats = zip(gem.stats[1:], stats[:-1])
+                else:
+                    zipped_stats = zip(gem.stats, stats)
                 if gem.type == GemType.lesser:
-                    for stat, new_stat in zip(gem.stats, stats):
+                    for stat, new_stat in zipped_stats:
                         stat.name = new_stat
                 elif gem.type == GemType.empowered:
-                    for stat, new_stat in zip(gem.stats, stats):
+                    for stat, new_stat in zipped_stats:
                         stat.name = new_stat
         self.page.snack_bar.content.value = t("messages.changed_all_health")
         self.page.snack_bar.open = True
@@ -821,4 +862,11 @@ class GemsController(Controller):
     async def on_superior_augment(self, event):
         event.control.data.add_superior_focus()
         self.setup_controls(self.selected_gem)
+        await self.page.update_async()
+
+    async def copy_to_clipboard(self, event):
+        if value := event.control.content.value:
+            await self.page.set_clipboard_async(str(value))
+            self.page.snack_bar.content.value = "Copied to clipboard"
+            self.page.snack_bar.open = True
         await self.page.update_async()
