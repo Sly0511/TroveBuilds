@@ -593,7 +593,6 @@ class GemsController(Controller):
                     tabs=[
                         Tab(
                             text="Low Cost",
-                            content=Text("Hello")
                         ),
                         Tab(
                             text="Medium Cost",
