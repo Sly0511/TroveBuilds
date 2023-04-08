@@ -224,7 +224,10 @@ class GemController(Controller):
                             ),
                             Container(
                                 content=Image("assets/images/gems/chaosspark.png", width=43),
-                                disabled=not bool(self.selected_stat) or [s for s in self.selected_gem.stats if s.name == stat.light],
+                                disabled=(
+                                        not bool(self.selected_stat) or
+                                        (self.selected_stat and self.selected_stat.name == Stat.light)
+                                ),
                                 on_click=self.change_stat,
                                 col=1.5
                             ),
