@@ -49,7 +49,7 @@ from utils.path import BasePath
 class GemController(Controller):
     def setup_controls(self, gem=None, stat=None):
         if not hasattr(self, "selected_gem"):
-            self.selected_gem = LesserGem.random_gem()
+            self.selected_gem = EmpoweredGem.random_gem()
         if gem:
             self.selected_gem = gem
         if not hasattr(self, "selected_stat"):
@@ -284,13 +284,16 @@ class GemController(Controller):
         self.setup_controls(self.selected_gem, self.selected_stat)
 
     async def reroll_radiant(self, _):
-        self.setup_controls(LesserGem.random_gem(GemTier.radiant), None)
+        gem_type = choice([EmpoweredGem, LesserGem])
+        self.setup_controls(gem_type.random_gem(GemTier.radiant), None)
 
     async def reroll_stellar(self, _):
-        self.setup_controls(LesserGem.random_gem(GemTier.stellar), None)
+        gem_type = choice([EmpoweredGem, LesserGem])
+        self.setup_controls(gem_type.random_gem(GemTier.stellar), None)
 
     async def reroll_crystal(self, _):
-        self.setup_controls(LesserGem.random_gem(GemTier.crystal), None)
+        gem_type = choice([EmpoweredGem, LesserGem])
+        self.setup_controls(gem_type.random_gem(GemTier.crystal), None)
 
     async def rough_augment(self, _):
         self.selected_stat.add_rough_focus()
