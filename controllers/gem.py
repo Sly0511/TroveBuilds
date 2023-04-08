@@ -233,7 +233,7 @@ class GemController(Controller):
                             ),
                             Container(
                                 content=Image("assets/images/gems/chaosflare.png", width=43),
-                                disabled=not bool(self.selected_stat) or not stat.boosts,
+                                disabled=not bool(self.selected_stat) or not self.selected_stat.boosts,
                                 on_click=self.move_boost,
                                 col=1.5
                             )
