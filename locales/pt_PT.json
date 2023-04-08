@@ -3,7 +3,8 @@
     "tabs": {
         "0": "Simulador de Gemas",
         "1": "Maestria",
-        "2": "Gr\u00e1fico de Estrelas"
+        "2": "Gr\u00e1fico de Estrelas",
+        "3": "# TRANSLATION ERROR: [WIP] Gem Simulator"
     },
     "stats": {
         "Health Bonus": "Vida M\u00e1xima B\u00f3nus",
@@ -30,7 +31,8 @@
     },
     "gem_tiers": {
         "Stellar": "Estelar",
-        "Crystal": "Cristal"
+        "Crystal": "Cristal",
+        "Radiant": "# TRANSLATION ERROR: Radiant"
     },
     "gem_types": {
         "Empowered": "Maior",

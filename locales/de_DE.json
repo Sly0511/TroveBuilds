@@ -3,7 +3,8 @@
     "tabs": {
         "0": "Juwelen Kalkulator",
         "1": "Beherrschungsrang",
-        "2": "# TRANSLATION ERROR: Star Chart"
+        "2": "# TRANSLATION ERROR: [WIP] Star Chart",
+        "3": "# TRANSLATION ERROR: [WIP] Gem Simulator"
     },
     "stats": {
         "Health Bonus": "Gesundheits Bonus",
@@ -30,7 +31,8 @@
     },
     "gem_tiers": {
         "Stellar": "Stellar",
-        "Crystal": "Kristall"
+        "Crystal": "Kristall",
+        "Radiant": "# TRANSLATION ERROR: Radiant"
     },
     "gem_types": {
         "Empowered": "Machtvoller",

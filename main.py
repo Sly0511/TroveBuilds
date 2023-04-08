@@ -2,7 +2,7 @@ from flet import app, Page, Tabs, SnackBar, Text, WEB_BROWSER
 from i18n import t
 
 from models import Config
-from tabs import Configurations, Gems, Mastery, StarChart
+from tabs import Configurations, Gem, Gems, Mastery, StarChart
 from utils.localization import LocalizationManager
 from utils.logger import Logger
 
@@ -29,7 +29,7 @@ class TroveBuilds:
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         # Build tab frames
         self.page.tabs = Tabs(
-            tabs=[Configurations(page), Gems(page), StarChart(page), Mastery(page)],
+            tabs=[Configurations(page), Gems(page), Gem(page), StarChart(page), Mastery(page)],
             selected_index=self.page.tabs.selected_index
             if hasattr(self.page, "tabs")
             else 1,

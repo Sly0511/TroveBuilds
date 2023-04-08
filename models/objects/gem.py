@@ -68,6 +68,12 @@ class GemStatContainer(BaseModel):
     def total(self) -> int:
         return sum([self.base, self.rough, self.precise * 2, self.superior * 5])
 
+    @property
+    def percentage(self) -> float:
+        if not self.total:
+            return 0
+        return self.total / 40
+
 
 class GemStat(BaseModel):
     """This class simulates a stat in a gem."""
@@ -78,7 +84,7 @@ class GemStat(BaseModel):
     containers: list[GemStatContainer]
 
     def __eq__(self, other) -> bool:
-        return self.uuid == other.uuid
+        return self.uuid == getattr(other, "uuid", None)
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)

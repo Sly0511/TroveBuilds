@@ -1,9 +1,10 @@
 {
     "title": "Trove Calculation Tool",
     "tabs": {
-        "0": "Gem Simulator",
+        "0": "Gem Set Calculator",
         "1": "Mastery",
-        "2": "Star Chart"
+        "2": "[WIP] Star Chart",
+        "3": "[WIP] Gem Simulator"
     },
     "gem_full_names": {
         "Arcane Fire Gem": "Arcane Fire Gem",
@@ -37,6 +38,7 @@
         "Maximum Health %": "Maximum Health %"
     },
     "gem_tiers": {
+        "Radiant": "Radiant",
         "Stellar": "Stellar",
         "Crystal": "Crystal"
     },

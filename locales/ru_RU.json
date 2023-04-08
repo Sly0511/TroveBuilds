@@ -1,9 +1,10 @@
 {
     "title": "# TRANSLATION ERROR: Trove Calculation Tool",
     "tabs": {
-        "0": "# TRANSLATION ERROR: Gem Simulator",
+        "0": "# TRANSLATION ERROR: Gem Set Calculator",
         "1": "# TRANSLATION ERROR: Mastery",
-        "2": "# TRANSLATION ERROR: Star Chart"
+        "2": "# TRANSLATION ERROR: [WIP] Star Chart",
+        "3": "# TRANSLATION ERROR: [WIP] Gem Simulator"
     },
     "gem_full_names": {
         "Arcane Fire Gem": "# TRANSLATION ERROR: Arcane Fire Gem",
@@ -38,7 +39,8 @@
     },
     "gem_tiers": {
         "Stellar": "# TRANSLATION ERROR: Stellar",
-        "Crystal": "# TRANSLATION ERROR: Crystal"
+        "Crystal": "# TRANSLATION ERROR: Crystal",
+        "Radiant": "# TRANSLATION ERROR: Radiant"
     },
     "gem_types": {
         "Empowered": "# TRANSLATION ERROR: Empowered",
