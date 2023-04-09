@@ -37,6 +37,11 @@ from utils.data.gems import (
 from utils.functions import split_boosts
 
 
+# This dictates the percentages stats can generate at.
+# This adds complexity in a way but system remains unchanged progression wise.
+GEM_COMPLEXITY = 40 * 40
+
+
 class Stat(Enum):
     """This class enumerates the various stats available in gems."""
 
@@ -66,13 +71,21 @@ class GemStatContainer(BaseModel):
 
     @property
     def total(self) -> int:
-        return sum([self.base, self.rough, self.precise * 2, self.superior * 5])
+        ratio = GEM_COMPLEXITY / 40
+        return sum(
+            [
+                self.base,
+                self.rough * ratio,
+                self.precise * ratio * 2,
+                self.superior * ratio * 5,
+            ]
+        )
 
     @property
     def percentage(self) -> float:
         if not self.total:
             return 0
-        return self.total / 40
+        return self.total / GEM_COMPLEXITY
 
 
 class GemStat(BaseModel):
@@ -99,7 +112,7 @@ class GemStat(BaseModel):
     def max_augments(self) -> int:
         """This property calculates the maximum amount of augments a gem can hold"""
 
-        return 40 + 40 * self.boosts
+        return GEM_COMPLEXITY + GEM_COMPLEXITY * self.boosts
 
     @property
     def current_augments(self) -> int:
@@ -220,7 +233,12 @@ class GemStat(BaseModel):
 
         self.containers.append(
             GemStatContainer(
-                **{"base": randint(0, 40), "rough": 0, "precise": 0, "superior": 0}
+                **{
+                    "base": randint(0, GEM_COMPLEXITY),
+                    "rough": 0,
+                    "precise": 0,
+                    "superior": 0,
+                }
             )
         )
 
@@ -237,28 +255,28 @@ class GemStat(BaseModel):
         stat.containers.append(container)
 
     def add_rough_focus(self) -> bool:
-        """Adds a rough focus to the first container under 40 augments."""
+        """Adds a rough focus to the first container under max augments."""
 
         for container in self.containers:
-            if container.total < 40:
+            if container.total < GEM_COMPLEXITY:
                 container.rough += 1
                 break
         return self.is_maxed
 
     def add_precise_focus(self) -> bool:
-        """Adds a precise focus to the first container under 40 augments."""
+        """Adds a precise focus to the first container under max augments."""
 
         for container in self.containers:
-            if container.total < 40:
+            if container.total < GEM_COMPLEXITY:
                 container.precise += 1
                 break
         return self.is_maxed
 
     def add_superior_focus(self) -> bool:
-        """Adds a superior focus to the first container under 40 augments."""
+        """Adds a superior focus to the first container under max augments."""
 
         for container in self.containers:
-            if container.total < 40:
+            if container.total < GEM_COMPLEXITY:
                 container.superior += 1
                 break
         return self.is_maxed
@@ -270,7 +288,12 @@ class GemStat(BaseModel):
             gem=gem,
             containers=[
                 GemStatContainer(
-                    **{"base": randint(0, 40), "rough": 0, "precise": 0, "superior": 0}
+                    **{
+                        "base": randint(0, GEM_COMPLEXITY),
+                        "rough": 0,
+                        "precise": 0,
+                        "superior": 0,
+                    }
                 )
                 for _ in range(boosts + 1)
             ],
