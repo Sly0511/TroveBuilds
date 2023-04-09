@@ -376,7 +376,7 @@ class GemController(Controller):
                     ),
                 ],
                 horizontal_alignment="center",
-                col=3,
+                col=4,
                 spacing=2,
             )
         )
