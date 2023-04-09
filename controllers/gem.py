@@ -48,14 +48,13 @@ from utils.path import BasePath
 
 class GemController(Controller):
     def setup_controls(self, gem=None, stat=None):
+        if not hasattr(self, "header_row"):
+            self.header_row = ResponsiveRow()
         if not hasattr(self, "selected_gem"):
             self.selected_gem = EmpoweredGem.random_gem()
         if gem:
             self.selected_gem = gem
-        if not hasattr(self, "selected_stat"):
-            self.selected_stat = None
-        if not hasattr(self, "header_row"):
-            self.header_row = ResponsiveRow()
+        self.selected_stat = stat
         self.header_row.controls.clear()
         self.header_row.controls.append(
             Column(
@@ -69,20 +68,22 @@ class GemController(Controller):
                         alignment="center",
                     ),
                     Text(
-                        value=self.selected_gem.name
+                        value=self.selected_gem.name,
+                        size=22,
+                        color=f"#{self.selected_gem.color.value}"
                     ),
                     DragTarget(
                         content=Stack(
                             controls=[
                                 Image(
                                     f"assets/images/rarity/{self.selected_gem.tier.name}_frame.png",
-                                    scale=1.66,
-                                    left=90,
-                                    top=87,
+                                    scale=1.4,
+                                    left=89,
+                                    top=89,
                                 ),
                                 Image(
                                     f"assets/images/gems/old_{self.selected_gem.element.name}_{self.selected_gem.type.name}.png",
-                                    scale=0.4,
+                                    scale=0.3,
                                 ),
                             ]
                         ),
@@ -191,80 +192,102 @@ class GemController(Controller):
                     ],
                     ResponsiveRow(
                         controls=[
-                            Text("Improve Stat", col=5.5, text_align="right"),
-                            Container(col=2.2),
-                            Text("Reroll Stat", col=4.3, text_align="left"),
-                        ],
-                        alignment="center"
-                    ),
-                    Container(height=5),
-                    ResponsiveRow(
-                        controls=[
-                            Container(
-                                content=Image("assets/images/gems/augment_01.png", width=40),
-                                disabled=not bool(self.selected_stat),
-                                on_click=self.rough_augment,
-                                col=1.5
+                            Column(
+                                controls=[
+                                    Row(
+                                        controls=[
+                                            Text("Improve Stat", text_align="center")
+                                        ],
+                                        alignment="center"
+                                    ),
+                                    ResponsiveRow(
+                                        controls=[
+                                            Container(col=1.5),
+                                            Container(
+                                                content=Image("assets/images/gems/augment_01.png", width=40),
+                                                disabled=not bool(self.selected_stat),
+                                                on_click=self.rough_augment,
+                                                col=2.5
+                                            ),
+                                            Container(
+                                                content=Image("assets/images/gems/augment_02.png", width=40),
+                                                disabled=not bool(self.selected_stat),
+                                                on_click=self.precise_augment,
+                                                col=2.5
+                                            ),
+                                            Container(
+                                                content=Image("assets/images/gems/augment_03.png", width=40),
+                                                disabled=not bool(self.selected_stat),
+                                                on_click=self.superior_augment,
+                                                col=2.5
+                                            ),
+                                            Container(col=1.5),
+                                        ],
+                                    ),
+                                    ResponsiveRow(
+                                        controls=[
+                                            Container(col=1.8),
+                                            Container(
+                                                content=Text("2.5%"),
+                                                col=2.5
+                                            ),
+                                            Container(
+                                                content=Text("5.0%"),
+                                                col=2.5
+                                            ),
+                                            Container(
+                                                content=Text("12.5%"),
+                                                col=2.5
+                                            ),
+                                            Container(col=1.5),
+                                        ],
+                                    ),
+                                    Container(col=1)
+                                ],
+                                col=8
                             ),
-                            Container(
-                                content=Image("assets/images/gems/augment_02.png", width=40),
-                                disabled=not bool(self.selected_stat),
-                                on_click=self.precise_augment,
-                                col=1.5
-                            ),
-                            Container(
-                                content=Image("assets/images/gems/augment_03.png", width=40),
-                                disabled=not bool(self.selected_stat),
-                                on_click=self.superior_augment,
-                                col=1.5
-                            ),
-                            Container(
-                                width=20,
-                                col=1
-                            ),
-                            Container(
-                                content=Image("assets/images/gems/chaosspark.png", width=43),
-                                disabled=(
-                                        not bool(self.selected_stat) or
-                                        (self.selected_stat and self.selected_stat.name == Stat.light)
-                                ),
-                                on_click=self.change_stat,
-                                col=1.5
-                            ),
-                            Container(
-                                content=Image("assets/images/gems/chaosflare.png", width=43),
-                                disabled=not bool(self.selected_stat) or not self.selected_stat.boosts,
-                                on_click=self.move_boost,
-                                col=1.5
-                            )
-                        ],
-                        alignment="center"
-                    ),
-                    ResponsiveRow(
-                        controls=[
-                            Container(
-                                content=Text("2.5%"),
-                                col=1.5
-                            ),
-                            Container(
-                                content=Text("5.0%"),
-                                col=1.5
-                            ),
-                            Container(
-                                content=Text("12.5%"),
-                                col=1.5
-                            ),
-                            Container(
-                                width=20,
-                                col=1
-                            ),
-                            Container(
-                                content=Text("Change Stat", size=10, text_align="center"),
-                                col=1.5
-                            ),
-                            Container(
-                                content=Text("Move Boost", size=10, text_align="center"),
-                                col=1.5
+                            Column(
+                                controls=[
+                                    Row(
+                                        controls=[
+                                            Text("Reroll Stat", text_align="center")
+                                        ],
+                                        alignment="center"
+                                    ),
+                                    ResponsiveRow(
+                                        controls=[
+                                            Container(
+                                                content=Image("assets/images/gems/chaosspark.png", width=43),
+                                                disabled=(
+                                                        not bool(self.selected_stat) or
+                                                        (self.selected_stat and self.selected_stat.name == Stat.light)
+                                                ),
+                                                on_click=self.change_stat,
+                                                col=5.5
+                                            ),
+                                            Container(
+                                                content=Image("assets/images/gems/chaosflare.png", width=43),
+                                                disabled=not bool(self.selected_stat) or not self.selected_stat.boosts,
+                                                on_click=self.move_boost,
+                                                col=5.5
+                                            ),
+                                        ],
+                                    ),
+                                    ResponsiveRow(
+                                        controls=[
+                                            Container(
+                                                content=Text("Change Stat", size=11, text_align="center"),
+                                                col=5.5
+                                            ),
+                                            Container(
+                                                content=Text("Move Boost", size=11, text_align="center"),
+                                                col=5.5
+                                            )
+                                        ],
+                                    )
+                                ],
+                                horizontal_alignment="top",
+                                col=4
                             )
                         ],
                         alignment="center"
