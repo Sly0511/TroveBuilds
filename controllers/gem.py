@@ -77,15 +77,16 @@ class GemController(Controller):
                             controls=[
                                 Image(
                                     f"assets/images/rarity/{self.selected_gem.tier.name}_frame.png",
-                                    scale=1.4,
+                                    scale=5,
                                     left=89,
                                     top=89,
                                 ),
                                 Image(
                                     f"assets/images/gems/old_{self.selected_gem.element.name}_{self.selected_gem.type.name}.png",
-                                    scale=0.3,
+                                    scale=1.25,
                                 ),
-                            ]
+                            ],
+                            scale=0.5
                         ),
                     ),
                     *[
@@ -295,6 +296,7 @@ class GemController(Controller):
                 ],
                 horizontal_alignment="center",
                 col=3,
+                spacing=2
             )
         )
         asyncio.create_task(self.page.update_async())
