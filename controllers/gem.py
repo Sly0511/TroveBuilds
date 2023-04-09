@@ -78,7 +78,10 @@ class GemController(Controller):
                         alignment="center",
                     ),
                     Text(
-                        value=self.selected_gem.name + ": " + t("strings.Level") + f" {self.selected_gem.level}",
+                        value=self.selected_gem.name
+                        + ": "
+                        + t("strings.Level")
+                        + f" {self.selected_gem.level}",
                         size=22,
                         color=f"#{self.selected_gem.color.value}",
                     ),
@@ -91,9 +94,16 @@ class GemController(Controller):
                                     left=89,
                                     top=89,
                                 ),
-                                Image(
-                                    f"assets/images/gems/old_{self.selected_gem.element.name}_{self.selected_gem.type.name}.png",
-                                    scale=1.25,
+                                Draggable(
+                                    data=self.selected_gem,
+                                    content=Image(
+                                        f"assets/images/gems/old_{self.selected_gem.element.name}_{self.selected_gem.type.name}.png",
+                                        scale=1.25,
+                                    ),
+                                    content_feedback=Image(
+                                        f"assets/images/gems/old_{self.selected_gem.element.name}_{self.selected_gem.type.name}.png",
+                                        scale=0.40,
+                                    ),
                                 ),
                             ],
                             scale=0.5,
@@ -104,25 +114,27 @@ class GemController(Controller):
                             ElevatedButton(
                                 "Min Level",
                                 on_click=self.max_level_down,
-                                disabled=self.selected_gem.level == 1
+                                disabled=self.selected_gem.level == 1,
                             ),
                             ElevatedButton(
                                 "Level Down",
                                 on_click=self.level_down,
-                                disabled=self.selected_gem.level == 1
+                                disabled=self.selected_gem.level == 1,
                             ),
                             ElevatedButton(
                                 "Level Up",
                                 on_click=self.level_up,
-                                disabled=self.selected_gem.level == self.selected_gem.max_level
+                                disabled=self.selected_gem.level
+                                == self.selected_gem.max_level,
                             ),
                             ElevatedButton(
                                 "Max Level",
                                 on_click=self.max_level_up,
-                                disabled=self.selected_gem.level == self.selected_gem.max_level
+                                disabled=self.selected_gem.level
+                                == self.selected_gem.max_level,
                             ),
                         ],
-                        alignment="center"
+                        alignment="center",
                     ),
                     *[
                         Stack(
@@ -271,7 +283,8 @@ class GemController(Controller):
                                                     "assets/images/gems/augment_01.png",
                                                     width=40,
                                                 ),
-                                                disabled=not bool(self.selected_stat),
+                                                disabled=not bool(self.selected_stat)
+                                                or self.selected_stat.is_maxed,
                                                 on_click=self.rough_augment,
                                                 col=2.5,
                                             ),
@@ -280,7 +293,8 @@ class GemController(Controller):
                                                     "assets/images/gems/augment_02.png",
                                                     width=40,
                                                 ),
-                                                disabled=not bool(self.selected_stat),
+                                                disabled=not bool(self.selected_stat)
+                                                or self.selected_stat.is_maxed,
                                                 on_click=self.precise_augment,
                                                 col=2.5,
                                             ),
@@ -289,7 +303,8 @@ class GemController(Controller):
                                                     "assets/images/gems/augment_03.png",
                                                     width=40,
                                                 ),
-                                                disabled=not bool(self.selected_stat),
+                                                disabled=not bool(self.selected_stat)
+                                                or self.selected_stat.is_maxed,
                                                 on_click=self.superior_augment,
                                                 col=2.5,
                                             ),
