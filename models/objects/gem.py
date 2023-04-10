@@ -316,6 +316,12 @@ class GemTier(Enum):
     crystal = "crystal"
 
 
+class GemTierColor(Enum):
+    radiant = "#dff6ff"
+    stellar = "#f0e62a"
+    crystal = "#77e4ac"
+
+
 class GemType(Enum):
     lesser = "Lesser"
     empowered = "Empowered"

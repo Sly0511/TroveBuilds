@@ -38,6 +38,7 @@ from models.objects.gem import (
     EmpoweredGem,
     GemElement,
     GemTier,
+    GemTierColor,
     GemType,
     GemRestriction,
     Stat,
@@ -66,14 +67,20 @@ class GemController(Controller):
                             ElevatedButton(
                                 text=t("gem_tiers.Radiant"),
                                 on_click=self.reroll_radiant,
+                                bgcolor=GemTierColor.radiant.value,
+                                color="black"
                             ),
                             ElevatedButton(
                                 text=t("gem_tiers.Stellar"),
                                 on_click=self.reroll_stellar,
+                                bgcolor=GemTierColor.stellar.value,
+                                color="black"
                             ),
                             ElevatedButton(
                                 text=t("gem_tiers.Crystal"),
                                 on_click=self.reroll_crystal,
+                                bgcolor=GemTierColor.crystal.value,
+                                color="black"
                             ),
                             VerticalDivider(width=50),
                             Text("Lesser"),
