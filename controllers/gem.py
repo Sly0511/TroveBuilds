@@ -85,6 +85,10 @@ class GemController(Controller):
                         size=22,
                         color=f"#{self.selected_gem.color.value}",
                     ),
+                    Text(
+                        value=f"Power Rank: {round(self.selected_gem.power_rank)}",
+                        size=19,
+                    ),
                     DragTarget(
                         content=Stack(
                             controls=[
@@ -120,6 +124,11 @@ class GemController(Controller):
                                 "Level Down",
                                 on_click=self.level_down,
                                 disabled=self.selected_gem.level == 1,
+                            ),
+                            ElevatedButton(
+                                "Level 15",
+                                on_click=self.level_fifteen,
+                                disabled=self.selected_gem.level == 15,
                             ),
                             ElevatedButton(
                                 "Level Up",
@@ -269,15 +278,21 @@ class GemController(Controller):
                         controls=[
                             Column(
                                 controls=[
-                                    Row(
+                                    ResponsiveRow(
                                         controls=[
-                                            Text("Improve Stat", text_align="center")
+                                            Container(col=3),
+                                            Text(
+                                                "Improve Stat",
+                                                text_align="center",
+                                                col=5,
+                                            ),
+                                            Container(col=4),
                                         ],
                                         alignment="center",
                                     ),
                                     ResponsiveRow(
                                         controls=[
-                                            Container(col=1.5),
+                                            Container(col=3.3),
                                             Container(
                                                 content=Image(
                                                     "assets/images/gems/augment_01.png",
@@ -286,7 +301,7 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or self.selected_stat.is_maxed,
                                                 on_click=self.rough_augment,
-                                                col=2.5,
+                                                col=1.5,
                                             ),
                                             Container(
                                                 content=Image(
@@ -296,7 +311,7 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or self.selected_stat.is_maxed,
                                                 on_click=self.precise_augment,
-                                                col=2.5,
+                                                col=1.5,
                                             ),
                                             Container(
                                                 content=Image(
@@ -306,18 +321,18 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or self.selected_stat.is_maxed,
                                                 on_click=self.superior_augment,
-                                                col=2.5,
+                                                col=1.5,
                                             ),
-                                            Container(col=1.5),
+                                            Container(col=3),
                                         ],
                                     ),
                                     ResponsiveRow(
                                         controls=[
-                                            Container(col=1.8),
-                                            Container(content=Text("2.5%"), col=2.5),
-                                            Container(content=Text("5.0%"), col=2.5),
-                                            Container(content=Text("12.5%"), col=2.5),
-                                            Container(col=1.5),
+                                            Container(col=3.3),
+                                            Container(content=Text("2.5%"), col=1.5),
+                                            Container(content=Text("5.0%"), col=1.5),
+                                            Container(content=Text("12.5%"), col=1.5),
+                                            Container(col=3),
                                         ],
                                     ),
                                     Container(col=1),
@@ -326,9 +341,15 @@ class GemController(Controller):
                             ),
                             Column(
                                 controls=[
-                                    Row(
+                                    ResponsiveRow(
                                         controls=[
-                                            Text("Reroll Stat", text_align="center")
+                                            Container(col=1),
+                                            Text(
+                                                "Reroll Stat",
+                                                text_align="center",
+                                                col=5,
+                                            ),
+                                            Container(col=6),
                                         ],
                                         alignment="center",
                                     ),
@@ -348,7 +369,7 @@ class GemController(Controller):
                                                     )
                                                 ),
                                                 on_click=self.change_stat,
-                                                col=5.5,
+                                                col=3.5,
                                             ),
                                             Container(
                                                 content=Image(
@@ -358,7 +379,7 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or not self.selected_stat.boosts,
                                                 on_click=self.move_boost,
-                                                col=5.5,
+                                                col=3.5,
                                             ),
                                         ],
                                     ),
@@ -370,7 +391,7 @@ class GemController(Controller):
                                                     size=11,
                                                     text_align="center",
                                                 ),
-                                                col=5.5,
+                                                col=3.5,
                                             ),
                                             Container(
                                                 content=Text(
@@ -378,7 +399,7 @@ class GemController(Controller):
                                                     size=11,
                                                     text_align="center",
                                                 ),
-                                                col=5.5,
+                                                col=3.5,
                                             ),
                                         ],
                                     ),
@@ -425,6 +446,10 @@ class GemController(Controller):
 
     async def level_down(self, _):
         self.selected_gem.set_level(self.selected_gem.level - 1)
+        self.setup_controls(self.selected_gem, self.selected_stat)
+
+    async def level_fifteen(self, _):
+        self.selected_gem.set_level(15)
         self.setup_controls(self.selected_gem, self.selected_stat)
 
     async def level_up(self, _):
