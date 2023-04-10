@@ -52,7 +52,8 @@ class GemController(Controller):
         if not hasattr(self, "header_row"):
             self.header_row = ResponsiveRow()
         if not hasattr(self, "selected_gem"):
-            self.selected_gem = EmpoweredGem.random_gem()
+            self.empower = False
+            self.selected_gem = LesserGem.random_gem()
         if gem:
             self.selected_gem = gem
         self.selected_stat = stat
@@ -74,6 +75,10 @@ class GemController(Controller):
                                 text=t("gem_tiers.Crystal"),
                                 on_click=self.reroll_crystal,
                             ),
+                            VerticalDivider(width=50),
+                            Text("Lesser"),
+                            Switch(value=self.empower, on_change=self.switch_empower),
+                            Text("Empowered")
                         ],
                         alignment="center",
                     ),
@@ -428,16 +433,19 @@ class GemController(Controller):
             self.selected_stat = event.control.data
         self.setup_controls(self.selected_gem, self.selected_stat)
 
+    async def switch_empower(self, event):
+        self.empower = event.control.value
+
     async def reroll_radiant(self, _):
-        gem_type = choice([EmpoweredGem, LesserGem])
+        gem_type = EmpoweredGem if self.empower else LesserGem
         self.setup_controls(gem_type.random_gem(GemTier.radiant), None)
 
     async def reroll_stellar(self, _):
-        gem_type = choice([EmpoweredGem, LesserGem])
+        gem_type = EmpoweredGem if self.empower else LesserGem
         self.setup_controls(gem_type.random_gem(GemTier.stellar), None)
 
     async def reroll_crystal(self, _):
-        gem_type = choice([EmpoweredGem, LesserGem])
+        gem_type = EmpoweredGem if self.empower else LesserGem
         self.setup_controls(gem_type.random_gem(GemTier.crystal), None)
 
     async def max_level_down(self, _):
