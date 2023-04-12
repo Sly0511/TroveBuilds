@@ -14,7 +14,7 @@ class TroveBuilds:
     def run(self):
         app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=13010)
 
-    async def start(self, page: Page, restart=False):
+    async def start(self, page: Page, restart=False, translate=False):
         if not restart:
             self.page = page
             self.page.restart = self.restart
@@ -34,7 +34,7 @@ class TroveBuilds:
         page.scroll = "auto"
         page.on_keyboard_event = ...
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
-        if not hasattr(page, "all_views"):
+        if not hasattr(page, "all_views") or translate:
             page.all_views = [
                 View404(page),
                 HomeView(page),
@@ -56,8 +56,8 @@ class TroveBuilds:
         page.appbar = view.appbar
         await page.add_async(Column(controls=view.controls))
 
-    async def restart(self):
-        await self.start(self.page, True)
+    async def restart(self, translate=False):
+        await self.start(self.page, True, translate)
 
     async def route_change(self, route):
         await self.start(self.page, True)

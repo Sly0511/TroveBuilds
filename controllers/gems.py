@@ -619,7 +619,6 @@ class GemSetController(Controller):
             costs["high"] = {}
             for key, value in augment_costs[augment]["costs"].items():
                 costs["high"][key] = value * high[augment]
-        print(costs)
         costs_card = Column(
             controls=[
                 Text(t("strings.Augmentation Costs"), size=18),

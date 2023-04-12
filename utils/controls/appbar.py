@@ -55,7 +55,7 @@ class TroveToolsAppBar(AppBar):
 
     async def change_locale(self, event):
         self.page.app_config.locale = event.control.data
-        await self.page.restart()
+        await self.page.restart(True)
 
     async def change_route(self, event):
         self.page.route = event.control.data
