@@ -12,7 +12,7 @@ class DiscordOAuth2(OAuthProvider):
             client_secret=client_secret,
             authorization_endpoint="https://discord.com/oauth2/authorize",
             token_endpoint="https://discord.com/api/oauth2/token",
-            redirect_url="https://trovetools.slynx.xyz/",
+            redirect_url=redirect_url,
             scopes=["identify"],
             user_endpoint="https://discord.com/api/users/@me"
         )
