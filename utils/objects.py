@@ -14,5 +14,7 @@ class DiscordOAuth2(OAuthProvider):
             token_endpoint="https://discord.com/api/oauth2/token",
             redirect_url=redirect_url,
             scopes=["identify"],
-            user_endpoint="https://discord.com/api/users/@me"
+            user_endpoint="https://discord.com/api/users/@me",
+            user_scopes=["identify"],
+            user_id_fn=lambda u: u["id"]
         )

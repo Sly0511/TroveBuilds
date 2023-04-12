@@ -19,8 +19,7 @@ class TroveBuilds:
             self.page = page
             page.login_provider = DiscordOAuth2(
                 client_id=get_key(".env", "DISCORD_CLIENT"),
-                client_secret=get_key(".env", "DISCORD_SECRET"),
-                redirect_url=None
+                client_secret=get_key(".env", "DISCORD_SECRET")
             )
             page.restart = self.restart
             page.logger = Logger("Trove Builds Core")

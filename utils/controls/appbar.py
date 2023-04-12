@@ -14,7 +14,11 @@ class TroveToolsAppBar(AppBar):
         actions = []
         if self.page.route != "/":
             actions.append(IconButton(icon=HOME, on_click=self.change_home))
-        login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
+        if not self.page.auth:
+            login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
+        else:
+            login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
+            print(self.page.auth.user)
         actions.extend(
             [
                 IconButton(icon=WB_SUNNY_OUTLINED, on_click=self.change_theme, tooltip="Change theme"),
@@ -84,8 +88,14 @@ class TroveToolsAppBar(AppBar):
         await self.page.update_async()
 
     async def login(self, _):
-        await self.page.login_async(self.page.login_provider, redirect_to_page="https://127.0.0.1:13010" + self.page.route)
-        print(self.page.auth.user)
+        await self.page.login_async(
+            self.page.login_provider,
+            on_open_authorization_url=self.open_self_page,
+            redirect_to_page=True
+        )
+
+    async def open_self_page(self, url):
+        await self.page.launch_url_async(url, web_window_name="_self")
 
     async def go_url(self, event):
         urls = {
