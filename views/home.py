@@ -1,4 +1,4 @@
-from flet import View, Icon, Text
+from flet import View, Icon, Text, Column
 from flet_core.icons import HOME_SHARP
 
 from utils.controls import TroveToolsAppBar
@@ -10,5 +10,11 @@ class HomeView(View):
         self.icon = Icon(HOME_SHARP)
         super().__init__(
             route="/",
-            controls=[Text("Welcome")],
+            controls=[
+                Column(
+                    controls=[
+                        Text("Welcome")
+                    ]
+                )
+            ]
         )

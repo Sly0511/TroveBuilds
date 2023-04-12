@@ -1,13 +1,13 @@
-from flet import app, Page, Tabs, SnackBar, Text, WEB_BROWSER, Theme, View, Column
+from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column
 from i18n import t
-import asyncio
 
 from models import Config
-from tabs import Configurations, Gem, GemSet, Mastery, StarChart, Login
-from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
+from utils.controls import TroveToolsAppBar
 from utils.localization import LocalizationManager
 from utils.logger import Logger
-from utils.controls import TroveToolsAppBar
+from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
+from utils.objects import DiscordOAuth2
+from dotenv import get_key
 
 
 class TroveBuilds:
@@ -17,7 +17,12 @@ class TroveBuilds:
     async def start(self, page: Page, restart=False, translate=False):
         if not restart:
             self.page = page
-            self.page.restart = self.restart
+            page.login_provider = DiscordOAuth2(
+                client_id=get_key(".env", "DISCORD_CLIENT"),
+                client_secret=get_key(".env", "DISCORD_SECRET"),
+                redirect_url=None
+            )
+            page.restart = self.restart
             page.logger = Logger("Trove Builds Core")
             # Load configurations
             self.load_configuration()
@@ -26,22 +31,22 @@ class TroveBuilds:
         # Build main window
         page.title = t("title")
         page.on_route_change = self.route_change
+        page.on_keyboard_event = self.keyboard_shortcut
         page.theme = Theme(color_scheme_seed="red")
-        page.theme_mode = "DARK"
+        page.theme_mode = await page.client_storage.get_async("theme") or "DARK"
         page.window_maximizable = True
         page.window_maximized = True
         page.window_resizable = False
         page.scroll = "auto"
-        page.on_keyboard_event = ...
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         if not hasattr(page, "all_views") or translate:
             page.all_views = [
                 View404(page),
                 HomeView(page),
                 GemSetView(page),
-                MasteryView(page),
-                StarView(page),
                 GemView(page),
+                StarView(page),
+                MasteryView(page),
             ]
         for view in page.all_views:
             view.appbar = TroveToolsAppBar(
@@ -58,6 +63,23 @@ class TroveBuilds:
 
     async def restart(self, translate=False):
         await self.start(self.page, True, translate)
+
+    async def keyboard_shortcut(self, e):
+        async def switch_tabs(e):
+            views = self.page.all_views[2:]
+            index = int(e.key) - 1
+            if 0 <= index <= len(views) - 1:
+                self.page.route = views[index].route
+                await self.page.update_async()
+
+        if (
+            e.key.isnumeric()
+            and not e.ctrl
+            and not e.shift
+            and e.alt
+            and not e.meta
+        ):
+            await switch_tabs(e)
 
     async def route_change(self, route):
         await self.start(self.page, True)
