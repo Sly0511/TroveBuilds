@@ -2,12 +2,12 @@ from flet import Tab, Container, Column
 from i18n import t
 import flet_core.icons as ico
 
-from controllers import GemsController
+from controllers import GemSetController
 
 
-class Gems(Tab):
+class GemSet(Tab):
     def __init__(self, page):
-        ctrl = GemsController(page=page)
+        ctrl = GemSetController(page=page)
         ctrl.container = Container(
             content=Column(
                 controls=[ctrl.gem_report, ctrl.general_controls, ctrl.gem_altar]

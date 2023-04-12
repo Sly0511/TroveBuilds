@@ -38,9 +38,9 @@
         "Maximum Health %": "# TRANSLATION ERROR: Maximum Health %"
     },
     "gem_tiers": {
+        "Radiant": "# TRANSLATION ERROR: Radiant",
         "Stellar": "# TRANSLATION ERROR: Stellar",
-        "Crystal": "# TRANSLATION ERROR: Crystal",
-        "Radiant": "# TRANSLATION ERROR: Radiant"
+        "Crystal": "# TRANSLATION ERROR: Crystal"
     },
     "gem_types": {
         "Empowered": "# TRANSLATION ERROR: Empowered",
@@ -110,7 +110,11 @@
         "% Augmentation Progress": "# TRANSLATION ERROR: % Augmentation",
         "Change Ability": "# TRANSLATION ERROR: Change Ability",
         "Change Restriction": "# TRANSLATION ERROR: Change Restriction",
-        "Change Stat": "# TRANSLATION ERROR: Change Stat"
+        "Change Stat": "# TRANSLATION ERROR: Change Stat",
+        "Improve Stat": "# TRANSLATION ERROR: Improve Stat",
+        "Reroll Stat": "# TRANSLATION ERROR: Reroll Stat",
+        "Move Boost": "# TRANSLATION ERROR: Move Boost",
+        "Augmentation Costs": "# TRANSLATION ERROR: Augmentation Costs"
     },
     "messages": {
         "maxed_gem_levels": "# TRANSLATION ERROR: All gems have had their level maxed out.",
@@ -136,6 +140,9 @@
         "all_ten_level": "# TRANSLATION ERROR: All 10 Level",
         "all_fifteen_level": "# TRANSLATION ERROR: All 15 Level",
         "max_level": "# TRANSLATION ERROR: Max level",
+        "level_down": "# TRANSLATION ERROR: Level Down",
+        "level_up": "# TRANSLATION ERROR: Level Up",
+        "level_fifteen": "# TRANSLATION ERROR: Level 15",
         "zero_augmentation": "# TRANSLATION ERROR: Zero Augmentation",
         "min_augmentation": "# TRANSLATION ERROR: Min Augmentation",
         "max_augmentation": "# TRANSLATION ERROR: Max Augmentation",

@@ -1,10 +1,13 @@
-from flet import app, Page, Tabs, SnackBar, Text, WEB_BROWSER
+from flet import app, Page, Tabs, SnackBar, Text, WEB_BROWSER, Theme, View, Column
 from i18n import t
+import asyncio
 
 from models import Config
-from tabs import Configurations, Gem, Gems, Mastery, StarChart
+from tabs import Configurations, Gem, GemSet, Mastery, StarChart, Login
+from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
 from utils.localization import LocalizationManager
 from utils.logger import Logger
+from utils.controls import TroveToolsAppBar
 
 
 class TroveBuilds:
@@ -22,23 +25,41 @@ class TroveBuilds:
         self.setup_localization()
         # Build main window
         page.title = t("title")
+        page.on_route_change = self.route_change
+        page.theme = Theme(color_scheme_seed="red")
+        page.theme_mode = "DARK"
         page.window_maximizable = True
         page.window_maximized = True
         page.window_resizable = False
         page.scroll = "auto"
+        page.on_keyboard_event = ...
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
-        # Build tab frames
-        self.page.tabs = Tabs(
-            tabs=[Configurations(page), Gems(page), Gem(page), StarChart(page), Mastery(page)],
-            selected_index=self.page.tabs.selected_index
-            if hasattr(self.page, "tabs")
-            else 1,
-        )
+        if not hasattr(page, "all_views"):
+            page.all_views = [
+                View404(page),
+                HomeView(page),
+                GemSetView(page),
+                MasteryView(page),
+                StarView(page),
+                GemView(page),
+            ]
+        for view in page.all_views:
+            view.appbar = TroveToolsAppBar(
+                leading=view.icon, title=view.title, views=page.all_views[1:], page=page
+            )
         # Push UI elements into view
-        await page.add_async(self.page.tabs)
+        await page.clean_async()
+        view = page.all_views[0]
+        for v in page.all_views[1:]:
+            if v.route == page.route:
+                view = v
+        page.appbar = view.appbar
+        await page.add_async(Column(controls=view.controls))
 
     async def restart(self):
-        await self.page.clean_async()
+        await self.start(self.page, True)
+
+    async def route_change(self, route):
         await self.start(self.page, True)
 
     def load_configuration(self):

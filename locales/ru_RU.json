@@ -110,7 +110,11 @@
         "% Augmentation Progress": "# TRANSLATION ERROR: % Augmentation",
         "Change Ability": "# TRANSLATION ERROR: Change Ability",
         "Change Restriction": "# TRANSLATION ERROR: Change Restriction",
-        "Change Stat": "# TRANSLATION ERROR: Change Stat"
+        "Change Stat": "# TRANSLATION ERROR: Change Stat",
+        "Improve Stat": "# TRANSLATION ERROR: Improve Stat",
+        "Reroll Stat": "# TRANSLATION ERROR: Reroll Stat",
+        "Move Boost": "# TRANSLATION ERROR: Move Boost",
+        "Augmentation Costs": "# TRANSLATION ERROR: Augmentation Costs"
     },
     "messages": {
         "maxed_gem_levels": "# TRANSLATION ERROR: All gems have had their level maxed out.",
@@ -145,7 +149,10 @@
         "all_health": "# TRANSLATION ERROR: Full Health",
         "all_radiant": "# TRANSLATION ERROR: Full Radiant",
         "all_stellar": "# TRANSLATION ERROR: Full Stellar",
-        "all_crystal": "# TRANSLATION ERROR: Full Crystal"
+        "all_crystal": "# TRANSLATION ERROR: Full Crystal",
+        "level_down": "# TRANSLATION ERROR: Level Down",
+        "level_up": "# TRANSLATION ERROR: Level Up",
+        "level_fifteen": "# TRANSLATION ERROR: Level 15"
     },
     "errors": {
         "invalid_number": "# TRANSLATION ERROR: Please provide a valid number",

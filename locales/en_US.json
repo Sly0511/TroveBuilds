@@ -107,10 +107,14 @@
         "Stats": "Stats",
         "Stat": "Stat",
         "Value": "Value",
+        "Augmentation Costs": "Augmentation Costs",
         "% Augmentation Progress": "% Augmentation",
         "Change Ability": "Change Ability",
         "Change Restriction": "Change Restriction",
-        "Change Stat": "Change Stat"
+        "Change Stat": "Change Stat",
+        "Improve Stat": "Improve Stat",
+        "Reroll Stat": "Reroll Stat",
+        "Move Boost": "Move Boost"
     },
     "messages": {
         "maxed_gem_levels": "All gems have had their level maxed out.",
@@ -136,6 +140,9 @@
         "all_ten_level": "All 10 Level",
         "all_fifteen_level": "All 15 Level",
         "max_level": "Max level",
+        "level_down": "Level Down",
+        "level_up": "Level Up",
+        "level_fifteen": "Level 15",
         "zero_augmentation": "Zero Augmentation",
         "min_augmentation": "Min Augmentation",
         "max_augmentation": "Max Augmentation",

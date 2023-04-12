@@ -1,8 +1,6 @@
 import asyncio
-from copy import copy
 from random import choice
 
-import flet_core.colors
 from flet import (
     ResponsiveRow,
     Column,
@@ -13,22 +11,12 @@ from flet import (
     Text,
     Border,
     BorderSide,
-    Dropdown,
-    dropdown,
-    Slider,
     Switch,
     ElevatedButton,
     Draggable,
     DragTarget,
-    DataTable,
-    DataRow,
-    DataColumn,
-    DataCell,
-    Tabs,
-    Tab,
     Stack,
     VerticalDivider,
-    TextThemeStyle,
 )
 from i18n import t
 
@@ -36,16 +24,10 @@ from models.objects import Controller
 from models.objects.gem import (
     LesserGem,
     EmpoweredGem,
-    GemElement,
     GemTier,
     GemTierColor,
-    GemType,
-    GemRestriction,
     Stat,
 )
-from utils.data.gems import max_levels, augment_costs
-from utils.functions import throttle
-from utils.path import BasePath
 
 
 class GemController(Controller):
@@ -83,9 +65,9 @@ class GemController(Controller):
                                 color="black"
                             ),
                             VerticalDivider(width=50),
-                            Text("Lesser"),
+                            Text(t("gem_types.Lesser")),
                             Switch(value=self.empower, on_change=self.switch_empower),
-                            Text("Empowered")
+                            Text(t("gem_types.Empowered"))
                         ],
                         alignment="center",
                     ),
@@ -98,7 +80,7 @@ class GemController(Controller):
                         color=f"#{self.selected_gem.color.value}",
                     ),
                     Text(
-                        value=f"Power Rank: {round(self.selected_gem.power_rank)}",
+                        value=t("stats.Power Rank") + f": {round(self.selected_gem.power_rank)}",
                         size=19,
                     ),
                     DragTarget(
@@ -128,28 +110,28 @@ class GemController(Controller):
                     Row(
                         controls=[
                             ElevatedButton(
-                                "Min Level",
+                                t("buttons.min_level"),
                                 on_click=self.max_level_down,
                                 disabled=self.selected_gem.level == 1,
                             ),
                             ElevatedButton(
-                                "Level Down",
+                                t("buttons.level_down"),
                                 on_click=self.level_down,
                                 disabled=self.selected_gem.level == 1,
                             ),
                             ElevatedButton(
-                                "Level 15",
+                                t("buttons.level_fifteen"),
                                 on_click=self.level_fifteen,
                                 disabled=self.selected_gem.level == 15,
                             ),
                             ElevatedButton(
-                                "Level Up",
+                                t("buttons.level_up"),
                                 on_click=self.level_up,
                                 disabled=self.selected_gem.level
                                 == self.selected_gem.max_level,
                             ),
                             ElevatedButton(
-                                "Max Level",
+                                t("buttons.max_level"),
                                 on_click=self.max_level_up,
                                 disabled=self.selected_gem.level
                                 == self.selected_gem.max_level,
@@ -231,10 +213,7 @@ class GemController(Controller):
                                                                     border=Border(
                                                                         *(
                                                                             [
-                                                                                BorderSide(
-                                                                                    2,
-                                                                                    "black",
-                                                                                )
+                                                                                BorderSide(2, "black")
                                                                             ]
                                                                             * 4
                                                                         )
@@ -242,9 +221,7 @@ class GemController(Controller):
                                                                     border_radius=0,
                                                                     col=3,
                                                                 )
-                                                                for _ in range(
-                                                                    3 - stat.boosts
-                                                                )
+                                                                for _ in range(3 - stat.boosts)
                                                             ],
                                                         ],
                                                         spacing=0,
@@ -294,7 +271,7 @@ class GemController(Controller):
                                         controls=[
                                             Container(col=3),
                                             Text(
-                                                "Improve Stat",
+                                                t("strings.Improve Stat"),
                                                 text_align="center",
                                                 col=5,
                                             ),
@@ -357,7 +334,7 @@ class GemController(Controller):
                                         controls=[
                                             Container(col=1),
                                             Text(
-                                                "Reroll Stat",
+                                                t("strings.Reroll Stat"),
                                                 text_align="center",
                                                 col=5,
                                             ),
@@ -399,7 +376,7 @@ class GemController(Controller):
                                         controls=[
                                             Container(
                                                 content=Text(
-                                                    "Change Stat",
+                                                    t("strings.Change Stat"),
                                                     size=11,
                                                     text_align="center",
                                                 ),
@@ -407,7 +384,7 @@ class GemController(Controller):
                                             ),
                                             Container(
                                                 content=Text(
-                                                    "Move Boost",
+                                                    t("strings.Move Boost"),
                                                     size=11,
                                                     text_align="center",
                                                 ),

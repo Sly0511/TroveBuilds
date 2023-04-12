@@ -3,8 +3,8 @@
     "tabs": {
         "0": "Juwelen Kalkulator",
         "1": "Beherrschungsrang",
-        "2": "# TRANSLATION ERROR: [WIP] Star Chart",
-        "3": "# TRANSLATION ERROR: [WIP] Gem Simulator"
+        "2": "Sternenkarte",
+        "3": "Juwelen Simulator"
     },
     "stats": {
         "Health Bonus": "Gesundheits Bonus",
@@ -91,7 +91,11 @@
         "Change Restriction": "Beschr\u00e4nkung Aufheben",
         "Change Stat": "Wert \u00c4ndern",
         "Lvl": "Lvl",
-        "Value": "# TRANSLATION ERROR: Value"
+        "Value": "# TRANSLATION ERROR: Value",
+        "Improve Stat": "# TRANSLATION ERROR: Improve Stat",
+        "Reroll Stat": "# TRANSLATION ERROR: Reroll Stat",
+        "Move Boost": "# TRANSLATION ERROR: Move Boost",
+        "Augmentation Costs": "# TRANSLATION ERROR: Augmentation Costs"
     },
     "messages": {
         "updated_stats": "Werte Aktualisiert",
@@ -147,9 +151,12 @@
         "all_physical": "Alle Juwelen zu Physischem Schaden \u00e4ndern",
         "all_damage": "Voller Schaden",
         "all_health": "Volle Max. Gesundheit",
-        "all_radiant": "# TRANSLATION ERROR: Full Radiant",
-        "all_stellar": "# TRANSLATION ERROR: Full Stellar",
-        "all_crystal": "# TRANSLATION ERROR: Full Crystal"
+        "all_radiant": "Komplett Strahlend",
+        "all_stellar": "Komplett Stellar",
+        "all_crystal": "Komplett Kristall",
+        "level_down": "Level reduzieren",
+        "level_up": "Level erh\u00f6hen",
+        "level_fifteen": "Level 15"
     },
     "about": {
         "developer": "# TRANSLATION ERROR: Application developed by Sly",

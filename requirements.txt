@@ -2,3 +2,4 @@ flet
 python-i18n
 pydantic
 pyinstaller
+beanie

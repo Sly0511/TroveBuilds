@@ -45,12 +45,12 @@ from utils.functions import throttle
 from utils.path import BasePath
 
 
-class GemsController(Controller):
+class GemSetController(Controller):
     def setup_controls(self, gem=None):
         self.selected_gem = gem
         used_abilities = []
         if not hasattr(self, "gem_report"):
-            self.gem_report = ResponsiveRow(controls=[Text("Gem Stat Report", size=21)])
+            self.gem_report = ResponsiveRow(controls=[])
         # Build a gem set
         if not hasattr(self, "gem_set"):
             self.gem_set = []
@@ -619,13 +619,29 @@ class GemsController(Controller):
             costs["high"] = {}
             for key, value in augment_costs[augment]["costs"].items():
                 costs["high"][key] = value * high[augment]
+        print(costs)
         costs_card = Column(
             controls=[
-                Text(t("Augmentation Costs"), size=18),
+                Text(t("strings.Augmentation Costs"), size=18),
                 Tabs(
                     tabs=[
                         Tab(
                             text="Low Cost",
+                            # content=DataTable(
+                            #     columns=[
+                            #         DataColumn(Text("Item")),
+                            #         DataColumn(Text("Amount")),
+                            #     ],
+                            #     rows=[
+                            #         DataRow(
+                            #             cells=[
+                            #                 DataCell(Text(f"{item}")),
+                            #                 DataCell(Text(f"{round(cost)}"))
+                            #             ]
+                            #         )
+                            #         for item, cost in costs["low"].items()
+                            #     ]
+                            # )
                         ),
                         Tab(
                             text="Medium Cost",
