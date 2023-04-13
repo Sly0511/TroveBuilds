@@ -145,7 +145,7 @@ class TroveToolsAppBar(AppBar):
                                         ),
                                         width=19,
                                     ),
-                                    Text("Discord"),
+                                    Text("Github"),
                                 ]
                             ),
                             on_click=self.go_url,
