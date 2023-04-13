@@ -1,4 +1,4 @@
-from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider
+from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text
 
 
 from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP
@@ -20,7 +20,15 @@ class TroveToolsAppBar(AppBar):
             print("Not logged in!")
         else:
             print("Logged in!")
-            login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
+            login_account = PopupMenuItem(
+                content=Row(
+                    controls=[
+                        CircleAvatar(foreground_image_url=self.page.discord_user.avatar()),
+                        Text(self.page.discord_user.display_name)
+                    ]
+                ),
+                on_click=self.login
+            )
             print(self.page.auth.user)
             print(self.page.auth.user.id)
         actions.extend(

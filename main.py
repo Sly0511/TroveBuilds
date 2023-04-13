@@ -8,6 +8,7 @@ from utils.logger import Logger
 from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
 from utils.objects import DiscordOAuth2
 from dotenv import get_key
+from models.objects.discord_user import DiscordUser
 
 
 class TroveBuilds:
@@ -38,6 +39,10 @@ class TroveBuilds:
         page.window_resizable = False
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
+        if page.auth:
+            page.discord_user = DiscordUser(page.auth.user)
+        else:
+            page.discord_user = None
         if not hasattr(page, "all_views") or translate:
             page.all_views = [
                 View404(page),
