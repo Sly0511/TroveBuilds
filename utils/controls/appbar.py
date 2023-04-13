@@ -1,7 +1,7 @@
-from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text, Container
+from flet import AppBar, Icon, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text, Container
 
 
-from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP, LOGOUT
+from flet_core.icons import WB_SUNNY_OUTLINED, WB_SUNNY, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP, LOGOUT
 from flet_core.colors import SURFACE_VARIANT
 from utils.localization import Locale
 import asyncio
@@ -18,9 +18,16 @@ class TroveToolsAppBar(AppBar):
             actions.append(IconButton(icon=HOME, on_click=self.change_home))
         actions.extend(
             [
-                IconButton(icon=WB_SUNNY_OUTLINED, on_click=self.change_theme, tooltip="Change theme"),
+                IconButton(icon=WB_SUNNY_OUTLINED if self.page.theme_mode == "LIGHT" else WB_SUNNY, on_click=self.change_theme, tooltip="Change theme"),
                 PopupMenuButton(
-                    icon=LANGUAGE,
+                    content=Container(
+                        Row(
+                            controls=[
+                                Icon(LANGUAGE),
+                                Text(self.page.app_config.locale.name.replace("_", " "))
+                            ]
+                        )
+                    ),
                     items=[
                         PopupMenuItem(
                             data=loc,
@@ -32,7 +39,14 @@ class TroveToolsAppBar(AppBar):
                     tooltip="Change language"
                 ),
                 PopupMenuButton(
-                    icon=NOW_WIDGETS_SHARP,
+                    content=Container(
+                        Row(
+                            controls=[
+                                Icon(NOW_WIDGETS_SHARP),
+                                Text("Apps")
+                            ]
+                        )
+                    ),
                     items=[
                         PopupMenuItem(
                             data=view.route,
@@ -98,6 +112,7 @@ class TroveToolsAppBar(AppBar):
 
     async def change_locale(self, event):
         self.page.app_config.locale = event.control.data
+        await self.page.client_storage.set_async("locale", event.control.data.value)
         await self.page.restart(True)
 
     async def change_route(self, event):
