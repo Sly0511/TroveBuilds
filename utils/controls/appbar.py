@@ -47,11 +47,16 @@ class TroveToolsAppBar(AppBar):
                 ),
                 (
                     PopupMenuButton(
-                        content=CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url()),
+                        content=Row(
+                            controls=[
+                                CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url()),
+                                Text(self.page.discord_user.display_name)
+                            ]
+                        ),
                         items=[
                             PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
                         ]
-                    ) if self.page.discord_user else IconButton(icon=PERSON, on_click=self.login)
+                    ) if self.page.discord_user else IconButton(icon=PERSON, content=Text("Login"), on_click=self.login)
                 ),
                 PopupMenuButton(
                     items=[
