@@ -1,4 +1,5 @@
-from flet import AppBar, IconButton, Icon, PopupMenuButton, PopupMenuItem, Divider, Text
+from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider
+
 
 from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP
 from flet_core.colors import SURFACE_VARIANT
@@ -14,11 +15,14 @@ class TroveToolsAppBar(AppBar):
         actions = []
         if self.page.route != "/":
             actions.append(IconButton(icon=HOME, on_click=self.change_home))
-        if not self.page.auth:
+        if self.page.auth is None:
             login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
+            print("Not logged in!")
         else:
+            print("Logged in!")
             login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
             print(self.page.auth.user)
+            print(self.page.auth.user.id)
         actions.extend(
             [
                 IconButton(icon=WB_SUNNY_OUTLINED, on_click=self.change_theme, tooltip="Change theme"),
@@ -93,6 +97,7 @@ class TroveToolsAppBar(AppBar):
             on_open_authorization_url=self.open_self_page,
             redirect_to_page=True
         )
+        await self.page.restart()
 
     async def open_self_page(self, url):
         await self.page.launch_url_async(url, web_window_name="_self")
