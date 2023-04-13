@@ -40,7 +40,7 @@ class TroveBuilds:
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         if page.auth:
-            page.discord_user = DiscordUser(page.auth.user)
+            page.discord_user = DiscordUser(**page.auth.user)
         else:
             page.discord_user = None
         if not hasattr(page, "all_views") or translate:
