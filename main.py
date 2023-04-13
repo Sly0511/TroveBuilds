@@ -11,6 +11,7 @@ from dotenv import get_key
 from models.objects.discord_user import DiscordUser
 from flet.security import encrypt, decrypt
 import asyncio
+from httpx import HTTPStatusError
 
 
 class TroveBuilds:
@@ -72,15 +73,20 @@ class TroveBuilds:
         self.page.secret_key = get_key(".env", "APP_SECRET")
         self.page.discord_user = None
         if self.page.auth is None and await self.page.client_storage.contains_key_async("login"):
-            encrypted_token = await self.page.client_storage.get_async("login")
-            await self.page.login_async(
-                self.page.login_provider,
-                saved_token=decrypt(encrypted_token, self.page.secret_key)
-            )
-        elif self.page.auth is not None:
-            self.page.discord_user = DiscordUser(**self.page.auth.user)
-            encrypted_token = encrypt(self.page.auth.token.to_json(), self.page.secret_key)
-            await self.page.client_storage.set_async("login", encrypted_token)
+            try:
+                encrypted_token = await self.page.client_storage.get_async("login")
+                await self.page.login_async(
+                    self.page.login_provider,
+                    saved_token=decrypt(encrypted_token, self.page.secret_key)
+                )
+                return
+            except HTTPStatusError:
+                ...
+        if self.page.auth is None:
+            return
+        self.page.discord_user = DiscordUser(**self.page.auth.user)
+        encrypted_token = encrypt(self.page.auth.token.to_json(), self.page.secret_key)
+        await self.page.client_storage.set_async("login", encrypted_token)
 
     async def on_login(self, event):
         while self.page.auth is None:
