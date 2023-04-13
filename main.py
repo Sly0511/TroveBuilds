@@ -81,6 +81,7 @@ class TroveBuilds:
                 )
                 return
             except HTTPStatusError:
+                await self.page.client_storage.remove_async("login")
                 await self.page.logout_async()
         if self.page.auth is None:
             return
