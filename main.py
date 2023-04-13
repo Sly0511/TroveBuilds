@@ -1,17 +1,18 @@
+import asyncio
+
+from dotenv import get_key
 from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column
+from flet.security import encrypt, decrypt
+from httpx import HTTPStatusError
 from i18n import t
 
 from models import Config
-from utils.controls import TroveToolsAppBar
-from utils.localization import LocalizationManager
-from utils.logger import Logger
-from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
-from utils.objects import DiscordOAuth2
-from dotenv import get_key
 from models.objects.discord_user import DiscordUser
-from flet.security import encrypt, decrypt
-import asyncio
-from httpx import HTTPStatusError
+from utils.controls import TroveToolsAppBar
+from utils.localization import LocalizationManager, Locale
+from utils.logger import Logger
+from utils.objects import DiscordOAuth2
+from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
 
 
 class TroveBuilds:
@@ -28,7 +29,7 @@ class TroveBuilds:
             page.restart = self.restart
             page.logger = Logger("Trove Builds Core")
             # Load configurations
-            self.load_configuration()
+            await self.load_configuration()
         # Setup localization
         self.setup_localization()
         # Build main window
@@ -126,8 +127,16 @@ class TroveBuilds:
     async def route_change(self, route):
         await self.start(self.page, True)
 
-    def load_configuration(self):
+    async def load_configuration(self):
         self.page.app_config = Config()
+        if await self.page.client_storage.contains_key_async("locale"):
+            try:
+                loc = Locale(await self.page.client_storage.get_async("locale"))
+                self.page.app_config.locale = loc
+            except ValueError:
+                await self.page.client_storage.set_async("locale", Locale.American_English.value)
+        else:
+            await self.page.client_storage.set_async("locale", Locale.American_English.value)
         self.page.logger.debug("Configuration loaded -> " + repr(self.page.app_config))
 
     def setup_localization(self):
