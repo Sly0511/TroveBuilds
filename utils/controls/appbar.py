@@ -96,6 +96,7 @@ class TroveToolsAppBar(AppBar):
             on_open_authorization_url=self.open_self_page,
             redirect_to_page=True
         )
+        print(auth)
         await self.page.restart(auth=auth)
 
     async def logout(self, _):
