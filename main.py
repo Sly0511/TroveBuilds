@@ -83,6 +83,7 @@ class TroveBuilds:
             except HTTPStatusError:
                 await self.page.client_storage.remove_async("login")
                 await self.page.logout_async()
+                self.page.logger.debug("User logged out: Invalidated token")
         if self.page.auth is None:
             return
         self.page.discord_user = DiscordUser(**self.page.auth.user)
@@ -92,9 +93,11 @@ class TroveBuilds:
     async def on_login(self, event):
         while self.page.auth is None:
             await asyncio.sleep(1)
+        self.page.logger.debug(f"User Login: [{self.page.discord_user.id}] {self.page.discord_user.display_name}")
         await self.restart()
 
     async def on_logout(self, event):
+        self.page.logger.debug(f"User Logout: [{self.page.discord_user.id}] {self.page.discord_user.display_name}")
         while self.page.auth is not None:
             await asyncio.sleep(1)
         await self.restart()
