@@ -9,6 +9,7 @@ from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
 from utils.objects import DiscordOAuth2
 from dotenv import get_key
 from models.objects.discord_user import DiscordUser
+from flet.security import encrypt, decrypt
 
 
 class TroveBuilds:
@@ -39,10 +40,7 @@ class TroveBuilds:
         page.window_resizable = False
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
-        if page.auth:
-            page.discord_user = DiscordUser(**page.auth.user)
-        else:
-            page.discord_user = None
+        await self.check_login()
         if not hasattr(page, "all_views") or translate:
             page.all_views = [
                 View404(page),
@@ -64,6 +62,17 @@ class TroveBuilds:
                 view = v
         page.appbar = view.appbar
         await page.add_async(Column(controls=view.controls))
+
+    async def check_login(self):
+        self.page.secret_key = get_key(".env", "APP_SECRET")
+        self.page.discord_user = None
+        if self.page.auth is None and await self.page.client_storage.contains_key_async("login"):
+            encrypted_token = await self.page.client_storage.get_async("login")
+            await self.page.login(self.page.login_provider, saved_token=decrypt(encrypted_token, self.page.secret_key))
+        elif self.page.auth is not None:
+            self.page.discord_user = DiscordUser(**self.page.auth.user)
+            encrypted_token = encrypt(self.page.auth.token.to_json(), self.page.secret_key)
+            await self.page.client_storage.set_async("login", encrypted_token)
 
     async def restart(self, translate=False):
         await self.start(self.page, True, translate)
