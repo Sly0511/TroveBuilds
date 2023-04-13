@@ -1,7 +1,7 @@
 from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text
 
 
-from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP
+from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP, LOGOUT
 from flet_core.colors import SURFACE_VARIANT
 from utils.localization import Locale
 import asyncio
@@ -18,9 +18,7 @@ class TroveToolsAppBar(AppBar):
             actions.append(IconButton(icon=HOME, on_click=self.change_home))
         if self.page.auth is None:
             login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
-            print("Not logged in!")
         else:
-            print("Logged in!")
             login_account = PopupMenuItem(
                 content=Row(
                     controls=[
@@ -30,8 +28,6 @@ class TroveToolsAppBar(AppBar):
                 ),
                 on_click=self.login
             )
-            print(self.page.auth.user)
-            print(self.page.auth.user.id)
         actions.extend(
             [
                 IconButton(icon=WB_SUNNY_OUTLINED, on_click=self.change_theme, tooltip="Change theme"),
@@ -76,6 +72,13 @@ class TroveToolsAppBar(AppBar):
                 )
             ]
         )
+        if self.page.auth is not None:
+            actions.extend(
+                [
+                    Divider(),
+                    PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
+                ]
+            )
         actions.extend(kwargs.get("actions", []))
         super().__init__(
             leading_width=40, bgcolor=SURFACE_VARIANT, actions=actions, **kwargs
@@ -113,6 +116,8 @@ class TroveToolsAppBar(AppBar):
     async def logout(self, _):
         await self.page.client_storage.remove_async("login")
         await self.page.logout_async()
+        while self.page.auth is not None:
+            await asyncio.sleep(1)
         await self.page.restart()
 
     async def open_self_page(self, url):
