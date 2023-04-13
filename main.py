@@ -32,8 +32,12 @@ class TroveBuilds:
         self.setup_localization()
         # Build main window
         page.title = t("title")
+        # Setup Events
+        page.on_login = self.on_login
+        page.on_logout = self.on_logout
         page.on_route_change = self.route_change
         page.on_keyboard_event = self.keyboard_shortcut
+        # Setup app interface data
         page.theme = Theme(color_scheme_seed="red")
         page.theme_mode = await page.client_storage.get_async("theme") or "DARK"
         page.window_maximizable = True
@@ -73,13 +77,17 @@ class TroveBuilds:
                 self.page.login_provider,
                 saved_token=decrypt(encrypted_token, self.page.secret_key)
             )
-            while self.page.auth is None:
-                await asyncio.sleep(1)
-            self.page.discord_user = DiscordUser(**self.page.auth.user)
         elif self.page.auth is not None:
             self.page.discord_user = DiscordUser(**self.page.auth.user)
             encrypted_token = encrypt(self.page.auth.token.to_json(), self.page.secret_key)
             await self.page.client_storage.set_async("login", encrypted_token)
+
+    async def on_login(self, event):
+        self.page.discord_user = DiscordUser(**self.page.auth.user)
+        await self.restart()
+
+    async def on_logout(self, event):
+        await self.restart()
 
     async def restart(self, translate=False):
         await self.start(self.page, True, translate)

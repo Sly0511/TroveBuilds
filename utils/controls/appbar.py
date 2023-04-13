@@ -109,15 +109,10 @@ class TroveToolsAppBar(AppBar):
             on_open_authorization_url=self.open_self_page,
             redirect_to_page=True
         )
-        while self.page.auth is None:
-            await asyncio.sleep(1)
-        await self.page.restart()
 
     async def logout(self, _):
         await self.page.client_storage.remove_async("login")
         await self.page.logout_async()
-        self.page.auth = None
-        await self.page.restart()
 
     async def open_self_page(self, url):
         await self.page.launch_url_async(url, web_window_name="_self")
