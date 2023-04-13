@@ -7,7 +7,7 @@ class DiscordUser(BaseModel):
     username: str
     global_name: Optional[str]
     display_name: Optional[str]
-    avatar_hash: Field(Optional[str], alias="avatar")
+    avatar: Optional[str]
     discriminator: str
     public_flags: int
     flags: int
@@ -23,5 +23,5 @@ class DiscordUser(BaseModel):
     def display_name(self):
         return self.username + "#" + self.discriminator
 
-    def avatar(self, size=64):
-        return "https://cdn.discordapp.com/avatars/" + self.id + "/" + self.avatar_hash + f".png?size={size}"
+    def avatar_url(self, size=64):
+        return "https://cdn.discordapp.com/avatars/" + self.id + "/" + self.avatar + f".png?size={size}"

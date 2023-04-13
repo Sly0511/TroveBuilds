@@ -23,7 +23,7 @@ class TroveToolsAppBar(AppBar):
             login_account = PopupMenuItem(
                 content=Row(
                     controls=[
-                        CircleAvatar(foreground_image_url=self.page.discord_user.avatar()),
+                        CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url()),
                         Text(self.page.discord_user.display_name)
                     ]
                 ),
