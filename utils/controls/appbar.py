@@ -1,4 +1,4 @@
-from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text
+from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text, VerticalDivider
 
 
 from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP, LOGOUT
@@ -56,6 +56,11 @@ class TroveToolsAppBar(AppBar):
                     ],
                     tooltip="Change tool"
                 ),
+                (
+                    PopupMenuButton(
+                        content=CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url())
+                    ) if self.page.discord_user else IconButton(icon=PERSON, on_click=self.login)
+                ),
                 PopupMenuButton(
                     items=[
                         login_account,
@@ -66,18 +71,16 @@ class TroveToolsAppBar(AppBar):
                         Divider(),
                         PopupMenuItem(icon=BUG_REPORT, data="discord", text="Report a bug", on_click=self.go_url),
                         PopupMenuItem(icon=HELP, text="About")
-                    ],
+                    ] + (
+                        [
+                            Divider(),
+                            PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
+                        ] if self.page.discord_user else []
+                    ),
                     tooltip="Others"
                 )
             ]
         )
-        if self.page.auth is not None:
-            actions[-1].items.extend(
-                [
-                    Divider(),
-                    PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
-                ]
-            )
         actions.extend(kwargs.get("actions", []))
         super().__init__(
             leading_width=40, bgcolor=SURFACE_VARIANT, actions=actions, **kwargs
