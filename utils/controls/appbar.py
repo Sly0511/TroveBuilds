@@ -41,6 +41,7 @@ class TroveToolsAppBar(AppBar):
         actions.extend(
             [
                 IconButton(
+                    data="theme_switcher",
                     icon=WB_SUNNY_OUTLINED
                     if self.page.theme_mode == "LIGHT"
                     else WB_SUNNY,
@@ -145,9 +146,12 @@ class TroveToolsAppBar(AppBar):
     async def change_theme(self, _):
         self.page.theme_mode = "LIGHT" if self.page.theme_mode == "DARK" else "DARK"
         await self.page.client_storage.set_async("theme", self.page.theme_mode)
-        self.actions[0].icon = (
-            WB_SUNNY_OUTLINED if self.page.theme_mode == "LIGHT" else WB_SUNNY
-        )
+        for action in self.actions:
+            if action.data == "theme_switcher":
+                action.icon = (
+                    WB_SUNNY_OUTLINED if self.page.theme_mode == "LIGHT" else WB_SUNNY
+                )
+                break
         await self.page.update_async()
 
     async def change_locale(self, event):
