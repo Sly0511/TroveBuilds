@@ -83,11 +83,9 @@ class TroveBuilds:
             await self.page.client_storage.set_async("login", encrypted_token)
 
     async def on_login(self, event):
-        self.page.discord_user = DiscordUser(**self.page.auth.user)
         await self.restart()
 
     async def on_logout(self, event):
-        self.page.discord_user = None
         await self.restart()
 
     async def restart(self, translate=False):
