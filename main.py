@@ -83,9 +83,15 @@ class TroveBuilds:
             await self.page.client_storage.set_async("login", encrypted_token)
 
     async def on_login(self, event):
+        while self.page.auth is None:
+            await asyncio.sleep(1)
+        await asyncio.sleep(3)
         await self.restart()
 
     async def on_logout(self, event):
+        while self.page.auth is not None:
+            await asyncio.sleep(1)
+        await asyncio.sleep(3)
         await self.restart()
 
     async def restart(self, translate=False):
