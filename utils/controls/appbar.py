@@ -25,8 +25,7 @@ class TroveToolsAppBar(AppBar):
                         CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url()),
                         Text(self.page.discord_user.display_name)
                     ]
-                ),
-                on_click=self.login
+                )
             )
         actions.extend(
             [
