@@ -116,8 +116,7 @@ class TroveToolsAppBar(AppBar):
     async def logout(self, _):
         await self.page.client_storage.remove_async("login")
         await self.page.logout_async()
-        while self.page.auth is not None:
-            await asyncio.sleep(1)
+        self.page.auth = None
         await self.page.restart()
 
     async def open_self_page(self, url):
