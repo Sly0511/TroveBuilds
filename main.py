@@ -69,9 +69,13 @@ class TroveBuilds:
         self.page.discord_user = None
         if self.page.auth is None and await self.page.client_storage.contains_key_async("login"):
             encrypted_token = await self.page.client_storage.get_async("login")
-            await self.page.login_async(self.page.login_provider, saved_token=decrypt(encrypted_token, self.page.secret_key))
+            await self.page.login_async(
+                self.page.login_provider,
+                saved_token=decrypt(encrypted_token, self.page.secret_key)
+            )
             while self.page.auth is None:
                 await asyncio.sleep(1)
+            self.page.discord_user = DiscordUser(**self.page.auth.user)
         elif self.page.auth is not None:
             self.page.discord_user = DiscordUser(**self.page.auth.user)
             encrypted_token = encrypt(self.page.auth.token.to_json(), self.page.secret_key)
