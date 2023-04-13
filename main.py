@@ -91,8 +91,8 @@ class TroveBuilds:
         encrypted_token = encrypt(auth.token.to_json(), self.page.secret_key)
         await self.page.client_storage.set_async("login", encrypted_token)
 
-    async def restart(self, translate=False):
-        await self.start(self.page, True, translate)
+    async def restart(self, translate=False, auth=None):
+        await self.start(self.page, True, translate=translate, auth=auth)
 
     async def keyboard_shortcut(self, e):
         async def switch_tabs(e):
