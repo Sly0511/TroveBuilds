@@ -48,7 +48,7 @@ class TroveBuilds:
         page.window_resizable = False
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
-        await self.check_login()
+        await self.check_login(auth)
         if not hasattr(page, "all_views") or translate:
             page.all_views = [
                 View404(page),
