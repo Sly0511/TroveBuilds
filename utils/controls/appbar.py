@@ -4,6 +4,7 @@ from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Ro
 from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP
 from flet_core.colors import SURFACE_VARIANT
 from utils.localization import Locale
+import asyncio
 
 
 class TroveToolsAppBar(AppBar):
@@ -105,6 +106,8 @@ class TroveToolsAppBar(AppBar):
             on_open_authorization_url=self.open_self_page,
             redirect_to_page=True
         )
+        while self.page.auth is None:
+            await asyncio.sleep(1)
         await self.page.restart()
 
     async def logout(self, _):
