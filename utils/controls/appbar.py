@@ -16,17 +16,6 @@ class TroveToolsAppBar(AppBar):
         actions = []
         if self.page.route != "/":
             actions.append(IconButton(icon=HOME, on_click=self.change_home))
-        if self.page.auth is None:
-            login_account = PopupMenuItem(icon=PERSON, text="Login", on_click=self.login)
-        else:
-            login_account = PopupMenuItem(
-                content=Row(
-                    controls=[
-                        CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url()),
-                        Text(self.page.discord_user.display_name)
-                    ]
-                )
-            )
         actions.extend(
             [
                 IconButton(icon=WB_SUNNY_OUTLINED, on_click=self.change_theme, tooltip="Change theme"),
@@ -58,25 +47,21 @@ class TroveToolsAppBar(AppBar):
                 ),
                 (
                     PopupMenuButton(
-                        content=CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url())
+                        content=CircleAvatar(foreground_image_url=self.page.discord_user.avatar_url()),
+                        items=[
+                            PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
+                        ]
                     ) if self.page.discord_user else IconButton(icon=PERSON, on_click=self.login)
                 ),
                 PopupMenuButton(
                     items=[
-                        login_account,
-                        Divider(),
                         PopupMenuItem(data="discord", text="Discord", on_click=self.go_url),
                         PopupMenuItem(data="github", text="Github", on_click=self.go_url),
                         PopupMenuItem(data="paypal", text="Paypal", on_click=self.go_url),
                         Divider(),
                         PopupMenuItem(icon=BUG_REPORT, data="discord", text="Report a bug", on_click=self.go_url),
                         PopupMenuItem(icon=HELP, text="About")
-                    ] + (
-                        [
-                            Divider(),
-                            PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
-                        ] if self.page.discord_user else []
-                    ),
+                    ],
                     tooltip="Others"
                 )
             ]
