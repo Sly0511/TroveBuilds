@@ -10,9 +10,9 @@ from flet import (
     Text,
     Container,
     VerticalDivider,
+    Image,
 )
-
-
+from flet_core.colors import SURFACE_VARIANT
 from flet_core.icons import (
     WB_SUNNY_OUTLINED,
     WB_SUNNY,
@@ -24,9 +24,8 @@ from flet_core.icons import (
     HELP,
     LOGOUT,
 )
-from flet_core.colors import SURFACE_VARIANT
+
 from utils.localization import Locale
-import asyncio
 
 
 class TroveToolsAppBar(AppBar):
@@ -115,15 +114,53 @@ class TroveToolsAppBar(AppBar):
                     )
                 ),
                 PopupMenuButton(
+                    data="other-buttons",
                     items=[
                         PopupMenuItem(
-                            data="discord", text="Discord", on_click=self.go_url
+                            data="discord",
+                            content=Row(
+                                controls=[
+                                    Image(
+                                        (
+                                            "assets/icons/brands/discord-mark-black.png"
+                                            if self.page.theme_mode == "LIGHT"
+                                            else "assets/icons/brands/discord-mark-white.png"
+                                        ),
+                                        width=19,
+                                    ),
+                                    Text("Discord"),
+                                ]
+                            ),
+                            on_click=self.go_url,
                         ),
                         PopupMenuItem(
-                            data="github", text="Github", on_click=self.go_url
+                            data="github",
+                            content=Row(
+                                controls=[
+                                    Image(
+                                        (
+                                            "assets/icons/brands/github-mark-black.png"
+                                            if self.page.theme_mode == "LIGHT"
+                                            else "assets/icons/brands/github-mark-white.png"
+                                        ),
+                                        width=19,
+                                    ),
+                                    Text("Discord"),
+                                ]
+                            ),
+                            on_click=self.go_url,
                         ),
                         PopupMenuItem(
-                            data="paypal", text="Paypal", on_click=self.go_url
+                            data="paypal",
+                            content=Row(
+                                controls=[
+                                    Image(
+                                        "assets/icons/brands/paypal-mark.png", width=19
+                                    ),
+                                    Text("Paypal"),
+                                ]
+                            ),
+                            on_click=self.go_url,
                         ),
                         Divider(),
                         PopupMenuItem(
@@ -151,7 +188,15 @@ class TroveToolsAppBar(AppBar):
                 action.icon = (
                     WB_SUNNY_OUTLINED if self.page.theme_mode == "LIGHT" else WB_SUNNY
                 )
-                break
+            if action.data == "other-buttons":
+                for item in action.items:
+                    if item.data in ["discord", "github"] and item.content is not None:
+                        item.content.controls[0].src = (
+                            f"assets/icons/brands/{item.data}-mark-black.png"
+                            if self.page.theme_mode == "LIGHT"
+                            else f"assets/icons/brands/{item.data}-mark-white.png"
+                        )
+
         await self.page.update_async()
 
     async def change_locale(self, event):
