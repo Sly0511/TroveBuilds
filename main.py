@@ -87,6 +87,7 @@ class TroveBuilds:
         await self.restart()
 
     async def on_logout(self, event):
+        self.page.discord_user = None
         await self.restart()
 
     async def restart(self, translate=False):
