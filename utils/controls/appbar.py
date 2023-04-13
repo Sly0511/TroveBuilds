@@ -73,7 +73,7 @@ class TroveToolsAppBar(AppBar):
             ]
         )
         if self.page.auth is not None:
-            actions.extend(
+            actions[-1].items.extend(
                 [
                     Divider(),
                     PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
