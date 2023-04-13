@@ -91,14 +91,14 @@ class TroveBuilds:
         await self.page.client_storage.set_async("login", encrypted_token)
 
     async def on_login(self, event):
-        while self.page.auth is None:
+        while self.page.discord_user is None:
             await asyncio.sleep(1)
         self.page.logger.debug(f"User Login: [{self.page.discord_user.id}] {self.page.discord_user.display_name}")
         await self.restart()
 
     async def on_logout(self, event):
         self.page.logger.debug(f"User Logout: [{self.page.discord_user.id}] {self.page.discord_user.display_name}")
-        while self.page.auth is not None:
+        while self.page.discord_user is not None:
             await asyncio.sleep(1)
         await self.restart()
 
