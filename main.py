@@ -81,7 +81,7 @@ class TroveBuilds:
                 )
                 return
             except HTTPStatusError:
-                ...
+                await self.page.logout_async()
         if self.page.auth is None:
             return
         self.page.discord_user = DiscordUser(**self.page.auth.user)
