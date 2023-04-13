@@ -18,7 +18,7 @@ class TroveBuilds:
     def run(self):
         app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=13010)
 
-    async def start(self, page: Page, restart=False, translate=False, auth=None):
+    async def start(self, page: Page, restart=False, translate=False):
         if not restart:
             self.page = page
             page.login_provider = DiscordOAuth2(
@@ -29,15 +29,13 @@ class TroveBuilds:
             page.logger = Logger("Trove Builds Core")
             # Load configurations
             self.load_configuration()
-        if auth is None:
-            auth = self.page.auth
-        if auth == 0:
-            auth = None
         # Setup localization
         self.setup_localization()
         # Build main window
         page.title = t("title")
         # Setup Events
+        page.on_login = self.on_login
+        page.on_logout = self.on_logout
         page.on_route_change = self.route_change
         page.on_keyboard_event = self.keyboard_shortcut
         # Setup app interface data
@@ -48,7 +46,7 @@ class TroveBuilds:
         page.window_resizable = False
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
-        await self.check_login(auth)
+        await self.check_login()
         if not hasattr(page, "all_views") or translate:
             page.all_views = [
                 View404(page),
@@ -71,10 +69,10 @@ class TroveBuilds:
         page.appbar = view.appbar
         await page.add_async(Column(controls=view.controls))
 
-    async def check_login(self, auth):
+    async def check_login(self):
         self.page.secret_key = get_key(".env", "APP_SECRET")
         self.page.discord_user = None
-        if auth is None and await self.page.client_storage.contains_key_async("login"):
+        if self.page.auth is None and await self.page.client_storage.contains_key_async("login"):
             try:
                 encrypted_token = await self.page.client_storage.get_async("login")
                 await self.page.login_async(
@@ -85,14 +83,26 @@ class TroveBuilds:
             except HTTPStatusError:
                 await self.page.client_storage.remove_async("login")
                 await self.page.logout_async()
-        if auth is None:
+        if self.page.auth is None:
             return
-        self.page.discord_user = DiscordUser(**auth.user)
-        encrypted_token = encrypt(auth.token.to_json(), self.page.secret_key)
+        self.page.discord_user = DiscordUser(**self.page.auth.user)
+        encrypted_token = encrypt(self.page.auth.token.to_json(), self.page.secret_key)
         await self.page.client_storage.set_async("login", encrypted_token)
 
-    async def restart(self, translate=False, auth=None):
-        await self.start(self.page, True, translate=translate, auth=auth)
+    async def on_login(self, event):
+        while self.page.auth is None:
+            await asyncio.sleep(1)
+        await asyncio.sleep(3)
+        await self.restart()
+
+    async def on_logout(self, event):
+        while self.page.auth is not None:
+            await asyncio.sleep(1)
+        await asyncio.sleep(3)
+        await self.restart()
+
+    async def restart(self, translate=False):
+        await self.start(self.page, True, translate)
 
     async def keyboard_shortcut(self, e):
         async def switch_tabs(e):

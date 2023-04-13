@@ -91,19 +91,18 @@ class TroveToolsAppBar(AppBar):
         await self.page.update_async()
 
     async def login(self, _):
-        auth = await self.page.login_async(
+        await self.page.login_async(
             self.page.login_provider,
-            on_open_authorization_url=self.open_self_page
+            #on_open_authorization_url=self.open_self_page,
+            #redirect_to_page=True
         )
-        await self.page.restart(auth=auth)
 
     async def logout(self, _):
         await self.page.client_storage.remove_async("login")
         await self.page.logout_async()
-        await self.page.restart(auth=0)
 
     async def open_self_page(self, url):
-        await self.page.launch_url_async(url, web_window_name="_blank")
+        await self.page.launch_url_async(url, web_window_name="_self")
 
     async def go_url(self, event):
         urls = {
