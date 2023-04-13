@@ -1,4 +1,4 @@
-from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text, VerticalDivider
+from flet import AppBar, IconButton, PopupMenuButton, PopupMenuItem, Divider, Row, CircleAvatar, Text, Container
 
 
 from flet_core.icons import WB_SUNNY_OUTLINED, LANGUAGE, HOME, NOW_WIDGETS_SHARP, PERSON, BUG_REPORT, HELP, LOGOUT
@@ -56,7 +56,7 @@ class TroveToolsAppBar(AppBar):
                         items=[
                             PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
                         ]
-                    ) if self.page.discord_user else IconButton(icon=PERSON, content=Text("Login"), on_click=self.login)
+                    ) if self.page.discord_user else Container(Row(controls=[IconButton(icon=PERSON), Text("Login")]), on_click=self.login)
                 ),
                 PopupMenuButton(
                     items=[
