@@ -56,7 +56,20 @@ class TroveToolsAppBar(AppBar):
                         items=[
                             PopupMenuItem(icon=LOGOUT, text="Logout", on_click=self.logout),
                         ]
-                    ) if self.page.discord_user else Container(Row(controls=[IconButton(icon=PERSON), Text("Login")]), on_click=self.login)
+                    )
+                    if self.page.discord_user else
+                    Container(
+                        Row(
+                            controls=[
+                                IconButton(
+                                    icon=PERSON,
+                                    on_click=self.login
+                                ),
+                                Text("Login")
+                            ]
+                        ),
+                        on_click=self.login
+                    )
                 ),
                 PopupMenuButton(
                     items=[
