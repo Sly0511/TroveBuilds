@@ -107,6 +107,11 @@ class TroveToolsAppBar(AppBar):
         )
         await self.page.restart()
 
+    async def logout(self, _):
+        await self.page.client_storage.remove_async("login")
+        await self.page.logout_async()
+        await self.page.restart()
+
     async def open_self_page(self, url):
         await self.page.launch_url_async(url, web_window_name="_self")
 
