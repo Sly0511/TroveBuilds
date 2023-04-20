@@ -113,6 +113,7 @@ class GemBuildsController(Controller):
                                             disabled=b.name == self.config.build_type.name
                                         )
                                         for b in BuildType
+
                                     ],
                                     on_change=self.set_build_type
                                 ),
@@ -121,6 +122,36 @@ class GemBuildsController(Controller):
                     ]
                 ),
                 col=4,
+            ),
+            Card(
+                content=Column(
+                    controls=[
+                        Dropdown(
+                            label="Ally",
+                            value=self.config.ally,
+                            options=[
+                                dropdown.Option(
+                                    key=name,
+                                    text=name,
+                                    disabled=name == self.config.ally
+                                )
+                                for name in self.allies.keys()
+                            ],
+                            on_change=self.set_ally
+                        ),
+                        Text("Stats", size=20),
+                        *[
+                            Text(str(round(s["value"], 2)) + ("% " if s["percentage"] else " ") + s["name"])
+                            for s in self.allies[self.config.ally]["stats"]
+                        ],
+                        Text("Abilities", size=20),
+                        *[
+                            Text(a)
+                            for a in self.allies[self.config.ally]["abilities"]
+                        ],
+                    ]
+                ),
+                col=3
             ),
             Card(
                 content=Column(
@@ -138,26 +169,6 @@ class GemBuildsController(Controller):
                             ],
                             on_change=self.set_food
                         ),
-                        Dropdown(
-                            label="Ally",
-                            value=self.config.ally,
-                            options=[
-                                dropdown.Option(
-                                    key=name,
-                                    text=name,
-                                    disabled=name == self.config.ally
-                                )
-                                for name in self.allies.keys()
-                            ],
-                            on_change=self.set_ally
-                        )
-                    ]
-                ),
-                col=3
-            ),
-            Card(
-                content=Column(
-                    controls=[
                         Column(
                             controls=[
                                 Text(f"Critical Damage stats on gear: {self.config.critical_damage_count}"),
@@ -305,7 +316,7 @@ class GemBuildsController(Controller):
                             DataCell(content=Text(f"{mod_coefficient:,}")),
                             DataCell(content=Text(f"{round(first):,}")),
                             DataCell(content=Text(f"{round(final):,}")),
-                            DataCell(content=Text(f"{round(second, 2)}%")),
+                            DataCell(content=Text(f"{round(second, 2):,}%")),
                             DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
                         ],
                         color="#313233" if i%2 else "#414243"
