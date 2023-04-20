@@ -12,7 +12,7 @@ from utils.controls import TroveToolsAppBar
 from utils.localization import LocalizationManager, Locale
 from utils.logger import Logger
 from utils.objects import DiscordOAuth2
-from views import GemSetView, GemView, MasteryView, StarView, HomeView, View404
+from views import GemSetView, GemView, MasteryView, StarView, HomeView, GemBuildsView, MarketplaceView, View404
 
 
 class TroveBuilds:
@@ -45,6 +45,7 @@ class TroveBuilds:
         page.window_maximizable = True
         page.window_maximized = True
         page.window_resizable = False
+        page.padding = 0
         page.scroll = "auto"
         page.snack_bar = SnackBar(content=Text(""), bgcolor="green")
         await self.check_login()
@@ -56,6 +57,8 @@ class TroveBuilds:
                 GemView(page),
                 StarView(page),
                 MasteryView(page),
+                GemBuildsView(page),
+                MarketplaceView(page)
             ]
         for view in page.all_views:
             view.appbar = TroveToolsAppBar(
