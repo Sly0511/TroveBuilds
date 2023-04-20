@@ -26,7 +26,7 @@ from flet import (
     DataCell,
     Tabs,
     Tab,
-    Stack
+    Stack,
 )
 from i18n import t
 
@@ -186,10 +186,7 @@ class GemSetController(Controller):
                                 Container(
                                     Row(
                                         controls=[
-                                            Image(
-                                                "assets/images/empty.png",
-                                                width=1
-                                            ),
+                                            Image("assets/images/empty.png", width=1),
                                             Stack(
                                                 controls=[
                                                     Image(
@@ -204,7 +201,7 @@ class GemSetController(Controller):
                                                         ),
                                                         width=32,
                                                         left=6,
-                                                        top=7
+                                                        top=7,
                                                     ),
                                                 ],
                                             ),
@@ -846,9 +843,13 @@ class GemSetController(Controller):
             for i, gem in enumerate(copy(gs)):
                 if gem.tier != GemTier.radiant:
                     if gem.type == GemType.empowered:
-                        gem = EmpoweredGem.random_gem(tier=GemTier.radiant, element=gem.element)
+                        gem = EmpoweredGem.random_gem(
+                            tier=GemTier.radiant, element=gem.element
+                        )
                     elif gem.type == GemType.lesser:
-                        gem = LesserGem.random_gem(tier=GemTier.radiant, element=gem.element)
+                        gem = LesserGem.random_gem(
+                            tier=GemTier.radiant, element=gem.element
+                        )
                     gs[i] = gem
         self.setup_controls(self.selected_gem)
         await self.page.update_async()
@@ -858,9 +859,13 @@ class GemSetController(Controller):
             for i, gem in enumerate(copy(gs)):
                 if gem.tier != GemTier.stellar:
                     if gem.type == GemType.empowered:
-                        gem = EmpoweredGem.random_gem(tier=GemTier.stellar, element=gem.element)
+                        gem = EmpoweredGem.random_gem(
+                            tier=GemTier.stellar, element=gem.element
+                        )
                     elif gem.type == GemType.lesser:
-                        gem = LesserGem.random_gem(tier=GemTier.stellar, element=gem.element)
+                        gem = LesserGem.random_gem(
+                            tier=GemTier.stellar, element=gem.element
+                        )
                     gs[i] = gem
         self.setup_controls(self.selected_gem)
         await self.page.update_async()
@@ -870,9 +875,13 @@ class GemSetController(Controller):
             for i, gem in enumerate(copy(gs)):
                 if gem.tier != GemTier.crystal:
                     if gem.type == GemType.empowered:
-                        gem = EmpoweredGem.random_gem(tier=GemTier.crystal, element=gem.element)
+                        gem = EmpoweredGem.random_gem(
+                            tier=GemTier.crystal, element=gem.element
+                        )
                     elif gem.type == GemType.lesser:
-                        gem = LesserGem.random_gem(tier=GemTier.crystal, element=gem.element)
+                        gem = LesserGem.random_gem(
+                            tier=GemTier.crystal, element=gem.element
+                        )
                     gs[i] = gem
         self.setup_controls(self.selected_gem)
         await self.page.update_async()
