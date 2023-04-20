@@ -79,6 +79,23 @@ class GemSetController(Controller):
                             Column(
                                 controls=[
                                     ElevatedButton(
+                                        t("buttons.all_radiant"),
+                                        on_click=self.on_full_radiant,
+                                    ),
+                                    ElevatedButton(
+                                        t("buttons.all_stellar"),
+                                        on_click=self.on_full_stellar,
+                                    ),
+                                    ElevatedButton(
+                                        t("buttons.all_crystal"),
+                                        on_click=self.on_full_crystal,
+                                    ),
+                                ],
+                                col=2,
+                            ),
+                            Column(
+                                controls=[
+                                    ElevatedButton(
                                         t("buttons.min_level"),
                                         on_click=self.on_min_level,
                                     ),
@@ -135,23 +152,6 @@ class GemSetController(Controller):
                                     ElevatedButton(
                                         t("buttons.all_health"),
                                         on_click=self.on_full_health,
-                                    ),
-                                ],
-                                col=2,
-                            ),
-                            Column(
-                                controls=[
-                                    ElevatedButton(
-                                        t("buttons.all_radiant"),
-                                        on_click=self.on_full_radiant,
-                                    ),
-                                    ElevatedButton(
-                                        t("buttons.all_stellar"),
-                                        on_click=self.on_full_stellar,
-                                    ),
-                                    ElevatedButton(
-                                        t("buttons.all_crystal"),
-                                        on_click=self.on_full_crystal,
                                     ),
                                 ],
                                 col=2,
