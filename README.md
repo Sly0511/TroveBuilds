@@ -32,3 +32,6 @@ Let's be honest, coffees are overrated, scream all you want it's true.
 
 [Paypal](https://paypal.me/Waterin)<br>
 Yes, I ain't going to google "How to put nice badges in my md file on my github repo", that takes effort which I have spent it all on making this garbage.
+
+### Disclaimer
+This app is using assets from TROVE © gamigo US Inc., a member of gamigo group, and it is not endorsed by or affiliated with gamigo.
