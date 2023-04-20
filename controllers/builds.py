@@ -45,6 +45,7 @@ class GemBuildsController(Controller):
             for trove_class in load(open("data/classes.json")):
                 self.classes[trove_class["name"]] = TroveClass(**trove_class)
             self.foods = load(open("data/builds/food.json"))
+            self.allies = load(open("data/builds/ally.json"))
             self.config = BuildConfig()
         self.selected_class = self.classes.get(self.config.character.value, None)
         self.selected_subclass = self.classes.get(self.config.subclass.value, None)
@@ -126,16 +127,29 @@ class GemBuildsController(Controller):
                     controls=[
                         Dropdown(
                             label="Food",
-                            value=self.config.food.name,
+                            value=self.config.food,
                             options=[
                                 dropdown.Option(
-                                    key=Food(name).name,
+                                    key=name,
                                     text=name,
-                                    disabled=Food(name).name == self.config.food.name
+                                    disabled=name == self.config.food
                                 )
                                 for name in self.foods.keys()
                             ],
                             on_change=self.set_food
+                        ),
+                        Dropdown(
+                            label="Ally",
+                            value=self.config.ally,
+                            options=[
+                                dropdown.Option(
+                                    key=name,
+                                    text=name,
+                                    disabled=name == self.config.ally
+                                )
+                                for name in self.allies.keys()
+                            ],
+                            on_change=self.set_ally
                         )
                     ]
                 ),
@@ -235,13 +249,16 @@ class GemBuildsController(Controller):
                     DataColumn(label=Text("Light")),
                     DataColumn(label=Text("Difference #1")),
                     DataColumn(label=Text("Mod coefficient")),
+                    DataColumn(label=Text("Base Damage")),
+                    DataColumn(label=Text("Damage")),
+                    DataColumn(label=Text("Critical")),
                     DataColumn(label=Text("Is Cheap?")),
                 ],
                 bgcolor="#212223"
             )
         if self.config.character:
             self.data_table.rows.clear()
-            builds = self.calculate_results()[:10]
+            builds = self.calculate_results()
             builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
             top = 0
             for i, (
@@ -253,7 +270,7 @@ class GemBuildsController(Controller):
                 final,
                 coefficient,
                 mod_coefficient,
-            ) in enumerate(builds, 1):
+            ) in enumerate(builds[:10], 1):
                 boosts = []
                 [boosts.extend(i) for i in build]
                 if not self.config.light or (
@@ -282,10 +299,13 @@ class GemBuildsController(Controller):
                         cells=[
                             DataCell(content=Text(f"{i}")),
                             DataCell(content=Text(f"{build_text}")),
-                            DataCell(content=Text(f"{coefficient}")),
-                            DataCell(content=Text(f"{third}")),
-                            DataCell(content=Text(f"{abs(coefficient - top) if top else 'Best'}")),
-                            DataCell(content=Text(f"{mod_coefficient}")),
+                            DataCell(content=Text(f"{coefficient:,}")),
+                            DataCell(content=Text(f"{third:,}")),
+                            DataCell(content=Text(f"{round(abs(coefficient - top) / top * 100, 3)}%" if top else "Best")),
+                            DataCell(content=Text(f"{mod_coefficient:,}")),
+                            DataCell(content=Text(f"{round(first):,}")),
+                            DataCell(content=Text(f"{round(final):,}")),
+                            DataCell(content=Text(f"{round(second, 2)}%")),
                             DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
                         ],
                         color="#313233" if i%2 else "#414243"
@@ -345,8 +365,20 @@ class GemBuildsController(Controller):
         first += self.sum_file_values(f"{damage_type.name}/dragons_damage")
         second += self.sum_file_values("critical_damage")
         # Food stats
-        food = self.foods[self.config.food.value]
+        food = self.foods[self.config.food]
         for stat in food["stats"]:
+            if stat["name"] == damage_type.value:
+                if stat["percentage"]:
+                    fourth += stat["value"]
+                else:
+                    first += stat["value"]
+            if stat["name"] == StatName.critical_damage.value:
+                second += stat["value"]
+            if stat["name"] == StatName.light.value:
+                third += stat["value"]
+        # Ally stats
+        ally = self.allies[self.config.ally]
+        for stat in ally["stats"]:
             if stat["name"] == damage_type.value:
                 if stat["percentage"]:
                     fourth += stat["value"]
@@ -362,15 +394,15 @@ class GemBuildsController(Controller):
         if Class.solarion in [self.config.character, self.config.subclass]:
             third += 140
         # Lunar Lancer subclass
-        if damage_type == StatName.physical_damage and self.config.subclass in [
-            Class.lunar_lancer
-        ]:
-            first += 750
+        if damage_type == StatName.physical_damage:
+            if self.config.subclass in [Class.lunar_lancer]:
+                first += 750
+        # Shadow Hunter and Ice Sage
+        if damage_type == StatName.magic_damage:
+            if self.config.subclass in [Class.ice_sage, Class.shadow_hunter]:
+                first += 750
         # Bard and Boomeranger subclasses
-        if damage_type == StatName.magic_damage and self.config.subclass in [
-            Class.bard,
-            Class.boomeranger,
-        ]:
+        if self.config.subclass in [Class.bard, Class.boomeranger]:
             second += 20
         # Active subclass boosts
         if self.config.subclass_active:
@@ -540,7 +572,12 @@ class GemBuildsController(Controller):
         await self.page.update_async()
 
     async def set_food(self, event):
-        self.config.food = Food[event.control.value]
+        self.config.food = event.control.value
+        self.setup_controls()
+        await self.page.update_async()
+
+    async def set_ally(self, event):
+        self.config.ally = event.control.value
         self.setup_controls()
         await self.page.update_async()
 

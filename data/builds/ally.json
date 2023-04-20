@@ -1,0 +1,209 @@
+{
+    "Orchian": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 400.0,
+                "percentage": false
+            },
+            {
+                "name": "Magic Damage",
+                "value": 25.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    },
+    "Aevyr": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 300.0,
+                "percentage": false
+            },
+            {
+                "name": "Magic Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Gain 15% health when a nearby enemy dies.",
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    },
+    "Prefect Penguin": {
+        "stats": [
+            {
+                "name": "Magic Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Gain 15% health when a nearby enemy dies.",
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    },
+    "Starry Skyfire": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 400.0,
+                "percentage": false
+            },
+            {
+                "name": "Magic Damage",
+                "value": 25.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Increases cooldown recovery speed by 25%."
+        ]
+    },
+    "Puck": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 300.0,
+                "percentage": false
+            },
+            {
+                "name": "Magic Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Increases cooldown recovery speed by 25%."
+        ]
+    },
+    "Chronomancer Qubesly": {
+        "stats": [
+            {
+                "name": "Magic Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Increases cooldown recovery speed by 25%."
+        ]
+    },
+    "Scorpius": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 400.0,
+                "percentage": false
+            },
+            {
+                "name": "Physical Damage",
+                "value": 25.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Gain 15% health when a nearby enemy dies.",
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    },
+    "Animated Jug": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 300.0,
+                "percentage": false
+            },
+            {
+                "name": "Physical Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Gain 15% health when a nearby enemy dies.",
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    },
+    "Rapt Berserker": {
+        "stats": [
+            {
+                "name": "Physical Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Gain 15% health when a nearby enemy dies.",
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    },
+    "Jingles": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 300.0,
+                "percentage": false
+            },
+            {
+                "name": "Physical Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Increases cooldown recovery speed by 25%."
+        ]
+    },
+    "Lil Burgie": {
+        "stats": [
+            {
+                "name": "Physical Damage",
+                "value": 20.0,
+                "percentage": true
+            }
+        ],
+        "abilities": [
+            "Increases cooldown recovery speed by 25%."
+        ]
+    },
+    "Staruable": {
+        "stats": [
+            {
+                "name": "Light",
+                "value": 400.0,
+                "percentage": false
+            },
+            {
+                "name": "Movement Speed",
+                "value": 8.0,
+                "percentage": false
+            }
+        ],
+        "abilities": [
+            "Gain 15% health when a nearby enemy dies.",
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    },
+    "Clownish Kicker": {
+        "stats": [
+            {
+                "name": "Jump",
+                "value": 3.0,
+                "percentage": false
+            },
+            {
+                "name": "Movement Speed",
+                "value": 5.0,
+                "percentage": false
+            }
+        ],
+        "abilities": [
+            "Gain a movement speed boost when a nearby enemy dies."
+        ]
+    }
+}

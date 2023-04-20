@@ -105,7 +105,8 @@ class BuildConfig(BaseModel):
     build_type: BuildType = BuildType.light
     character: Class = Class.bard
     subclass: Class = Class.boomeranger
-    food: Food = Food.freerange
+    food: str = "Freerange Electrolytic Crystals"
+    ally: str = "Clownish Kicker"
     berserker_battler: bool = False
     critical_damage_count: int = 3
     no_face: bool = False
