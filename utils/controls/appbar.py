@@ -11,6 +11,9 @@ from flet import (
     Container,
     VerticalDivider,
     Image,
+    AlertDialog,
+    TextButton,
+    MainAxisAlignment
 )
 from flet_core.colors import SURFACE_VARIANT
 from flet_core.icons import (
@@ -169,7 +172,7 @@ class TroveToolsAppBar(AppBar):
                             text="Report a bug",
                             on_click=self.go_url,
                         ),
-                        PopupMenuItem(icon=HELP, text="About"),
+                        PopupMenuItem(icon=HELP, text="About", on_click=self.open_about),
                     ],
                     tooltip="Others",
                 ),
@@ -231,3 +234,28 @@ class TroveToolsAppBar(AppBar):
             "paypal": "https://www.paypal.com/paypalme/waterin",
         }
         await self.page.launch_url_async(urls[event.control.data])
+
+    async def open_about(self, event):
+        self.dlg = AlertDialog(
+            modal=True,
+            title=Text("About"),
+            actions=[
+                TextButton("Close", on_click=self.close_dlg),
+            ],
+            actions_alignment=MainAxisAlignment.END,
+            content=Text("This application was made by Sly.\n\nI am coding this as an hobby with the goal of"
+                         " achieving greater front-end building skills, at the same time I also improve code"
+                         " making and organization skills\n\nI have the goal to not only build something"
+                         " that is usable but mostly updatable with little effort or code knowledge"
+                         " this however may be a challenge if newer updates come with changes on behavior of"
+                         " previous content.\n\nI don't promise to keep this up to date forever, but as long as"
+                         " I am around I should be able to.\n\nThanks for using my application. <3"),
+            on_dismiss=lambda e: print("Modal dialog dismissed!"),
+        )
+        self.page.dialog = self.dlg
+        self.dlg.open = True
+        await self.page.update_async()
+
+    async def close_dlg(self, e):
+        self.dlg.open = False
+        await self.page.update_async()
