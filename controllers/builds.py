@@ -21,9 +21,11 @@ from flet import (
     VerticalDivider,
     Container,
     Icon,
-    TextField
+    TextField,
+    IconButton
 )
-from flet_core.icons import COPY
+from flet.security import encrypt, decrypt
+from flet_core.icons import COPY, SAVE
 from json import load
 import itertools
 
@@ -269,6 +271,20 @@ class GemBuildsController(Controller):
                 col=2
             )
         ]
+        if not hasattr(self, "features"):
+            self.features = Row()
+        self.features.controls.clear()
+        self.features.controls.extend(
+            [
+                TextField(
+                    data=encrypt(self.config.to_base_64(), self.page.secret_key),
+                    label="Insert build string",
+                    on_submit=self.set_build_string,
+                    col=3
+                ),
+                IconButton(SAVE, on_click=self.copy_build_string, col=1)
+            ]
+        )
         if not hasattr(self, "data_table"):
             self.coeff_table = DataTable(
                 columns=[
@@ -667,6 +683,20 @@ class GemBuildsController(Controller):
         except ValueError:
             event.control.border_color = "red"
             return await event.control.update_async()
+
+    async def set_build_string(self, event):
+        try:
+            self.config = BuildConfig.from_base_64(decrypt(event.control.value, self.page.secret_key))
+        except:
+            ...
+        self.setup_controls()
+        await self.page.update_async()
+
+    async def copy_build_string(self, _):
+        await self.page.set_clipboard_async(self.features.controls[0].data)
+        self.page.snack_bar.content.value = "Copied to clipboard"
+        self.page.snack_bar.open = True
+        await self.page.update_async()
 
     async def copy_to_clipboard(self, event):
         if value := event.control.content.value:

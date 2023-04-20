@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from enum import Enum
 from typing import Optional
+from base64 import b64encode, b64decode
+from json import loads
 
 
 class BuildType(Enum):
@@ -112,3 +114,10 @@ class BuildConfig(BaseModel):
     # Prediction based
     cosmic_primordial: bool = False
     crystal_5: bool = False
+
+    def to_base_64(self):
+        return b64encode(self.json().encode('utf-8')).decode('utf-8')
+
+    @classmethod
+    def from_base_64(cls, data):
+        return cls(**loads(b64decode(data.encode("utf-8")).decode("utf-8")))

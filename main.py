@@ -154,7 +154,10 @@ class TroveBuilds:
     @tasks.loop(seconds=1)
     async def update_clock(self):
         self.page.clock.value = (datetime.utcnow() - timedelta(hours=11)).strftime("Trove Time: %Y-%m-%d\t\t%H:%M:%S")
-        await self.page.clock.update_async()
+        try:
+            await self.page.clock.update_async()
+        except Exception:
+            ...
 
 
 if __name__ == "__main__":
