@@ -12,6 +12,8 @@ from utils.controls import TroveToolsAppBar
 from utils.localization import LocalizationManager, Locale
 from utils.logger import Logger
 from utils.objects import DiscordOAuth2
+from datetime import datetime, timedelta
+from utils import tasks
 from views import GemSetView, GemView, MasteryView, StarView, HomeView, GemBuildsView, MarketplaceView, View404
 
 
@@ -22,6 +24,7 @@ class TroveBuilds:
     async def start(self, page: Page, restart=False, translate=False):
         if not restart:
             self.page = page
+            page.clock = Text("Trove Time")
             page.login_provider = DiscordOAuth2(
                 client_id=get_key(".env", "DISCORD_CLIENT"),
                 client_secret=get_key(".env", "DISCORD_SECRET")
@@ -72,6 +75,8 @@ class TroveBuilds:
                 view = v
         page.appbar = view.appbar
         await page.add_async(Column(controls=view.controls))
+        if not self.update_clock.is_running():
+            self.update_clock.start()
 
     async def check_login(self):
         self.page.secret_key = get_key(".env", "APP_SECRET")
@@ -145,6 +150,11 @@ class TroveBuilds:
     def setup_localization(self):
         LocalizationManager(self.page).update_all_translations()
         self.page.logger.info("Updated localization strings")
+
+    @tasks.loop(seconds=1)
+    async def update_clock(self):
+        self.page.clock.value = (datetime.utcnow() - timedelta(hours=11)).strftime("Trove Time: %Y-%m-%d\t\t%H:%M:%S")
+        await self.page.clock.update_async()
 
 
 if __name__ == "__main__":
