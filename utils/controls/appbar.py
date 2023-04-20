@@ -177,7 +177,7 @@ class TroveToolsAppBar(AppBar):
         )
         actions.extend(kwargs.get("actions", []))
         super().__init__(
-            leading_width=40, bgcolor=SURFACE_VARIANT, actions=actions, **kwargs
+            leading_width=40, bgcolor=SURFACE_VARIANT, actions=actions, center_title=True, **kwargs
         )
 
     async def change_theme(self, _):
