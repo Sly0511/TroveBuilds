@@ -14,8 +14,8 @@ from flet import (
 )
 from flet_core.colors import SURFACE_VARIANT
 from flet_core.icons import (
-    WB_SUNNY_OUTLINED,
-    WB_SUNNY,
+    LIGHT_MODE,
+    DARK_MODE,
     LANGUAGE,
     HOME,
     NOW_WIDGETS_SHARP,
@@ -41,9 +41,9 @@ class TroveToolsAppBar(AppBar):
             [
                 IconButton(
                     data="theme_switcher",
-                    icon=WB_SUNNY_OUTLINED
+                    icon=DARK_MODE
                     if self.page.theme_mode == "LIGHT"
-                    else WB_SUNNY,
+                    else LIGHT_MODE,
                     on_click=self.change_theme,
                     tooltip="Change theme",
                 ),
@@ -186,7 +186,7 @@ class TroveToolsAppBar(AppBar):
         for action in self.actions:
             if action.data == "theme_switcher":
                 action.icon = (
-                    WB_SUNNY_OUTLINED if self.page.theme_mode == "LIGHT" else WB_SUNNY
+                    DARK_MODE if self.page.theme_mode == "LIGHT" else LIGHT_MODE
                 )
             if action.data == "other-buttons":
                 for item in action.items:
