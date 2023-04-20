@@ -248,7 +248,7 @@ class GemBuildsController(Controller):
                     ],
                     spacing=11
                 ),
-                col=1
+                col=2
             )
         ]
         if not hasattr(self, "data_table"):
@@ -261,6 +261,7 @@ class GemBuildsController(Controller):
                     DataColumn(label=Text("Difference #1")),
                     DataColumn(label=Text("Mod coefficient")),
                     DataColumn(label=Text("Base Damage")),
+                    DataColumn(label=Text("Bonus Damage")),
                     DataColumn(label=Text("Damage")),
                     DataColumn(label=Text("Critical")),
                     DataColumn(label=Text("Is Cheap?")),
@@ -315,6 +316,7 @@ class GemBuildsController(Controller):
                             DataCell(content=Text(f"{round(abs(coefficient - top) / top * 100, 3)}%" if top else "Best")),
                             DataCell(content=Text(f"{mod_coefficient:,}")),
                             DataCell(content=Text(f"{round(first):,}")),
+                            DataCell(content=Text(f"{round(fourth):,}%")),
                             DataCell(content=Text(f"{round(final):,}")),
                             DataCell(content=Text(f"{round(second, 2):,}%")),
                             DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
@@ -374,6 +376,7 @@ class GemBuildsController(Controller):
             first += 4719
         # Dragon stats
         first += self.sum_file_values(f"{damage_type.name}/dragons_damage")
+        first += self.sum_file_values(f"dragons_damage")
         second += self.sum_file_values("critical_damage")
         # Food stats
         food = self.foods[self.config.food]
