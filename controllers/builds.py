@@ -19,8 +19,10 @@ from flet import (
     Slider,
     Divider,
     VerticalDivider,
-    Container
+    Container,
+    Icon
 )
+from flet_core.icons import COPY
 from json import load
 import itertools
 
@@ -256,15 +258,15 @@ class GemBuildsController(Controller):
                 columns=[
                     DataColumn(label=Text("Rank")),
                     DataColumn(label=Text("Build")),
-                    DataColumn(label=Text("Coefficient")),
                     DataColumn(label=Text("Light")),
-                    DataColumn(label=Text("Difference #1")),
-                    DataColumn(label=Text("Mod coefficient")),
                     DataColumn(label=Text("Base Damage")),
                     DataColumn(label=Text("Bonus Damage")),
                     DataColumn(label=Text("Damage")),
                     DataColumn(label=Text("Critical")),
+                    DataColumn(label=Text("Coefficient")),
+                    DataColumn(label=Text("Difference #1")),
                     DataColumn(label=Text("Is Cheap?")),
+                    DataColumn(label=Text("")),
                 ],
                 bgcolor="#212223"
             )
@@ -281,7 +283,6 @@ class GemBuildsController(Controller):
                 fourth,
                 final,
                 coefficient,
-                mod_coefficient,
             ) in enumerate(builds[:10], 1):
                 boosts = []
                 [boosts.extend(i) for i in build]
@@ -310,16 +311,18 @@ class GemBuildsController(Controller):
                     DataRow(
                         cells=[
                             DataCell(content=Text(f"{i}")),
-                            DataCell(content=Text(f"{build_text}")),
-                            DataCell(content=Text(f"{coefficient:,}")),
+                            DataCell(content=Text(f"{build_text}"), on_tap=self.copy_to_clipboard),
                             DataCell(content=Text(f"{third:,}")),
-                            DataCell(content=Text(f"{round(abs(coefficient - top) / top * 100, 3)}%" if top else "Best")),
-                            DataCell(content=Text(f"{mod_coefficient:,}")),
                             DataCell(content=Text(f"{round(first):,}")),
                             DataCell(content=Text(f"{round(fourth):,}%")),
                             DataCell(content=Text(f"{round(final):,}")),
                             DataCell(content=Text(f"{round(second, 2):,}%")),
+                            DataCell(content=Text(f"{coefficient:,}"), on_tap=self.copy_to_clipboard),
+                            DataCell(content=Text(f"{round(abs(coefficient - top) / top * 100, 3)}%" if top else "Best")),
                             DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
+                            DataCell(
+                                content=Icon(COPY, data=self.get_build_string([])),
+                                on_tap=self.copy_build_clipboard),
                         ],
                         color="#313233" if i%2 else "#414243"
                     )
@@ -377,7 +380,7 @@ class GemBuildsController(Controller):
         # Dragon stats
         first += self.sum_file_values(f"{damage_type.name}/dragons_damage")
         first += self.sum_file_values(f"dragons_damage")
-        second += self.sum_file_values("critical_damage")
+        second += self.sum_file_values("dragons_critical_damage")
         # Food stats
         food = self.foods[self.config.food]
         for stat in food["stats"]:
@@ -457,7 +460,6 @@ class GemBuildsController(Controller):
             else:
                 final = cfirst
             coefficient = round(final * (1 + csecond / 100))
-            mod_coefficient = int(round(final) * (1 + round(csecond, 1) / 100))
             build_stats = [
                 build,
                 cfirst,
@@ -466,7 +468,6 @@ class GemBuildsController(Controller):
                 fourth,
                 final,
                 coefficient,
-                mod_coefficient,
             ]
             yield build_stats
 
@@ -598,4 +599,21 @@ class GemBuildsController(Controller):
     async def toggle_berserker_battler(self, _):
         self.config.berserker_battler = not self.config.berserker_battler
         self.setup_controls()
+        await self.page.update_async()
+
+    async def copy_to_clipboard(self, event):
+        if value := event.control.content.value:
+            await self.page.set_clipboard_async(str(value))
+            self.page.snack_bar.content.value = "Copied to clipboard"
+            self.page.snack_bar.open = True
+        await self.page.update_async()
+
+    def get_build_string(self, data):
+        return "Lol"
+
+    async def copy_build_clipboard(self, event):
+        if value := event.control.content.value:
+            await self.page.set_clipboard_async(str(value))
+            self.page.snack_bar.content.value = "Copied to clipboard"
+            self.page.snack_bar.open = True
         await self.page.update_async()
