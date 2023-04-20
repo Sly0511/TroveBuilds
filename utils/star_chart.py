@@ -2,6 +2,8 @@
 import json
 from enum import Enum
 from pydantic import BaseModel, Field
+from math import radians, sin, cos
+from json import dumps
 
 __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 
@@ -31,13 +33,14 @@ __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 #                     tree_branch = tree_branch["Stars"][int(x)]
 #             Type = name.split(" of ")
 #             Star = {
+#                 "Path": tree.lower() + "." + index,
 #                 "Constellation": tree,
 #                 "Type": "Minor" if Type[0].startswith("Minor") else "Major",
 #                 "Name": Type[1].replace("the ", " "),
 #                 "Description": description,
 #                 "Stats": [],
 #                 "Abilities": [],
-#                 "Stars": [],
+#                 "Stars": []
 #             }
 #             Star["Stats" if not Star["Type"] == "Major" else "Abilities"].extend(
 #                 details.split("\\n")
@@ -51,7 +54,19 @@ __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 
 
 class StarChart(BaseModel):
-    constellations: dict = Field(default_factory=dict)
+    constellations: list = Field(default_factory=list)
+
+    def get_stars(self):
+        for constellation in self.constellations:
+            yield constellation
+            for star in self.__iterate_stars(constellation):
+                yield star
+
+    def __iterate_stars(self, parent):
+        for star in parent.children:
+            yield star
+            for child in self.__iterate_stars(star):
+                yield child
 
     def __str__(self):
         return f"<StarChart constellations=[{', '.join([c.value for c in self.constellations.keys()])}]>"
@@ -67,12 +82,14 @@ class Constellation(Enum):
 
 
 class StarType(Enum):
+    root = "Root"
     minor = "Minor"
     major = "Major"
 
 
 class Star(BaseModel):
     constellation: Constellation
+    coords: list[int]
     type: StarType
     name: str
     description: str
@@ -80,6 +97,7 @@ class Star(BaseModel):
     abilities: list[str] = []
     unlocked: bool = False
     parent: object = None
+    path: str
     children: list = []
 
     def __str__(self):
@@ -87,6 +105,10 @@ class Star(BaseModel):
 
     def __repr__(self):
         return f'<Star name="{self.name}" type={self.type.value} unlocked={self.unlocked} children={len(self.children)}>'
+
+    @property
+    def full_name(self):
+        return self.type.value + " star of " + self.name.strip()
 
     def unlock(self):
         self.unlocked = True
@@ -110,29 +132,69 @@ class Star(BaseModel):
 
 def build_star_chart(star_dict: dict, parent: Star = None):
     star = Star(
+        path=star_dict["Path"],
+        coords=star_dict["Coords"],
         constellation=Constellation(star_dict["Constellation"]),
         type=StarType(star_dict["Type"]),
         name=star_dict["Name"],
         description=star_dict["Description"],
-        stats=star_dict["Stats"],
-        abilities=star_dict["Abilities"],
+        stats=star_dict.get("Stats", []),
+        abilities=star_dict.get("Abilities", []),
         children=[],
         parent=parent,
     )
     for cstar in star_dict["Stars"]:
         star.add_child(build_star_chart(cstar, star))
+        break
     return star
+
+
+def rotate(origin, point, angle):
+    ox, oy = origin
+    px, py = point
+    qx = ox + cos(angle) * (px - ox) - sin(angle) * (py - oy)
+    qy = oy + sin(angle) * (px - ox) + cos(angle) * (py - oy)
+    return qx, qy
+
+
+def build_branch(back_rotate, last_position, distance, star):
+    for i, child in enumerate(star["Stars"], 1):
+        total_angle = 180
+        splits = len(star["Stars"]) + 1
+        division = total_angle / splits
+        child_rotation = radians(division * i)
+        child_position = last_position[0] - distance, last_position[1]
+        back_rotated_position = rotate(last_position, child_position, back_rotate)
+        rotated_position = rotate(last_position, back_rotated_position, child_rotation)
+        child["Coords"] = rotated_position
+        build_branch(back_rotate - child_rotation / 2, rotated_position, distance, child)
+
+
+def rotate_branch(star, origin, angle):
+    for child in star["Stars"]:
+        child["Coords"] = rotate(origin, child["Coords"], angle)
+        rotate_branch(child, origin, angle)
 
 
 def get_star_chart():
     star_chart = json.load(open("data/star_chart.json"))
     obj_star_chart = StarChart()
-    for constellation in Constellation:
-        obj_star_chart.constellations.update(
-            {
-                constellation: build_star_chart(
-                    star_chart[constellation.value]["Stars"][0]
-                )
-            }
-        )
+    origin = 446, 433
+    point_distance = 100
+    for i, constellation in enumerate(Constellation):
+        total_angle = 360
+        division = total_angle / len(Constellation)
+        branch_rotation = radians(division * i)
+        position = origin[0], origin[1] - point_distance
+        rotated_position = rotate(origin, position, branch_rotation)
+        constell = star_chart[constellation.value]
+        constell["Coords"] = rotated_position
+        build_branch(radians(14), position, 43, constell)
+        rotate_branch(constell, origin, branch_rotation)
+        break
+
+    for constellation, data in star_chart.items():
+        obj_star_chart.constellations.append(build_star_chart(data))
+        break
+
     return obj_star_chart
