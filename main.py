@@ -1,7 +1,7 @@
 import asyncio
 
 from dotenv import get_key
-from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column
+from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column, Row
 from flet.security import encrypt, decrypt
 from httpx import HTTPStatusError
 from i18n import t
@@ -65,7 +65,7 @@ class TroveBuilds:
             ]
         for view in page.all_views:
             view.appbar = TroveToolsAppBar(
-                leading=view.icon, title=view.title, views=page.all_views[1:], page=page
+                leading=Row(controls=[view.icon, page.clock]), title=view.title, views=page.all_views[1:], page=page
             )
         # Push UI elements into view
         await page.clean_async()
