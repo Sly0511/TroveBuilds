@@ -17,7 +17,9 @@ from flet import (
     CircleAvatar,
     Switch,
     Slider,
-    Divider
+    Divider,
+    VerticalDivider,
+    Container
 )
 from json import load
 import itertools
@@ -31,6 +33,7 @@ from models.objects.builds import (
     BuildConfig,
     BuildType,
     DamageType,
+    Food
 )
 from utils.functions import get_key, get_attr
 
@@ -41,6 +44,7 @@ class GemBuildsController(Controller):
             self.classes = {}
             for trove_class in load(open("data/classes.json")):
                 self.classes[trove_class["name"]] = TroveClass(**trove_class)
+            self.foods = load(open("data/builds/food.json"))
             self.config = BuildConfig()
         self.selected_class = self.classes.get(self.config.character.value, None)
         self.selected_subclass = self.classes.get(self.config.subclass.value, None)
@@ -120,6 +124,26 @@ class GemBuildsController(Controller):
             Card(
                 content=Column(
                     controls=[
+                        Dropdown(
+                            label="Food",
+                            value=self.config.food.name,
+                            options=[
+                                dropdown.Option(
+                                    key=Food(name).name,
+                                    text=name,
+                                    disabled=Food(name).name == self.config.food.name
+                                )
+                                for name in self.foods.keys()
+                            ],
+                            on_change=self.set_food
+                        )
+                    ]
+                ),
+                col=3
+            ),
+            Card(
+                content=Column(
+                    controls=[
                         Column(
                             controls=[
                                 Text(f"Critical Damage stats on gear: {self.config.critical_damage_count}"),
@@ -133,25 +157,40 @@ class GemBuildsController(Controller):
                                 )
                             ]
                         ),
-                        Column(
+                        Row(
                             controls=[
-                                Text("Damage on face"),
-                                Switch(
-                                    value=not self.config.no_face,
-                                    on_change=self.toggle_face
-                                )
+
+                                Column(
+                                    controls=[
+                                        Text("Damage on face"),
+                                        Switch(
+                                            value=not self.config.no_face,
+                                            on_change=self.toggle_face
+                                        )
+                                    ]
+                                ),
+                                VerticalDivider(),
+                                Column(
+                                    controls=[
+                                        Text("Subclass ability active"),
+                                        Switch(
+                                            value=self.config.subclass_active,
+                                            on_change=self.toggle_subclass_active
+                                        )
+                                    ]
+                                ),
+                                VerticalDivider(),
+                                Column(
+                                    controls=[
+                                        Text("Berserker Battler"),
+                                        Switch(
+                                            value=self.config.berserker_battler,
+                                            on_change=self.toggle_berserker_battler
+                                        )
+                                    ]
+                                ),
                             ]
-                        ),
-                        Column(
-                            controls=[
-                                Text("Subclass ability active"),
-                                Switch(
-                                    label="",
-                                    value=self.config.subclass_active,
-                                    on_change=self.toggle_subclass_active
-                                )
-                            ]
-                        ),
+                        )
                     ],
                     spacing=11
                 ),
@@ -196,8 +235,9 @@ class GemBuildsController(Controller):
                     DataColumn(label=Text("Light")),
                     DataColumn(label=Text("Difference #1")),
                     DataColumn(label=Text("Mod coefficient")),
-                    # DataColumn(label=Text("Is Cheap?")),
+                    DataColumn(label=Text("Is Cheap?")),
                 ],
+                bgcolor="#212223"
             )
         if self.config.character:
             self.data_table.rows.clear()
@@ -230,6 +270,13 @@ class GemBuildsController(Controller):
                     if len(boosts) > 4
                     else ""
                 )
+                if (3 <= build[0][0] <= 6 and
+                    3 <= build[0][1] <= 6 and
+                    6 <= build[1][0] <= 12 and
+                    6 <= build[1][1] <= 12):
+                    cheap = True
+                else:
+                    cheap = False
                 self.data_table.rows.append(
                     DataRow(
                         cells=[
@@ -237,10 +284,11 @@ class GemBuildsController(Controller):
                             DataCell(content=Text(f"{build_text}")),
                             DataCell(content=Text(f"{coefficient}")),
                             DataCell(content=Text(f"{third}")),
-                            DataCell(content=Text(f"{abs(coefficient - top)}")),
+                            DataCell(content=Text(f"{abs(coefficient - top) if top else 'Best'}")),
                             DataCell(content=Text(f"{mod_coefficient}")),
-                            # DataCell(content=Text(f"Yes")),
-                        ]
+                            DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
+                        ],
+                        color="#313233" if i%2 else "#414243"
                     )
                 )
                 if not top:
@@ -296,6 +344,18 @@ class GemBuildsController(Controller):
         # Dragon stats
         first += self.sum_file_values(f"{damage_type.name}/dragons_damage")
         second += self.sum_file_values("critical_damage")
+        # Food stats
+        food = self.foods[self.config.food.value]
+        for stat in food["stats"]:
+            if stat["name"] == damage_type.value:
+                if stat["percentage"]:
+                    fourth += stat["value"]
+                else:
+                    first += stat["value"]
+            if stat["name"] == StatName.critical_damage.value:
+                second += stat["value"]
+            if stat["name"] == StatName.light.value:
+                third += stat["value"]
         # Remove critical damage stats from equipments (movement speed builds)
         second -= 44.2 * (3 - self.config.critical_damage_count)
         # Solarion 140 Light
@@ -324,6 +384,9 @@ class GemBuildsController(Controller):
             # Lunar Lancer and Candy Barbarian
             if self.config.subclass in [Class.lunar_lancer, Class.candy_barbarian]:
                 fourth += 30
+        # Berserker battler stats
+        if self.config.berserker_battler:
+            third += 750
         # Crystal 5 (will implement later)
         ...
         builder = self.generate_combinations(
@@ -338,11 +401,12 @@ class GemBuildsController(Controller):
             cfirst = first + gem_first
             csecond = second + gem_second
             cthird = third + gem_third
-            if self.config.build_type in [BuildType.health]:
-                cfirst *= 1 + (
-                    get_key(self.selected_class.bonuses, {"name": damage_type.value})
-                    / 100
-                )
+            if self.config.build_type not in [BuildType.health]:
+                if class_bonus := get_attr(self.selected_class.bonuses, name=damage_type.value):
+                    cfirst *= 1 + (
+                        class_bonus
+                        / 100
+                    )
                 final = cfirst * (1 + fourth / 100)
             else:
                 final = cfirst
@@ -472,5 +536,15 @@ class GemBuildsController(Controller):
 
     async def toggle_crystal_5(self, _):
         self.config.crystal_5 = not self.config.crystal_5
+        self.setup_controls()
+        await self.page.update_async()
+
+    async def set_food(self, event):
+        self.config.food = Food[event.control.value]
+        self.setup_controls()
+        await self.page.update_async()
+
+    async def toggle_berserker_battler(self, _):
+        self.config.berserker_battler = not self.config.berserker_battler
         self.setup_controls()
         await self.page.update_async()

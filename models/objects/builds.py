@@ -94,10 +94,19 @@ class StarChartConfig(BaseModel):
     ...
 
 
+class Food(Enum):
+    freerange = "Freerange Electrolytic Crystals"
+    soup = "Premium Fish Soup"
+    fillet = "Premium Fish Fillet"
+    kabobs = "Premium Fish Kabobs"
+
+
 class BuildConfig(BaseModel):
     build_type: BuildType = BuildType.light
     character: Class = Class.bard
     subclass: Class = Class.boomeranger
+    food: Food = Food.freerange
+    berserker_battler: bool = False
     critical_damage_count: int = 3
     no_face: bool = False
     light: int = 0
