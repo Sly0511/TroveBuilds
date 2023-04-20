@@ -20,7 +20,8 @@ from flet import (
     Divider,
     VerticalDivider,
     Container,
-    Icon
+    Icon,
+    TextField
 )
 from flet_core.icons import COPY
 from json import load
@@ -37,11 +38,11 @@ from models.objects.builds import (
     DamageType,
     Food
 )
-from utils.functions import get_key, get_attr
+from utils.functions import get_key, get_attr, throttle, chunks
 
 
 class GemBuildsController(Controller):
-    def setup_controls(self):
+    def setup_controls(self, page=0):
         if not hasattr(self, "classes"):
             self.classes = {}
             for trove_class in load(open("data/classes.json")):
@@ -115,7 +116,7 @@ class GemBuildsController(Controller):
                                             disabled=b.name == self.config.build_type.name
                                         )
                                         for b in BuildType
-
+                                        if b != BuildType.health
                                     ],
                                     on_change=self.set_build_type
                                 ),
@@ -226,27 +227,42 @@ class GemBuildsController(Controller):
             Card(
                 content=Column(
                     controls=[
-                        Text("Predictions", size=22),
-                        Column(
-                            controls=[
-                                Text("Cosmic Primordial"),
-                                Switch(
-                                    value=self.config.cosmic_primordial,
-                                    on_change=self.toggle_cosmic_primordial
-                                )
-                            ]
+                        # Text("Predictions", size=22),
+                        # Column(
+                        #     controls=[
+                        #         Text("Cosmic Primordial"),
+                        #         Switch(
+                        #             value=self.config.cosmic_primordial,
+                        #             on_change=self.toggle_cosmic_primordial
+                        #         )
+                        #     ]
+                        # ),
+                        # Column(
+                        #     controls=[
+                        #         Text("Crystal 5 (WIP)"),
+                        #         Switch(
+                        #             label="",
+                        #             value=self.config.crystal_5,
+                        #             on_change=self.toggle_crystal_5,
+                        #             disabled=True
+                        #         )
+                        #     ]
+                        # ),
+                        Switch(
+                            label="Star Chart",
+                            value=self.config.star_chart,
+                            on_change=self.toggle_star_chart
                         ),
-                        Column(
-                            controls=[
-                                Text("Crystal 5 (WIP)"),
-                                Switch(
-                                    label="",
-                                    value=self.config.crystal_5,
-                                    on_change=self.toggle_crystal_5,
-                                    disabled=True
-                                )
-                            ]
-                        ),
+                        Text("250 Light\n27% Bonus Damage\n35% Critical Damage"),
+                        *[
+                            TextField(
+                                label="Light",
+                                value=str(self.config.light),
+                                on_submit=self.set_light
+                            )
+                            for _ in range(1)
+                            if self.config.build_type != BuildType.light
+                        ]
                     ],
                     spacing=11
                 ),
@@ -254,7 +270,7 @@ class GemBuildsController(Controller):
             )
         ]
         if not hasattr(self, "data_table"):
-            self.data_table = DataTable(
+            self.coeff_table = DataTable(
                 columns=[
                     DataColumn(label=Text("Rank")),
                     DataColumn(label=Text("Build")),
@@ -270,10 +286,22 @@ class GemBuildsController(Controller):
                 ],
                 bgcolor="#212223"
             )
+            self.data_table = Container(
+                content=Column(
+                    controls=[
+                        self.coeff_table
+                    ]
+                )
+            )
         if self.config.character:
-            self.data_table.rows.clear()
+            self.coeff_table.rows.clear()
             builds = self.calculate_results()
             builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
+            paged_builds = chunks(builds, 10)
+            if page < 0:
+                page = 0
+            elif page > len(paged_builds) - 1:
+                page = len(paged_builds) - 1
             top = 0
             for i, (
                 build,
@@ -283,7 +311,7 @@ class GemBuildsController(Controller):
                 fourth,
                 final,
                 coefficient,
-            ) in enumerate(builds[:10], 1):
+            ) in enumerate(paged_builds[page], 1):
                 boosts = []
                 [boosts.extend(i) for i in build]
                 if not self.config.light or (
@@ -307,7 +335,7 @@ class GemBuildsController(Controller):
                     cheap = True
                 else:
                     cheap = False
-                self.data_table.rows.append(
+                self.coeff_table.rows.append(
                     DataRow(
                         cells=[
                             DataCell(content=Text(f"{i}")),
@@ -321,7 +349,17 @@ class GemBuildsController(Controller):
                             DataCell(content=Text(f"{round(abs(coefficient - top) / top * 100, 3)}%" if top else "Best")),
                             DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
                             DataCell(
-                                content=Icon(COPY, data=self.get_build_string([])),
+                                content=Icon(COPY, data=self.get_build_string(
+                                    [
+                                        build_text,
+                                        first,
+                                        second,
+                                        third,
+                                        fourth,
+                                        final,
+                                        coefficient
+                                    ]
+                                )),
                                 on_tap=self.copy_build_clipboard),
                         ],
                         color="#313233" if i%2 else "#414243"
@@ -352,9 +390,6 @@ class GemBuildsController(Controller):
         ).value
         if self.selected_class.subclass in [Class.chloromancer]:
             second += 60
-        if self.config.crystal_5:
-            first += 17290
-            second += 104
         return first, second, 0, 0
 
     def calculate_damage_build_stats(self):
@@ -405,6 +440,11 @@ class GemBuildsController(Controller):
                 second += stat["value"]
             if stat["name"] == StatName.light.value:
                 third += stat["value"]
+        # Add Star Chart stats
+        if self.config.star_chart:
+            second += 35
+            third += 250
+            fourth += 27
         # Remove critical damage stats from equipments (movement speed builds)
         second -= 44.2 * (3 - self.config.critical_damage_count)
         # Solarion 140 Light
@@ -548,6 +588,16 @@ class GemBuildsController(Controller):
 
     async def set_class(self, event):
         self.config.character = Class[event.control.value]
+        self.selected_class = self.classes.get(self.config.character.value, None)
+        damage_type = (
+            StatName.magic_damage
+            if self.selected_class.damage_type == DamageType.magic
+            else StatName.physical_damage
+        )
+        if damage_type == DamageType.magic:
+            self.config.ally = "Starry Skyfire"
+        elif damage_type == DamageType.physical:
+            self.config.ally = "Scorpius"
         self.setup_controls()
         await self.page.update_async()
 
@@ -601,6 +651,23 @@ class GemBuildsController(Controller):
         self.setup_controls()
         await self.page.update_async()
 
+    async def toggle_star_chart(self, _):
+        self.config.star_chart = not self.config.star_chart
+        self.setup_controls()
+        await self.page.update_async()
+
+    @throttle
+    async def set_light(self, event):
+        event.control.border_color = None
+        try:
+            value = int(event.control.value)
+            self.config.light = value
+            self.setup_controls()
+            await event.control.update_async()
+        except ValueError:
+            event.control.border_color = "red"
+            return await event.control.update_async()
+
     async def copy_to_clipboard(self, event):
         if value := event.control.content.value:
             await self.page.set_clipboard_async(str(value))
@@ -609,10 +676,18 @@ class GemBuildsController(Controller):
         await self.page.update_async()
 
     def get_build_string(self, data):
-        return "Lol"
+        string = ""
+        string += f"Build: {data[0]}\n"
+        string += f"Light: {data[2]}\n"
+        string += f"Base Damage: {data[1]}\n"
+        string += f"Bonus Damage: {data[4]}\n"
+        string += f"Damage: {data[5]}\n"
+        string += f"Critical Damage: {data[2]}\n"
+        string += f"Coefficient: {data[6]}"
+        return string
 
     async def copy_build_clipboard(self, event):
-        if value := event.control.content.value:
+        if value := event.control.content.data:
             await self.page.set_clipboard_async(str(value))
             self.page.snack_bar.content.value = "Copied to clipboard"
             self.page.snack_bar.open = True

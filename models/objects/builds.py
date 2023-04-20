@@ -90,10 +90,6 @@ class TroveClass(BaseModel):
         return f"assets/images/classes/icons/{self.name.name}.png"
 
 
-class StarChartConfig(BaseModel):
-    ...
-
-
 class Food(Enum):
     freerange = "Freerange Electrolytic Crystals"
     soup = "Premium Fish Soup"
@@ -106,13 +102,13 @@ class BuildConfig(BaseModel):
     character: Class = Class.bard
     subclass: Class = Class.boomeranger
     food: str = "Freerange Electrolytic Crystals"
-    ally: str = "Clownish Kicker"
+    ally: str = "Starry Skyfire"
     berserker_battler: bool = False
     critical_damage_count: int = 3
     no_face: bool = False
     light: int = 0
     subclass_active: bool = False
-    star_chart: Optional[StarChartConfig] = None
+    star_chart: bool = True
     # Prediction based
     cosmic_primordial: bool = False
     crystal_5: bool = False
