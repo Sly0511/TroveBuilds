@@ -36,3 +36,27 @@ def split_boosts(n):
     b = randint(0, n - a)
     c = n - a - b
     return [a, b, c]
+
+
+def get_key(iterable, obj: dict):
+    for z in iterable:
+        try:
+            for x, y in obj.items():
+                if z[x] == y:
+                    ...
+            return z
+        except KeyError:
+            ...
+    return None
+
+
+def get_attr(iterable, **kwargs):
+    for z in iterable:
+        try:
+            for x, y in kwargs.items():
+                if getattr(z, x) != y:
+                    raise ValueError
+            return z
+        except ValueError:
+            ...
+    return None
