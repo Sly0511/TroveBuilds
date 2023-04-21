@@ -72,6 +72,29 @@ class Stat(BaseModel):
     percentage: bool
 
 
+class AbilityType(Enum):
+    active = "Active"
+    passive = "Passive"
+    upgrade = "Upgrade"
+
+
+class AbilityStage(BaseModel):
+    name: str
+    base: float
+    multiplier: float
+
+
+class Ability(BaseModel):
+    name: str
+    icon: str
+    type: AbilityType
+    stages: list[AbilityStage]
+
+    @property
+    def icon_path(self):
+        return f"assets/images/abilities/{self.icon}.png"
+
+
 class TroveClass(BaseModel):
     name: Class
     qualified_name: str
@@ -82,6 +105,7 @@ class TroveClass(BaseModel):
     stats: list[Stat]
     bonuses: list[Stat]
     subclass: dict
+    abilities: list[Ability] = []
 
     @property
     def image_path(self):
@@ -101,7 +125,7 @@ class Food(Enum):
 
 class BuildConfig(BaseModel):
     build_type: BuildType = BuildType.light
-    character: Class = Class.bard
+    character: Class = Class.gunslinger
     subclass: Class = Class.boomeranger
     food: str = "Freerange Electrolytic Crystals"
     ally: str = "Starry Skyfire"

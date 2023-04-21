@@ -25,7 +25,7 @@ from flet import (
     IconButton
 )
 from flet.security import encrypt, decrypt
-from flet_core.icons import COPY, SAVE
+from flet_core.icons import COPY, SAVE, CALCULATE
 from json import load
 import itertools
 
@@ -38,7 +38,8 @@ from models.objects.builds import (
     BuildConfig,
     BuildType,
     DamageType,
-    Food
+    Food,
+    AbilityType
 )
 from utils.functions import get_key, get_attr, throttle, chunks
 
@@ -46,6 +47,7 @@ from utils.functions import get_key, get_attr, throttle, chunks
 class GemBuildsController(Controller):
     def setup_controls(self, page=0):
         if not hasattr(self, "classes"):
+            self.selected_build = None
             self.classes = {}
             for trove_class in load(open("data/classes.json")):
                 self.classes[trove_class["name"]] = TroveClass(**trove_class)
@@ -255,7 +257,7 @@ class GemBuildsController(Controller):
                             value=self.config.star_chart,
                             on_change=self.toggle_star_chart
                         ),
-                        Text("250 Light\n27% Bonus Damage\n35% Critical Damage"),
+                        Text("250 Light\n27% Bonus Damage\n35% Critical Damage") if self.config.star_chart else Text(),
                         *[
                             TextField(
                                 label="Light",
@@ -279,10 +281,9 @@ class GemBuildsController(Controller):
                 TextField(
                     data=encrypt(self.config.to_base_64(), self.page.secret_key),
                     label="Insert build string",
-                    on_submit=self.set_build_string,
-                    col=3
+                    on_submit=self.set_build_string
                 ),
-                IconButton(SAVE, on_click=self.copy_build_string, col=1)
+                IconButton(SAVE, on_click=self.copy_build_string)
             ]
         )
         if not hasattr(self, "data_table"):
@@ -296,16 +297,44 @@ class GemBuildsController(Controller):
                     DataColumn(label=Text("Damage")),
                     DataColumn(label=Text("Critical")),
                     DataColumn(label=Text("Coefficient")),
-                    DataColumn(label=Text("Difference #1")),
+                    DataColumn(label=Text("Deviation")),
                     DataColumn(label=Text("Is Cheap?")),
                     DataColumn(label=Text("")),
                 ],
-                bgcolor="#212223"
+                bgcolor="#212223",
+                col=8
+            )
+            self.abilities = DataTable(
+                columns=[
+                    DataColumn(Text("")),
+                    DataColumn(Text("")),
+                    DataColumn(
+                        Row(
+                            [
+                                Text("", width=70, size=10),
+                                Text("Critical", width=70, size=10, text_align="center"),
+                                Text("Emblem 2.5x", width=70, size=10, text_align="center")
+                            ]
+                        )
+                    )
+                ],
+                heading_row_height=15,
+                data_row_height=80
             )
             self.data_table = Container(
-                content=Column(
+                content=ResponsiveRow(
                     controls=[
-                        self.coeff_table
+                        self.coeff_table,
+                        Card(
+                            content=Column(
+                                controls=[
+                                    Text("Abilities", size=22), self.abilities
+                                ],
+                                horizontal_alignment="center",
+                            ),
+                            col=4,
+                            visible=False
+                        )
                     ]
                 )
             )
@@ -313,6 +342,8 @@ class GemBuildsController(Controller):
             self.coeff_table.rows.clear()
             builds = self.calculate_results()
             builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
+            if self.selected_build is None:
+                self.selected_build = builds[0]
             paged_builds = chunks(builds, 10)
             if page < 0:
                 page = 0
@@ -344,10 +375,12 @@ class GemBuildsController(Controller):
                     if len(boosts) > 4
                     else ""
                 )
-                if (3 <= build[0][0] <= 6 and
-                    3 <= build[0][1] <= 6 and
-                    6 <= build[1][0] <= 12 and
-                    6 <= build[1][1] <= 12):
+                if (
+                        3 <= build[0][0] <= 6 and
+                        3 <= build[0][1] <= 6 and
+                        6 <= build[1][0] <= 12 and
+                        6 <= build[1][1] <= 12
+                    ):
                     cheap = True
                 else:
                     cheap = False
@@ -365,24 +398,100 @@ class GemBuildsController(Controller):
                             DataCell(content=Text(f"{round(abs(coefficient - top) / top * 100, 3)}%" if top else "Best")),
                             DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
                             DataCell(
-                                content=Icon(COPY, data=self.get_build_string(
-                                    [
-                                        build_text,
-                                        first,
-                                        second,
-                                        third,
-                                        fourth,
-                                        final,
-                                        coefficient
+                                content=Row(
+                                    controls=[
+                                        IconButton(
+                                            COPY,
+                                            data=self.get_build_string(
+                                                [
+                                                    build_text,
+                                                    first,
+                                                    second,
+                                                    third,
+                                                    fourth,
+                                                    final,
+                                                    coefficient
+                                                ]
+                                            ),
+                                            on_click=self.copy_build_clipboard
+                                        ),
+                                        IconButton(
+                                            CALCULATE,
+                                            data=[
+                                                build,
+                                                first,
+                                                second,
+                                                third,
+                                                fourth,
+                                                final,
+                                                coefficient
+                                            ],
+                                            on_click=self.select_build
+                                        )
                                     ]
-                                )),
-                                on_tap=self.copy_build_clipboard),
+                                )
+                            )
                         ],
-                        color="#313233" if i%2 else "#414243"
+                        color="#313233" if i % 2 else "#414243"
                     )
                 )
                 if not top:
                     top = coefficient
+        self.abilities.rows.clear()
+        self.abilities.visible = bool(self.selected_build)
+        self.abilities.rows.extend(
+            [
+
+                *[
+                    DataRow(
+                        cells=[
+                            DataCell(
+                                content=Stack(
+                                    controls=[
+                                        Image(a.icon_path, top=6, left=5),
+                                        *[
+                                            Image("assets/images/abilities/gem_frame.png")
+                                            for i in range(1)
+                                            if a.type == AbilityType.upgrade
+                                        ],
+                                    ],
+                                )
+                            ),
+                            DataCell(
+                                content=Text(a.name)
+                            ),
+                            DataCell(
+                                content=Column(
+                                    controls=[
+                                        Row(
+                                            controls=[
+                                                Text(s.name, size=10, width=70),
+                                                Text(
+                                                    f"{round(s.base + s.multiplier * self.selected_build[6]):,}",
+                                                    size=10,
+                                                    width=70,
+                                                    text_align="center"
+                                                ),
+                                                Text(
+                                                    f"{round(s.base + s.multiplier * self.selected_build[6]*2.5):,}",
+                                                    size=10,
+                                                    width=70,
+                                                    text_align="center"
+                                                )
+                                            ],
+                                        )
+                                        for s in a.stages
+                                    ],
+                                    alignment="center",
+                                    spacing=1
+                                )
+                            )
+                        ]
+                    )
+                    for a in self.selected_class.abilities
+                ]
+            ]
+        )
 
     def setup_events(self):
         ...
@@ -603,6 +712,7 @@ class GemBuildsController(Controller):
         return itertools.product(first_set, second_set, third_set, fourth_set)
 
     async def set_class(self, event):
+        self.selected_build = None
         self.config.character = Class[event.control.value]
         self.selected_class = self.classes.get(self.config.character.value, None)
         damage_type = (
@@ -692,6 +802,13 @@ class GemBuildsController(Controller):
         self.setup_controls()
         await self.page.update_async()
 
+    async def select_build(self, event):
+        self.selected_build = event.control.data
+        self.page.snack_bar.content.value = "Ability build changed"
+        self.page.snack_bar.open = True
+        self.setup_controls()
+        await self.page.update_async()
+
     async def copy_build_string(self, _):
         await self.page.set_clipboard_async(self.features.controls[0].data)
         self.page.snack_bar.content.value = "Copied to clipboard"
@@ -709,16 +826,15 @@ class GemBuildsController(Controller):
         string = ""
         string += f"Build: {data[0]}\n"
         string += f"Light: {data[2]}\n"
-        string += f"Base Damage: {data[1]}\n"
+        string += f"Base Damage: {round(data[1], 2)}\n"
         string += f"Bonus Damage: {data[4]}\n"
-        string += f"Damage: {data[5]}\n"
+        string += f"Damage: {round(data[5], 2)}\n"
         string += f"Critical Damage: {data[2]}\n"
         string += f"Coefficient: {data[6]}"
         return string
 
     async def copy_build_clipboard(self, event):
-        if value := event.control.content.data:
-            await self.page.set_clipboard_async(str(value))
-            self.page.snack_bar.content.value = "Copied to clipboard"
-            self.page.snack_bar.open = True
+        await self.page.set_clipboard_async(event.control.data)
+        self.page.snack_bar.content.value = "Copied to clipboard"
+        self.page.snack_bar.open = True
         await self.page.update_async()
