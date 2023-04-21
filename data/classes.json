@@ -1233,7 +1233,94 @@
                 "30000": "",
                 "35000": ""
             }
-        }
+        },
+        "abilities": [
+            {
+                "name": "Basic Attack",
+                "icon": "icon_styles_gun",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 200,
+                        "multiplier": 1.33
+                    }
+                ]
+            },
+            {
+                "name": "Lucky Shot",
+                "icon": "ico_gunslinger_luckyshot_01",
+                "type": "Passive",
+                "stages": []
+            },
+            {
+                "name": "Charged Shot",
+                "icon": "ico_gunslinger_chargeshot_01",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Stage 1 Hit",
+                        "base": 5,
+                        "multiplier": 1.5
+                    },
+                    {
+                        "name": "Stage 2 Hit",
+                        "base": 0,
+                        "multiplier": 2
+                    },
+                    {
+                        "name": "Stage 2 AoE",
+                        "base": 25,
+                        "multiplier": 2
+                    },
+                    {
+                        "name": "Stage 3 Hit",
+                        "base": 0,
+                        "multiplier": 4
+                    },
+                    {
+                        "name": "Stage 3 AoE",
+                        "base": 25,
+                        "multiplier": 3.5
+                    }
+                ]
+            },
+            {
+                "name": "Blast Jump",
+                "icon": "ico_gunslinger_blastjump_01",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 10,
+                        "multiplier": 6
+                    }
+                ]
+            },
+            {
+                "name": "Run and Gun",
+                "icon": "ico_gunslinger_runandgun_01",
+                "type": "Passive",
+                "stages": []
+            },
+            {
+                "name": "Overcharged",
+                "icon": "ico_gunslinger_runandgun_01",
+                "type": "Upgrade",
+                "stages": [
+                    {
+                        "name": "Hit",
+                        "base": 0,
+                        "multiplier": 4
+                    },
+                    {
+                        "name": "AoE",
+                        "base": 25,
+                        "multiplier": 3.5
+                    }
+                ]
+            }
+        ]
     },
     {
         "name": "Ice Sage",
