@@ -419,6 +419,12 @@ class GemController(Controller):
 
     async def switch_empower(self, event):
         self.empower = event.control.value
+        if self.empower:
+            gem = EmpoweredGem.random_gem(element=self.selected_gem.element, tier=self.selected_gem.tier)
+        else:
+            gem = LesserGem.random_gem(element=self.selected_gem.element, tier=self.selected_gem.tier)
+        self.setup_controls(gem, None)
+
 
     async def reroll_radiant(self, _):
         gem_type = EmpoweredGem if self.empower else LesserGem
