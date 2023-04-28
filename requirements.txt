@@ -5,3 +5,4 @@ pydantic
 pyinstaller
 beanie
 cryptography
+requests

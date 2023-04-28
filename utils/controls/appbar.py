@@ -13,7 +13,7 @@ from flet import (
     Image,
     AlertDialog,
     TextButton,
-    MainAxisAlignment
+    MainAxisAlignment,
 )
 from flet_core.colors import SURFACE_VARIANT
 from flet_core.icons import (
@@ -44,9 +44,7 @@ class TroveToolsAppBar(AppBar):
             [
                 IconButton(
                     data="theme_switcher",
-                    icon=DARK_MODE
-                    if self.page.theme_mode == "LIGHT"
-                    else LIGHT_MODE,
+                    icon=DARK_MODE if self.page.theme_mode == "LIGHT" else LIGHT_MODE,
                     on_click=self.change_theme,
                     tooltip="Change theme",
                 ),
@@ -172,7 +170,9 @@ class TroveToolsAppBar(AppBar):
                             text="Report a bug",
                             on_click=self.go_url,
                         ),
-                        PopupMenuItem(icon=HELP, text="About", on_click=self.open_about),
+                        PopupMenuItem(
+                            icon=HELP, text="About", on_click=self.open_about
+                        ),
                     ],
                     tooltip="Others",
                 ),
@@ -180,7 +180,11 @@ class TroveToolsAppBar(AppBar):
         )
         actions.extend(kwargs.get("actions", []))
         super().__init__(
-            leading_width=40, bgcolor=SURFACE_VARIANT, actions=actions, center_title=True, **kwargs
+            leading_width=40,
+            bgcolor=SURFACE_VARIANT,
+            actions=actions,
+            center_title=True,
+            **kwargs,
         )
 
     async def change_theme(self, _):
@@ -215,17 +219,15 @@ class TroveToolsAppBar(AppBar):
         self.page.route = "/"
         await self.page.update_async()
 
-    async def login(self, _):
+    async def login(self, _=None):
         await self.page.login_async(
-            self.page.login_provider, on_open_authorization_url=self.open_blank_page
+            self.page.login_provider,
+            on_open_authorization_url=self.page.open_blank_page,
         )
 
-    async def logout(self, _):
+    async def logout(self, _=None):
         await self.page.client_storage.remove_async("login")
         await self.page.logout_async()
-
-    async def open_blank_page(self, url):
-        await self.page.launch_url_async(url, web_window_name="_blank")
 
     async def go_url(self, event):
         urls = {
@@ -243,13 +245,15 @@ class TroveToolsAppBar(AppBar):
                 TextButton("Close", on_click=self.close_dlg),
             ],
             actions_alignment=MainAxisAlignment.END,
-            content=Text("This application was made by Sly.\n\nI am coding this as an hobby with the goal of"
-                         " achieving greater front-end building skills, at the same time I also improve code"
-                         " making and organization skills\n\nI have the goal to not only build something"
-                         " that is usable but mostly updatable with little effort or code knowledge"
-                         " this however may be a challenge if newer updates come with changes on behavior of"
-                         " previous content.\n\nI don't promise to keep this up to date forever, but as long as"
-                         " I am around I should be able to.\n\nThanks for using my application. <3"),
+            content=Text(
+                "This application was made by Sly.\n\nI am coding this as an hobby with the goal of"
+                " achieving greater front-end building skills, at the same time I also improve code"
+                " making and organization skills\n\nI have the goal to not only build something"
+                " that is usable but mostly updatable with little effort or code knowledge"
+                " this however may be a challenge if newer updates come with changes on behavior of"
+                " previous content.\n\nI don't promise to keep this up to date forever, but as long as"
+                " I am around I should be able to.\n\nThanks for using my application. <3"
+            ),
             on_dismiss=lambda e: print("Modal dialog dismissed!"),
         )
         self.page.dialog = self.dlg

@@ -11,5 +11,7 @@ class GemBuildsView(View):
         self.icon = Icon(TABLE_VIEW)
         super().__init__(
             route="/gem_builds",
-            controls=[Column(controls=[ctrl.character_data, ctrl.features, ctrl.data_table])],
+            controls=[
+                Column(controls=[ctrl.character_data, ctrl.data_table, ctrl.features])
+            ],
         )

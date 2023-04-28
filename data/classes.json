@@ -307,7 +307,95 @@
                 "30000": "45% Heal",
                 "35000": "50% Heal"
             }
-        }
+        },
+        "abilities": [
+            {
+                "name": "Final Blow",
+                "icon": "icon_adventurer_passive",
+                "type": "Passive",
+                "stages": []
+            },
+            {
+                "name": "Basic Attack",
+                "icon": "icon_styles_gun",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Sword",
+                        "base": 300,
+                        "multiplier": 1.7
+                    },
+                    {
+                        "name": "Bow",
+                        "base": 250,
+                        "multiplier": 1.4
+                    }
+                ]
+            },
+            {
+                "name": "Boomerang",
+                "icon": "icon_adventurer_boomerang",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 0,
+                        "multiplier": 2.75
+                    }
+                ]
+            },
+            {
+                "name": "Big Bomb",
+                "icon": "icon_adventurer_bomb",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 0,
+                        "multiplier": 5
+                    }
+                ]
+            },
+            {
+                "name": "Mysterious Urn",
+                "icon": "icon_adventurer_urn",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 0,
+                        "multiplier": 6
+                    },
+                    {
+                        "name": "Bomb",
+                        "base": 0,
+                        "multiplier": 4
+                    },
+                    {
+                        "name": "Chicken",
+                        "base": 0,
+                        "multiplier": 2
+                    }
+                ]
+            },
+            {
+                "name": "Bawk Bomb",
+                "icon": "icon_adventurer_bomb",
+                "type": "Upgrade",
+                "stages": [
+                    {
+                        "name": "Explosion",
+                        "base": 0,
+                        "multiplier": 2.85
+                    },
+                    {
+                        "name": "Chicken",
+                        "base": 0,
+                        "multiplier": 0.65
+                    }
+                ]
+            }
+        ]
     },
     {
         "name": "Candy Barbarian",
@@ -462,7 +550,75 @@
                 "30000": "40% chance to activate on damage dealt.",
                 "35000": "50% chance to activate on damage dealt."
             }
-        }
+        },
+        "abilities": [
+            {
+                "name": "Gum Drop",
+                "icon": "ico_barbarian_passive_01",
+                "type": "Passive",
+                "stages": []
+            },
+            {
+                "name": "Basic Attack",
+                "icon": "icon_styles_gun",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 150,
+                        "multiplier": 1.85
+                    }
+                ]
+            },
+            {
+                "name": "Vanilla Swirlwind",
+                "icon": "ico_barbarian_whirlwind_01",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 0,
+                        "multiplier": 6.5
+                    }
+                ]
+            },
+            {
+                "name": "Sugar Crash",
+                "icon": "ico_barbarian_crash_01",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 50,
+                        "multiplier": 4.5
+                    }
+                ]
+            },
+            {
+                "name": "Eis-Crom Cone",
+                "icon": "ico_barbarian_cromcone_01",
+                "type": "Active",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 25,
+                        "multiplier": 15
+                    }
+                ]
+            },
+            {
+                "name": "Scoop n' Gloop",
+                "icon": "ico_barbarian_crash_01",
+                "type": "Upgrade",
+                "stages": [
+                    {
+                        "name": "Damage",
+                        "base": 50,
+                        "multiplier": 4.5
+                    }
+                ]
+            }
+        ]
     },
     {
         "name": "Chloromancer",

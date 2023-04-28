@@ -1,4 +1,5 @@
-import asyncio
+import itertools
+from json import load
 
 from flet import (
     Text,
@@ -14,21 +15,17 @@ from flet import (
     Card,
     Row,
     Stack,
-    CircleAvatar,
     Switch,
     Slider,
-    Divider,
     VerticalDivider,
     Container,
-    Icon,
     TextField,
-    IconButton
+    IconButton,
+    ElevatedButton,
+    Icon,
 )
 from flet.security import encrypt, decrypt
-from flet_core.icons import COPY, SAVE, CALCULATE
-from json import load
-import itertools
-
+from flet_core.icons import COPY, CALCULATE
 
 from models.objects import Controller
 from models.objects.builds import (
@@ -38,16 +35,17 @@ from models.objects.builds import (
     BuildConfig,
     BuildType,
     DamageType,
-    Food,
-    AbilityType
+    AbilityType,
 )
-from utils.functions import get_key, get_attr, throttle, chunks
+from utils.functions import get_attr, throttle, chunks
 
 
 class GemBuildsController(Controller):
-    def setup_controls(self, page=0):
+    def setup_controls(self):
         if not hasattr(self, "classes"):
             self.selected_build = None
+            self.build_page = 0
+            self.max_pages = 0
             self.classes = {}
             for trove_class in load(open("data/classes.json")):
                 self.classes[trove_class["name"]] = TroveClass(**trove_class)
@@ -85,7 +83,8 @@ class GemBuildsController(Controller):
                                         dropdown.Option(
                                             key=c.name,
                                             text=c.value,
-                                            disabled=c.name == self.config.character.name
+                                            disabled=c.name
+                                            == self.config.character.name,
                                         )
                                         for c in Class
                                         if not self.config.subclass
@@ -94,7 +93,7 @@ class GemBuildsController(Controller):
                                             and c.name != self.config.subclass.name
                                         )
                                     ],
-                                    on_change=self.set_class
+                                    on_change=self.set_class,
                                 ),
                                 Dropdown(
                                     label="Subclass",
@@ -103,12 +102,13 @@ class GemBuildsController(Controller):
                                         dropdown.Option(
                                             key=c.name,
                                             text=c.value,
-                                            disabled=c.name == self.config.subclass.name
+                                            disabled=c.name
+                                            == self.config.subclass.name,
                                         )
                                         for c in Class
                                         if c.name != self.config.character.name
                                     ],
-                                    on_change=self.set_subclass
+                                    on_change=self.set_subclass,
                                 ),
                                 Dropdown(
                                     label="Build Type",
@@ -117,12 +117,13 @@ class GemBuildsController(Controller):
                                         dropdown.Option(
                                             key=b.name,
                                             text=b.value,
-                                            disabled=b.name == self.config.build_type.name
+                                            disabled=b.name
+                                            == self.config.build_type.name,
                                         )
                                         for b in BuildType
                                         if b != BuildType.health
                                     ],
-                                    on_change=self.set_build_type
+                                    on_change=self.set_build_type,
                                 ),
                             ]
                         ),
@@ -140,25 +141,26 @@ class GemBuildsController(Controller):
                                 dropdown.Option(
                                     key=name,
                                     text=name,
-                                    disabled=name == self.config.ally
+                                    disabled=name == self.config.ally,
                                 )
                                 for name in self.allies.keys()
                             ],
-                            on_change=self.set_ally
+                            on_change=self.set_ally,
                         ),
                         Text("Stats", size=20),
                         *[
-                            Text(str(round(s["value"], 2)) + ("% " if s["percentage"] else " ") + s["name"])
+                            Text(
+                                str(round(s["value"], 2))
+                                + ("% " if s["percentage"] else " ")
+                                + s["name"]
+                            )
                             for s in self.allies[self.config.ally]["stats"]
                         ],
                         Text("Abilities", size=20),
-                        *[
-                            Text(a)
-                            for a in self.allies[self.config.ally]["abilities"]
-                        ],
+                        *[Text(a) for a in self.allies[self.config.ally]["abilities"]],
                     ]
                 ),
-                col=3
+                col=3,
             ),
             Card(
                 content=Column(
@@ -170,35 +172,36 @@ class GemBuildsController(Controller):
                                 dropdown.Option(
                                     key=name,
                                     text=name,
-                                    disabled=name == self.config.food
+                                    disabled=name == self.config.food,
                                 )
                                 for name in self.foods.keys()
                             ],
-                            on_change=self.set_food
+                            on_change=self.set_food,
                         ),
                         Column(
                             controls=[
-                                Text(f"Critical Damage stats on gear: {self.config.critical_damage_count}"),
+                                Text(
+                                    f"Critical Damage stats on gear: {self.config.critical_damage_count}"
+                                ),
                                 Slider(
                                     min=0,
                                     max=3,
                                     divisions=3,
                                     value=self.config.critical_damage_count,
                                     label="{value}",
-                                    on_change_end=self.set_cd_count
-                                )
+                                    on_change_end=self.set_cd_count,
+                                ),
                             ]
                         ),
                         Row(
                             controls=[
-
                                 Column(
                                     controls=[
                                         Text("Damage on face"),
                                         Switch(
                                             value=not self.config.no_face,
-                                            on_change=self.toggle_face
-                                        )
+                                            on_change=self.toggle_face,
+                                        ),
                                     ]
                                 ),
                                 VerticalDivider(),
@@ -207,8 +210,8 @@ class GemBuildsController(Controller):
                                         Text("Subclass ability active"),
                                         Switch(
                                             value=self.config.subclass_active,
-                                            on_change=self.toggle_subclass_active
-                                        )
+                                            on_change=self.toggle_subclass_active,
+                                        ),
                                     ]
                                 ),
                                 VerticalDivider(),
@@ -217,30 +220,20 @@ class GemBuildsController(Controller):
                                         Text("Berserker Battler"),
                                         Switch(
                                             value=self.config.berserker_battler,
-                                            on_change=self.toggle_berserker_battler
-                                        )
+                                            on_change=self.toggle_berserker_battler,
+                                        ),
                                     ]
                                 ),
                             ]
-                        )
+                        ),
                     ],
-                    spacing=11
+                    spacing=11,
                 ),
-                col=3
+                col=3,
             ),
             Card(
                 content=Column(
                     controls=[
-                        # Text("Predictions", size=22),
-                        # Column(
-                        #     controls=[
-                        #         Text("Cosmic Primordial"),
-                        #         Switch(
-                        #             value=self.config.cosmic_primordial,
-                        #             on_change=self.toggle_cosmic_primordial
-                        #         )
-                        #     ]
-                        # ),
                         # Column(
                         #     controls=[
                         #         Text("Crystal 5 (WIP)"),
@@ -255,35 +248,79 @@ class GemBuildsController(Controller):
                         Switch(
                             label="Star Chart",
                             value=self.config.star_chart,
-                            on_change=self.toggle_star_chart
+                            on_change=self.toggle_star_chart,
                         ),
-                        Text("250 Light\n27% Bonus Damage\n35% Critical Damage") if self.config.star_chart else Text(),
+                        Text("250 Light\n27% Bonus Damage\n35% Critical Damage")
+                        if self.config.star_chart
+                        else Text(),
                         *[
                             TextField(
                                 label="Light",
                                 value=str(self.config.light),
-                                on_submit=self.set_light
+                                on_submit=self.set_light,
                             )
                             for _ in range(1)
                             if self.config.build_type != BuildType.light
-                        ]
+                        ],
+                        Text("Predictions", size=22),
+                        Column(
+                            controls=[
+                                Text("Cosmic Primordial"),
+                                Switch(
+                                    value=self.config.cosmic_primordial,
+                                    on_change=self.toggle_cosmic_primordial,
+                                ),
+                            ]
+                        ),
                     ],
-                    spacing=11
+                    spacing=11,
                 ),
-                col=2
-            )
+                col=2,
+            ),
         ]
         if not hasattr(self, "features"):
             self.features = Row()
         self.features.controls.clear()
         self.features.controls.extend(
             [
+                VerticalDivider(),
+                ElevatedButton("First", data=0, on_click=self.change_build_page),
+                # ElevatedButton(
+                #     "Backward 5",
+                #     data=self.build_page - 5,
+                #     on_click=self.change_build_page,
+                # ),
+                ElevatedButton(
+                    "Previous",
+                    data=self.build_page - 1,
+                    on_click=self.change_build_page,
+                ),
+                ElevatedButton(
+                    "Next page",
+                    data=self.build_page + 1,
+                    on_click=self.change_build_page,
+                ),
+                # ElevatedButton(
+                #     "Forward 5",
+                #     data=self.build_page + 5,
+                #     on_click=self.change_build_page,
+                # ),
+                ElevatedButton(
+                    "Last", data=self.max_pages - 1, on_click=self.change_build_page
+                ),
+                VerticalDivider(),
                 TextField(
                     data=encrypt(self.config.to_base_64(), self.page.secret_key),
                     label="Insert build string",
-                    on_submit=self.set_build_string
+                    on_submit=self.set_build_string,
                 ),
-                IconButton(SAVE, on_click=self.copy_build_string)
+                Container(
+                    content=Row(controls=[Icon(COPY), Text("Copy build string")]),
+                    on_click=self.copy_build_string,
+                    on_hover=self.copy_build_hover,
+                    padding=15,
+                    border_radius=10,
+                ),
             ]
         )
         if not hasattr(self, "data_table"):
@@ -302,7 +339,7 @@ class GemBuildsController(Controller):
                     DataColumn(label=Text("")),
                 ],
                 bgcolor="#212223",
-                col=8
+                col=8,
             )
             self.abilities = DataTable(
                 columns=[
@@ -312,45 +349,49 @@ class GemBuildsController(Controller):
                         Row(
                             [
                                 Text("", width=70, size=10),
-                                Text("Critical", width=70, size=10, text_align="center"),
-                                Text("Emblem 2.5x", width=70, size=10, text_align="center")
+                                Text(
+                                    "Critical", width=70, size=10, text_align="center"
+                                ),
+                                Text(
+                                    "Emblem 2.5x",
+                                    width=70,
+                                    size=10,
+                                    text_align="center",
+                                ),
                             ]
                         )
-                    )
+                    ),
                 ],
                 heading_row_height=15,
-                data_row_height=80
+                data_row_height=80,
+            )
+            self.abilities_table = Card(
+                content=Column(
+                    controls=[Text("Abilities", size=22), self.abilities],
+                    horizontal_alignment="center",
+                ),
+                col=4,
             )
             self.data_table = Container(
-                content=ResponsiveRow(
-                    controls=[
-                        self.coeff_table,
-                        Card(
-                            content=Column(
-                                controls=[
-                                    Text("Abilities", size=22), self.abilities
-                                ],
-                                horizontal_alignment="center",
-                            ),
-                            col=4,
-                            visible=False
-                        )
-                    ]
-                )
+                content=ResponsiveRow(controls=[self.coeff_table, self.abilities_table])
             )
+        self.abilities_table.visible = bool(self.selected_build)
         if self.config.character:
             self.coeff_table.rows.clear()
             builds = self.calculate_results()
             builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
+            builds = [[i] + b for i, b in enumerate(builds, 1)]
             if self.selected_build is None:
                 self.selected_build = builds[0]
             paged_builds = chunks(builds, 10)
-            if page < 0:
-                page = 0
-            elif page > len(paged_builds) - 1:
-                page = len(paged_builds) - 1
+            self.max_pages = len(paged_builds)
+            if self.build_page < 0:
+                self.build_page = self.max_pages - 1
+            elif self.build_page > self.max_pages - 1:
+                self.build_page = 0
             top = 0
-            for i, (
+            for (
+                rank,
                 build,
                 first,
                 second,
@@ -358,7 +399,7 @@ class GemBuildsController(Controller):
                 fourth,
                 final,
                 coefficient,
-            ) in enumerate(paged_builds[page], 1):
+            ) in paged_builds[self.build_page]:
                 boosts = []
                 [boosts.extend(i) for i in build]
                 if not self.config.light or (
@@ -376,27 +417,52 @@ class GemBuildsController(Controller):
                     else ""
                 )
                 if (
-                        3 <= build[0][0] <= 6 and
-                        3 <= build[0][1] <= 6 and
-                        6 <= build[1][0] <= 12 and
-                        6 <= build[1][1] <= 12
-                    ):
+                    3 <= build[0][0] <= 6
+                    and 3 <= build[0][1] <= 6
+                    and 6 <= build[1][0] <= 12
+                    and 6 <= build[1][1] <= 12
+                ):
                     cheap = True
                 else:
                     cheap = False
+                build_data = [
+                    build,
+                    first,
+                    second,
+                    third,
+                    fourth,
+                    final,
+                    coefficient,
+                ]
                 self.coeff_table.rows.append(
                     DataRow(
                         cells=[
-                            DataCell(content=Text(f"{i}")),
-                            DataCell(content=Text(f"{build_text}"), on_tap=self.copy_to_clipboard),
+                            DataCell(content=Text(f"{rank}")),
+                            DataCell(
+                                content=Text(f"{build_text}"),
+                                on_tap=self.copy_to_clipboard,
+                            ),
                             DataCell(content=Text(f"{third:,}")),
                             DataCell(content=Text(f"{round(first, 2):,}")),
                             DataCell(content=Text(f"{round(fourth, 2):,}%")),
                             DataCell(content=Text(f"{round(final, 2):,}")),
                             DataCell(content=Text(f"{round(second, 2):,}%")),
-                            DataCell(content=Text(f"{coefficient:,}"), on_tap=self.copy_to_clipboard),
-                            DataCell(content=Text(f"{round(abs(coefficient - top) / top * 100, 3)}%" if top else "Best")),
-                            DataCell(content=Container(bgcolor="#900000" if cheap else "#900000")),
+                            DataCell(
+                                content=Text(f"{coefficient:,}"),
+                                on_tap=self.copy_to_clipboard,
+                            ),
+                            DataCell(
+                                content=Text(
+                                    f"{round(abs(coefficient - top) / top * 100, 3)}%"
+                                    if top
+                                    else "Best"
+                                )
+                            ),
+                            DataCell(
+                                content=Container(
+                                    bgcolor="#a00000" if cheap else "#a00000"
+                                )
+                            ),
                             DataCell(
                                 content=Row(
                                     controls=[
@@ -410,29 +476,23 @@ class GemBuildsController(Controller):
                                                     third,
                                                     fourth,
                                                     final,
-                                                    coefficient
+                                                    coefficient,
                                                 ]
                                             ),
-                                            on_click=self.copy_build_clipboard
+                                            on_click=self.copy_build_clipboard,
                                         ),
                                         IconButton(
                                             CALCULATE,
-                                            data=[
-                                                build,
-                                                first,
-                                                second,
-                                                third,
-                                                fourth,
-                                                final,
-                                                coefficient
-                                            ],
-                                            on_click=self.select_build
-                                        )
+                                            data=build_data,
+                                            on_click=self.select_build,
+                                        ),
                                     ]
                                 )
-                            )
+                            ),
                         ],
-                        color="#313233" if i % 2 else "#414243"
+                        color="#156b16"
+                        if build_data == self.selected_build
+                        else ("#313233" if rank % 2 else "#414243"),
                     )
                 )
                 if not top:
@@ -441,7 +501,6 @@ class GemBuildsController(Controller):
         self.abilities.visible = bool(self.selected_build)
         self.abilities.rows.extend(
             [
-
                 *[
                     DataRow(
                         cells=[
@@ -450,16 +509,16 @@ class GemBuildsController(Controller):
                                     controls=[
                                         Image(a.icon_path, top=6, left=5),
                                         *[
-                                            Image("assets/images/abilities/gem_frame.png")
+                                            Image(
+                                                "assets/images/abilities/gem_frame.png"
+                                            )
                                             for i in range(1)
                                             if a.type == AbilityType.upgrade
                                         ],
                                     ],
                                 )
                             ),
-                            DataCell(
-                                content=Text(a.name)
-                            ),
+                            DataCell(content=Text(a.name)),
                             DataCell(
                                 content=Column(
                                     controls=[
@@ -470,22 +529,22 @@ class GemBuildsController(Controller):
                                                     f"{round(s.base + s.multiplier * self.selected_build[6]):,}",
                                                     size=10,
                                                     width=70,
-                                                    text_align="center"
+                                                    text_align="center",
                                                 ),
                                                 Text(
                                                     f"{round(s.base + s.multiplier * self.selected_build[6]*2.5):,}",
                                                     size=10,
                                                     width=70,
-                                                    text_align="center"
-                                                )
+                                                    text_align="center",
+                                                ),
                                             ],
                                         )
                                         for s in a.stages
                                     ],
                                     alignment="center",
-                                    spacing=1
+                                    spacing=1,
                                 )
-                            )
+                            ),
                         ]
                     )
                     for a in self.selected_class.abilities
@@ -616,11 +675,10 @@ class GemBuildsController(Controller):
             csecond = second + gem_second
             cthird = third + gem_third
             if self.config.build_type not in [BuildType.health]:
-                if class_bonus := get_attr(self.selected_class.bonuses, name=damage_type.value):
-                    cfirst *= 1 + (
-                        class_bonus
-                        / 100
-                    )
+                if class_bonus := get_attr(
+                    self.selected_class.bonuses, name=damage_type.value
+                ):
+                    cfirst *= 1 + (class_bonus / 100)
                 final = cfirst * (1 + fourth / 100)
             else:
                 final = cfirst
@@ -634,6 +692,7 @@ class GemBuildsController(Controller):
                 final,
                 coefficient,
             ]
+            # if build == [[5, 4], [8, 10], [0, 0, 3], [0, 0, 6]]:
             yield build_stats
 
     def sum_file_values(self, path):
@@ -794,16 +853,26 @@ class GemBuildsController(Controller):
             event.control.border_color = "red"
             return await event.control.update_async()
 
+    async def change_build_page(self, event):
+        self.build_page = event.control.data
+        self.setup_controls()
+        await self.page.update_async()
+
     async def set_build_string(self, event):
         try:
-            self.config = BuildConfig.from_base_64(decrypt(event.control.value, self.page.secret_key))
+            self.config = BuildConfig.from_base_64(
+                decrypt(event.control.value, self.page.secret_key)
+            )
         except:
             ...
         self.setup_controls()
         await self.page.update_async()
 
     async def select_build(self, event):
-        self.selected_build = event.control.data
+        if self.selected_build == event.control.data:
+            self.selected_build = None
+        else:
+            self.selected_build = event.control.data
         self.page.snack_bar.content.value = "Ability build changed"
         self.page.snack_bar.open = True
         self.setup_controls()
@@ -838,3 +907,7 @@ class GemBuildsController(Controller):
         self.page.snack_bar.content.value = "Copied to clipboard"
         self.page.snack_bar.open = True
         await self.page.update_async()
+
+    async def copy_build_hover(self, event):
+        event.control.ink = True
+        await event.control.update_async()

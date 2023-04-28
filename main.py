@@ -1,20 +1,33 @@
 import asyncio
+from datetime import datetime, timedelta
 
 from dotenv import get_key
 from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column, Row
 from flet.security import encrypt, decrypt
 from httpx import HTTPStatusError
 from i18n import t
+from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from models import Config
 from models.objects.discord_user import DiscordUser
+from models.objects.user import User
+from models.objects.marketplace import Listing
+from utils import tasks
 from utils.controls import TroveToolsAppBar
 from utils.localization import LocalizationManager, Locale
 from utils.logger import Logger
 from utils.objects import DiscordOAuth2
-from datetime import datetime, timedelta
-from utils import tasks
-from views import GemSetView, GemView, MasteryView, StarView, HomeView, GemBuildsView, MarketplaceView, View404
+from views import (
+    GemSetView,
+    GemView,
+    MasteryView,
+    StarView,
+    HomeView,
+    GemBuildsView,
+    MarketplaceView,
+    View404,
+)
 
 
 class TroveBuilds:
@@ -24,12 +37,17 @@ class TroveBuilds:
     async def start(self, page: Page, restart=False, translate=False):
         if not restart:
             self.page = page
+            page.database_client = AsyncIOMotorClient()
+            page.database = await init_beanie(
+                page.database_client.trovetools, document_models=[User, Listing]
+            )
             page.clock = Text("Trove Time")
             page.login_provider = DiscordOAuth2(
                 client_id=get_key(".env", "DISCORD_CLIENT"),
-                client_secret=get_key(".env", "DISCORD_SECRET")
+                client_secret=get_key(".env", "DISCORD_SECRET"),
             )
             page.restart = self.restart
+            page.open_blank_page = self.open_blank_page
             page.logger = Logger("Trove Builds Core")
             # Load configurations
             await self.load_configuration()
@@ -61,17 +79,25 @@ class TroveBuilds:
                 StarView(page),
                 MasteryView(page),
                 GemBuildsView(page),
-                MarketplaceView(page)
+                MarketplaceView(page),
             ]
         for view in page.all_views:
             view.appbar = TroveToolsAppBar(
-                leading=Row(controls=[view.icon, page.clock]), title=view.title, views=page.all_views[1:], page=page
+                leading=Row(controls=[view.icon, page.clock]),
+                title=view.title,
+                views=page.all_views[1:],
+                page=page,
             )
         # Push UI elements into view
         await page.clean_async()
         view = page.all_views[0]
         for v in page.all_views[1:]:
             if v.route == page.route:
+                if not self.page.discord_user and isinstance(v, MarketplaceView):
+                    await self.page.login_async(
+                        page.login_provider,
+                        on_open_authorization_url=self.open_blank_page,
+                    )
                 view = v
         page.appbar = view.appbar
         await page.add_async(Column(controls=view.controls))
@@ -81,12 +107,15 @@ class TroveBuilds:
     async def check_login(self):
         self.page.secret_key = get_key(".env", "APP_SECRET")
         self.page.discord_user = None
-        if self.page.auth is None and await self.page.client_storage.contains_key_async("login"):
+        if (
+            self.page.auth is None
+            and await self.page.client_storage.contains_key_async("login")
+        ):
             try:
                 encrypted_token = await self.page.client_storage.get_async("login")
                 await self.page.login_async(
                     self.page.login_provider,
-                    saved_token=decrypt(encrypted_token, self.page.secret_key)
+                    saved_token=decrypt(encrypted_token, self.page.secret_key),
                 )
                 return
             except HTTPStatusError:
@@ -103,11 +132,23 @@ class TroveBuilds:
         while self.page.auth is None:
             await asyncio.sleep(1)
         self.page.discord_user = DiscordUser(**self.page.auth.user)
-        self.page.logger.debug(f"User Login: [{self.page.discord_user.id}] {self.page.discord_user.display_name}")
+        if (
+            user := await User.find_one(
+                User.discord_id == int(self.page.discord_user.id)
+            )
+        ) is None:
+            user = await User(discord_id=int(self.page.discord_user.id)).save()
+        self.page.logger.debug(
+            f"User Login: [{self.page.discord_user.id}] {self.page.discord_user.display_name}"
+        )
+        if user.blocked:
+            await self.page.logout_async()
         await self.restart()
 
     async def on_logout(self, event):
-        self.page.logger.debug(f"User Logout: [{self.page.discord_user.id}] {self.page.discord_user.display_name}")
+        self.page.logger.debug(
+            f"User Logout: [{self.page.discord_user.id}] {self.page.discord_user.display_name}"
+        )
         while self.page.auth is not None:
             await asyncio.sleep(1)
         await self.restart()
@@ -123,13 +164,7 @@ class TroveBuilds:
                 self.page.route = views[index].route
                 await self.page.update_async()
 
-        if (
-            e.key.isnumeric()
-            and not e.ctrl
-            and not e.shift
-            and e.alt
-            and not e.meta
-        ):
+        if e.key.isnumeric() and not e.ctrl and not e.shift and e.alt and not e.meta:
             await switch_tabs(e)
 
     async def route_change(self, route):
@@ -142,18 +177,27 @@ class TroveBuilds:
                 loc = Locale(await self.page.client_storage.get_async("locale"))
                 self.page.app_config.locale = loc
             except ValueError:
-                await self.page.client_storage.set_async("locale", Locale.American_English.value)
+                await self.page.client_storage.set_async(
+                    "locale", Locale.American_English.value
+                )
         else:
-            await self.page.client_storage.set_async("locale", Locale.American_English.value)
+            await self.page.client_storage.set_async(
+                "locale", Locale.American_English.value
+            )
         self.page.logger.debug("Configuration loaded -> " + repr(self.page.app_config))
 
     def setup_localization(self):
         LocalizationManager(self.page).update_all_translations()
         self.page.logger.info("Updated localization strings")
 
+    async def open_blank_page(self, url):
+        await self.page.launch_url_async(url, web_window_name="_blank")
+
     @tasks.loop(seconds=1)
     async def update_clock(self):
-        self.page.clock.value = (datetime.utcnow() - timedelta(hours=11)).strftime("Trove Time: %Y-%m-%d\t\t%H:%M:%S")
+        self.page.clock.value = (datetime.utcnow() - timedelta(hours=11)).strftime(
+            "Trove Time: %Y-%m-%d\t\t%H:%M:%S"
+        )
         try:
             await self.page.clock.update_async()
         except Exception:
