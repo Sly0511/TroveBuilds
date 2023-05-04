@@ -35,7 +35,7 @@ class SavedBuild(Document):
 class User(Document):
     uuid: Indexed(UUID, unique=True) = Field(default_factory=uuid4)
     discord_id: Optional[Indexed(int, unique=True)] = None
-    trovesaurus_id: Optional[Indexed(str, unique=True)] = None
+    trovesaurus_id: Indexed(str, unique=True, partialFilterExpression={"trovesaurus_id": {"$type": "string"}}) = None
     market: MarketplaceData = Field(default_factory=MarketplaceData)
     blocked: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
