@@ -59,6 +59,7 @@ class Logger:
         self.logs_folder.mkdir(exist_ok=True)
         self.delete_logs()
         self.logger = logging.getLogger(name)
+        return
         self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = False
         self.debug_handler = logging.handlers.RotatingFileHandler(

@@ -145,7 +145,6 @@ def build_star_chart(star_dict: dict, parent: Star = None):
     )
     for cstar in star_dict["Stars"]:
         star.add_child(build_star_chart(cstar, star))
-        break
     return star
 
 
@@ -157,22 +156,27 @@ def rotate(origin, point, angle):
     return qx, qy
 
 
-def build_branch(back_rotate, last_position, distance, star):
-    for i, child in enumerate(star["Stars"], 1):
-        total_angle = 180
-        splits = len(star["Stars"]) + 1
-        division = total_angle / splits
+def build_branch(back_rotate, last_position, distance, stars, x=0):
+    total_angle = 180
+    splits = len(stars) + 1
+    division = total_angle / splits
+    x += 1
+    for i, child in enumerate(stars, 1):
         child_rotation = radians(division * i)
         child_position = last_position[0] - distance, last_position[1]
         back_rotated_position = rotate(last_position, child_position, back_rotate)
         rotated_position = rotate(last_position, back_rotated_position, child_rotation)
+        if x == 2:
+            break
+        build_branch(
+            back_rotate - child_rotation / 2, rotated_position, distance, child, x
+        )
         child["Coords"] = rotated_position
-        build_branch(back_rotate - child_rotation / 2, rotated_position, distance, child)
 
 
 def rotate_branch(star, origin, angle):
     for child in star["Stars"]:
-        child["Coords"] = rotate(origin, child["Coords"], angle)
+        child["Coords"] = rotate(origin, child.get("Coords", [0, 0]), angle)
         rotate_branch(child, origin, angle)
 
 
@@ -189,12 +193,10 @@ def get_star_chart():
         rotated_position = rotate(origin, position, branch_rotation)
         constell = star_chart[constellation.value]
         constell["Coords"] = rotated_position
-        build_branch(radians(14), position, 43, constell)
+        build_branch(radians(14), position, 43, constell["Stars"])
         rotate_branch(constell, origin, branch_rotation)
-        break
 
     for constellation, data in star_chart.items():
         obj_star_chart.constellations.append(build_star_chart(data))
-        break
 
     return obj_star_chart

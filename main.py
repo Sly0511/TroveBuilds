@@ -1,18 +1,19 @@
 import asyncio
 from datetime import datetime, timedelta
 
+import requests
+from beanie import init_beanie
 from dotenv import get_key
 from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column, Row
 from flet.security import encrypt, decrypt
 from httpx import HTTPStatusError
 from i18n import t
-from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from models import Config
 from models.objects.discord_user import DiscordUser
+from models.objects.marketplace import Listing, Item
 from models.objects.user import User
-from models.objects.marketplace import Listing
 from utils import tasks
 from utils.controls import TroveToolsAppBar
 from utils.localization import LocalizationManager, Locale
@@ -32,23 +33,25 @@ from views import (
 
 class TroveBuilds:
     def run(self):
-        app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=13010)
+        app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=50513)
 
     async def start(self, page: Page, restart=False, translate=False):
         if not restart:
             self.page = page
             page.database_client = AsyncIOMotorClient()
             page.database = await init_beanie(
-                page.database_client.trovetools, document_models=[User, Listing]
+                page.database_client.trovetools, document_models=[User, Listing, Item]
             )
             page.clock = Text("Trove Time")
             page.login_provider = DiscordOAuth2(
                 client_id=get_key(".env", "DISCORD_CLIENT"),
                 client_secret=get_key(".env", "DISCORD_SECRET"),
             )
+            self.page.market_log_webhook = get_key(".env", "MARKET_LOG_WEBHOOK")
             page.restart = self.restart
             page.open_blank_page = self.open_blank_page
             page.logger = Logger("Trove Builds Core")
+            await self.get_items_list()
             # Load configurations
             await self.load_configuration()
         # Setup localization
@@ -192,6 +195,22 @@ class TroveBuilds:
 
     async def open_blank_page(self, url):
         await self.page.launch_url_async(url, web_window_name="_blank")
+
+    async def get_items_list(self) -> list:
+        self.page.trove_items = []
+        data = requests.get("https://trovesaurus.com/items.json").json()
+        for raw_item in data:
+            item = await Item.find_one(Item.identifier == raw_item["identifier"])
+            if item is None:
+                item = await Item(**raw_item).save()
+            else:
+                item.name = raw_item["name"]
+                item.type = raw_item["type"]
+                item.description = raw_item["description"]
+                item.icon = raw_item["icon"]
+                item.notrade = raw_item["notrade"]
+                item.noobtain = raw_item["noobtain"]
+            self.page.trove_items.append(item)
 
     @tasks.loop(seconds=1)
     async def update_clock(self):

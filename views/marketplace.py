@@ -7,11 +7,6 @@ from controllers import MarketplaceController
 class MarketplaceView(View):
     def __init__(self, page):
         ctrl = MarketplaceController(page)
-        self.title = Text('[WIP] Marketplace')
+        self.title = Text("[BETA] Marketplace")
         self.icon = Icon(COMMENT_BANK)
-        super().__init__(
-            route="/marketplace",
-            controls=[
-                ctrl.page
-            ]
-        )
+        super().__init__(route="/marketplace", controls=[ctrl.main])

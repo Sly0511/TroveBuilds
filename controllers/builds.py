@@ -129,7 +129,7 @@ class GemBuildsController(Controller):
                         ),
                     ]
                 ),
-                col=4,
+                col={"xxl": 4},
             ),
             Card(
                 content=Column(
@@ -160,7 +160,7 @@ class GemBuildsController(Controller):
                         *[Text(a) for a in self.allies[self.config.ally]["abilities"]],
                     ]
                 ),
-                col=3,
+                col={"xxl": 3},
             ),
             Card(
                 content=Column(
@@ -229,7 +229,7 @@ class GemBuildsController(Controller):
                     ],
                     spacing=11,
                 ),
-                col=3,
+                col={"xxl": 3},
             ),
             Card(
                 content=Column(
@@ -275,16 +275,15 @@ class GemBuildsController(Controller):
                     ],
                     spacing=11,
                 ),
-                col=2,
+                col={"xxl": 2},
             ),
         ]
         if not hasattr(self, "features"):
-            self.features = Row()
+            self.features = ResponsiveRow()
         self.features.controls.clear()
         self.features.controls.extend(
             [
-                VerticalDivider(),
-                ElevatedButton("First", data=0, on_click=self.change_build_page),
+                ElevatedButton("First", data=0, on_click=self.change_build_page, col={"xs": 3, "xxl": 1}),
                 # ElevatedButton(
                 #     "Backward 5",
                 #     data=self.build_page - 5,
@@ -293,12 +292,12 @@ class GemBuildsController(Controller):
                 ElevatedButton(
                     "Previous",
                     data=self.build_page - 1,
-                    on_click=self.change_build_page,
+                    on_click=self.change_build_page, col={"xs": 3, "xxl": 1}
                 ),
                 ElevatedButton(
                     "Next page",
                     data=self.build_page + 1,
-                    on_click=self.change_build_page,
+                    on_click=self.change_build_page, col={"xs": 3, "xxl": 1}
                 ),
                 # ElevatedButton(
                 #     "Forward 5",
@@ -306,40 +305,33 @@ class GemBuildsController(Controller):
                 #     on_click=self.change_build_page,
                 # ),
                 ElevatedButton(
-                    "Last", data=self.max_pages - 1, on_click=self.change_build_page
+                    "Last", data=self.max_pages - 1, on_click=self.change_build_page, col={"xs": 3, "xxl": 1}
                 ),
-                VerticalDivider(),
                 TextField(
                     data=encrypt(self.config.to_base_64(), self.page.secret_key),
                     label="Insert build string",
-                    on_submit=self.set_build_string,
+                    on_submit=self.set_build_string, col={"xs": 6, "xxl": 3}
                 ),
                 Container(
                     content=Row(controls=[Icon(COPY), Text("Copy build string")]),
                     on_click=self.copy_build_string,
                     on_hover=self.copy_build_hover,
                     padding=15,
-                    border_radius=10,
+                    border_radius=10, col={"xs": 6, "xxl": 3}
                 ),
             ]
         )
         if not hasattr(self, "data_table"):
             self.coeff_table = DataTable(
                 columns=[
-                    DataColumn(label=Text("Rank")),
+                    DataColumn(label=Text("#")),
                     DataColumn(label=Text("Build")),
                     DataColumn(label=Text("Light")),
-                    DataColumn(label=Text("Base Damage")),
-                    DataColumn(label=Text("Bonus Damage")),
-                    DataColumn(label=Text("Damage")),
-                    DataColumn(label=Text("Critical")),
                     DataColumn(label=Text("Coefficient")),
                     DataColumn(label=Text("Deviation")),
-                    DataColumn(label=Text("Is Cheap?")),
                     DataColumn(label=Text("")),
                 ],
-                bgcolor="#212223",
-                col=8,
+                bgcolor="#212223"
             )
             self.abilities = DataTable(
                 columns=[
@@ -370,7 +362,7 @@ class GemBuildsController(Controller):
                     controls=[Text("Abilities", size=22), self.abilities],
                     horizontal_alignment="center",
                 ),
-                col=4,
+                col={"xxl": 4},
             )
             self.data_table = Container(
                 content=ResponsiveRow(controls=[self.coeff_table, self.abilities_table])
@@ -443,10 +435,6 @@ class GemBuildsController(Controller):
                                 on_tap=self.copy_to_clipboard,
                             ),
                             DataCell(content=Text(f"{third:,}")),
-                            DataCell(content=Text(f"{round(first, 2):,}")),
-                            DataCell(content=Text(f"{round(fourth, 2):,}%")),
-                            DataCell(content=Text(f"{round(final, 2):,}")),
-                            DataCell(content=Text(f"{round(second, 2):,}%")),
                             DataCell(
                                 content=Text(f"{coefficient:,}"),
                                 on_tap=self.copy_to_clipboard,
@@ -456,11 +444,6 @@ class GemBuildsController(Controller):
                                     f"{round(abs(coefficient - top) / top * 100, 3)}%"
                                     if top
                                     else "Best"
-                                )
-                            ),
-                            DataCell(
-                                content=Container(
-                                    bgcolor="#a00000" if cheap else "#a00000"
                                 )
                             ),
                             DataCell(
@@ -486,7 +469,8 @@ class GemBuildsController(Controller):
                                             data=build_data,
                                             on_click=self.select_build,
                                         ),
-                                    ]
+                                    ],
+                                    spacing=0
                                 )
                             ),
                         ],
