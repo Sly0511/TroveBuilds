@@ -33,7 +33,7 @@ from views import (
 
 class TroveBuilds:
     def run(self):
-        app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=50513)
+        app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=13010)
 
     async def start(self, page: Page, restart=False, translate=False):
         if not restart:
