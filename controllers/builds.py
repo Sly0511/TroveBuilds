@@ -59,21 +59,21 @@ class GemBuildsController(Controller):
             self.character_data = ResponsiveRow()
         self.character_data.controls = [
             Card(
-                content=Row(
+                content=ResponsiveRow(
                     controls=[
                         Stack(
                             controls=[
                                 Image(
                                     src=self.selected_class.image_path,
-                                    width=275,
                                 ),
                                 Image(
                                     src=self.selected_subclass.icon_path,
                                     width=75,
-                                    top=150,
-                                    left=170,
+                                    top=100,
+                                    left=140,
                                 ),
-                            ]
+                            ],
+                            col={"xxl": 6}
                         ),
                         Column(
                             controls=[
@@ -126,7 +126,8 @@ class GemBuildsController(Controller):
                                     ],
                                     on_change=self.set_build_type,
                                 ),
-                            ]
+                            ],
+                            col={"xxl": 6}
                         ),
                     ]
                 ),
