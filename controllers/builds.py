@@ -38,6 +38,7 @@ from models.objects.builds import (
     AbilityType,
 )
 from utils.functions import get_attr, throttle, chunks
+from utils.controls import ScrollingFrame
 
 
 class GemBuildsController(Controller):
@@ -331,7 +332,7 @@ class GemBuildsController(Controller):
                     DataColumn(label=Text("Deviation")),
                     DataColumn(label=Text("")),
                 ],
-                bgcolor="#212223"
+                bgcolor="#212223",
             )
             self.abilities = DataTable(
                 columns=[
@@ -356,6 +357,7 @@ class GemBuildsController(Controller):
                 ],
                 heading_row_height=15,
                 data_row_height=80,
+                col={"xxl": 4}
             )
             self.abilities_table = Card(
                 content=Column(
@@ -365,7 +367,12 @@ class GemBuildsController(Controller):
                 col={"xxl": 4},
             )
             self.data_table = Container(
-                content=ResponsiveRow(controls=[self.coeff_table, self.abilities_table])
+                content=ResponsiveRow(
+                    controls=[
+                        ScrollingFrame(self.coeff_table, col={"xxl": 8}),
+                        self.abilities_table
+                    ]
+                )
             )
         self.abilities_table.visible = bool(self.selected_build)
         if self.config.character:

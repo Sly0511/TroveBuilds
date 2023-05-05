@@ -6,3 +6,4 @@ pyinstaller
 beanie
 cryptography
 requests
+pytz

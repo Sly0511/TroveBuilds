@@ -53,9 +53,9 @@ class TroveToolsAppBar(AppBar):
                         Row(
                             controls=[
                                 Icon(LANGUAGE),
-                                Text(
-                                    self.page.app_config.locale.name.replace("_", " ")
-                                ),
+                                # Text(
+                                #     self.page.app_config.locale.name.replace("_", " ")
+                                # ),
                             ]
                         )
                     ),
@@ -72,7 +72,7 @@ class TroveToolsAppBar(AppBar):
                 VerticalDivider(),
                 PopupMenuButton(
                     content=Container(
-                        Row(controls=[Icon(NOW_WIDGETS_SHARP), Text("Apps")])
+                        Row(controls=[Icon(NOW_WIDGETS_SHARP)])
                     ),
                     items=[
                         PopupMenuItem(

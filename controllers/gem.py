@@ -64,7 +64,6 @@ class GemController(Controller):
                                 bgcolor=GemTierColor.crystal.value,
                                 color="black"
                             ),
-                            VerticalDivider(width=50),
                             Text(t("gem_types.Lesser")),
                             Switch(value=self.empower, on_change=self.switch_empower),
                             Text(t("gem_types.Empowered"))
@@ -269,19 +268,19 @@ class GemController(Controller):
                                 controls=[
                                     ResponsiveRow(
                                         controls=[
-                                            Container(col=3),
+                                            Container(col={"xs": 3}),
                                             Text(
                                                 t("strings.Improve Stat"),
                                                 text_align="center",
-                                                col=5,
+                                                col={"xs": 5},
                                             ),
-                                            Container(col=4),
+                                            Container(col={"xs": 4}),
                                         ],
                                         alignment="center",
                                     ),
                                     ResponsiveRow(
                                         controls=[
-                                            Container(col=3.3),
+                                            Container(col={"xs": 3.3}),
                                             Container(
                                                 content=Image(
                                                     "assets/images/gems/augment_01.png",
@@ -290,7 +289,7 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or self.selected_stat.is_maxed,
                                                 on_click=self.rough_augment,
-                                                col=1.5,
+                                                col={"xs": 1.5},
                                             ),
                                             Container(
                                                 content=Image(
@@ -300,7 +299,7 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or self.selected_stat.is_maxed,
                                                 on_click=self.precise_augment,
-                                                col=1.5,
+                                                col={"xs": 1.5},
                                             ),
                                             Container(
                                                 content=Image(
@@ -310,35 +309,34 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or self.selected_stat.is_maxed,
                                                 on_click=self.superior_augment,
-                                                col=1.5,
+                                                col={"xs": 1.5},
                                             ),
-                                            Container(col=3),
+                                            Container(col={"xs": 3}),
                                         ],
                                     ),
                                     ResponsiveRow(
                                         controls=[
-                                            Container(col=3.3),
-                                            Container(content=Text("2.5%"), col=1.5),
-                                            Container(content=Text("5.0%"), col=1.5),
-                                            Container(content=Text("12.5%"), col=1.5),
-                                            Container(col=3),
+                                            Container(col={"xs": 3.3}),
+                                            Container(content=Text("2.5%"), col={"xs": 1.5}),
+                                            Container(content=Text("5.0%"), col={"xs": 1.5}),
+                                            Container(content=Text("12.5%"), col={"xs": 1.5}),
+                                            Container(col={"xs": 3}),
                                         ],
                                     ),
-                                    Container(col=1),
+                                    Container(col={"xs": 1}),
                                 ],
-                                col=8,
+                                col={"xs": 8},
                             ),
                             Column(
                                 controls=[
                                     ResponsiveRow(
                                         controls=[
-                                            Container(col=1),
                                             Text(
                                                 t("strings.Reroll Stat"),
                                                 text_align="center",
-                                                col=5,
+                                                col={"xs": 5},
                                             ),
-                                            Container(col=6),
+                                            Container(col={"xs": 6}),
                                         ],
                                         alignment="center",
                                     ),
@@ -358,7 +356,7 @@ class GemController(Controller):
                                                     )
                                                 ),
                                                 on_click=self.change_stat,
-                                                col=3.5,
+                                                col={"xs": 3.5},
                                             ),
                                             Container(
                                                 content=Image(
@@ -368,7 +366,7 @@ class GemController(Controller):
                                                 disabled=not bool(self.selected_stat)
                                                 or not self.selected_stat.boosts,
                                                 on_click=self.move_boost,
-                                                col=3.5,
+                                                col={"xs": 3.5},
                                             ),
                                         ],
                                     ),
@@ -380,7 +378,7 @@ class GemController(Controller):
                                                     size=11,
                                                     text_align="center",
                                                 ),
-                                                col=3.5,
+                                                col={"xs": 3.5},
                                             ),
                                             Container(
                                                 content=Text(
@@ -388,20 +386,20 @@ class GemController(Controller):
                                                     size=11,
                                                     text_align="center",
                                                 ),
-                                                col=3.5,
+                                                col={"xs": 3.5},
                                             ),
                                         ],
                                     ),
                                 ],
                                 horizontal_alignment="top",
-                                col=4,
+                                col={"xs": 4},
                             ),
                         ],
                         alignment="center",
                     ),
                 ],
                 horizontal_alignment="center",
-                col=4,
+                col={"xxl": 4},
                 spacing=2,
             )
         )

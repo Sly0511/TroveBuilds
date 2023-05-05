@@ -322,6 +322,8 @@ class MarketplaceController(Controller):
         self.your_listings.controls.clear()
         listings = await Listing.find_many({}, limit=10, fetch_links=True).to_list(length=999999)
         self.market.ylistings_max_listings = len(listings)
+        if not self.market.ylistings_max_listings:
+            return
         listing_chunks = chunks(listings, self.market.ylistings_per_page)
         self.market.ylistings_max_pages = len(listing_chunks)
         if self.market.ylistings_page > self.market.ylistings_max_pages:

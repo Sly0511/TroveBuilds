@@ -212,11 +212,13 @@ class TroveBuilds:
                 item.noobtain = raw_item["noobtain"]
             self.page.trove_items.append(item)
 
-    @tasks.loop(seconds=1)
+    @tasks.loop(seconds=60)
     async def update_clock(self):
         self.page.clock.value = (datetime.utcnow() - timedelta(hours=11)).strftime(
-            "Trove Time: %Y-%m-%d\t\t%H:%M:%S"
+            "%a, %b %d\t\t%H:%M"
         )
+        now = datetime.utcnow()
+        await asyncio.sleep(60 - now.second)
         try:
             await self.page.clock.update_async()
         except Exception:
