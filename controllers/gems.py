@@ -27,8 +27,12 @@ from flet import (
     Tabs,
     Tab,
     Stack,
+    IconButton,
+    Icon
 )
 from i18n import t
+
+from flet_core.icons import EXPOSURE_PLUS_1, EXPOSURE_MINUS_1, EXPOSURE_ZERO
 
 from models.objects import Controller
 from models.objects.gem import (
@@ -76,85 +80,104 @@ class GemSetController(Controller):
                 controls=[
                     ResponsiveRow(
                         controls=[
-                            Column(
+                            ResponsiveRow(
                                 controls=[
+                                    Text("Gem Tier", size=18),
                                     ElevatedButton(
                                         t("buttons.all_radiant"),
                                         on_click=self.on_full_radiant,
+                                        col=4
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_stellar"),
                                         on_click=self.on_full_stellar,
+                                        col=4
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_crystal"),
                                         on_click=self.on_full_crystal,
+                                        col=4
                                     ),
                                 ],
-                                col=2,
+                                col={"xxl": 2},
                             ),
-                            Column(
+                            ResponsiveRow(
                                 controls=[
+                                    Text("Gem Levels", size=18),
                                     ElevatedButton(
                                         t("buttons.min_level"),
                                         on_click=self.on_min_level,
-                                    ),
-                                    ElevatedButton(
-                                        t("buttons.all_five_level"),
-                                        on_click=self.on_five_level,
-                                    ),
-                                    ElevatedButton(
-                                        t("buttons.all_ten_level"),
-                                        on_click=self.on_ten_level,
-                                    ),
-                                    ElevatedButton(
-                                        t("buttons.all_fifteen_level"),
-                                        on_click=self.on_fifteen_level,
+                                        col=6
                                     ),
                                     ElevatedButton(
                                         t("buttons.max_level"),
                                         on_click=self.on_max_level,
+                                        col=6
+                                    ),
+                                    ElevatedButton(
+                                        "5",
+                                        on_click=self.on_five_level,
+                                        col=4
+                                    ),
+                                    ElevatedButton(
+                                        "10",
+                                        on_click=self.on_ten_level,
+                                        col=4
+                                    ),
+                                    ElevatedButton(
+                                        "15",
+                                        on_click=self.on_fifteen_level,
+                                        col=4
                                     ),
                                 ],
-                                col=2,
+                                col={"xxl": 2},
                             ),
-                            Column(
+                            ResponsiveRow(
                                 controls=[
+                                    Text("Augmentation", size=18),
                                     ElevatedButton(
                                         t("buttons.zero_augmentation"),
                                         on_click=self.zero_augmentation,
+                                        col=4
                                     ),
                                     ElevatedButton(
                                         t("buttons.min_augmentation"),
                                         on_click=self.on_min_augmentation,
+                                        col=4
                                     ),
                                     ElevatedButton(
                                         t("buttons.max_augmentation"),
                                         on_click=self.on_max_augmentation,
+                                        col=4
                                     ),
                                 ],
-                                col=2,
+                                col={"xxl": 2},
                             ),
-                            Column(
+                            ResponsiveRow(
                                 controls=[
+                                    Text("Stats", size=18),
                                     ElevatedButton(
                                         t("buttons.all_magic"),
                                         on_click=self.on_all_magic,
+                                        col=6
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_physical"),
                                         on_click=self.on_all_physical,
+                                        col=6
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_damage"),
                                         on_click=self.on_full_damage,
+                                        col=6
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_health"),
                                         on_click=self.on_full_health,
+                                        col=6
                                     ),
                                 ],
-                                col=2,
+                                col={"xxl": 2},
                             ),
                         ],
                         data="shortcuts_bar",
@@ -166,7 +189,7 @@ class GemSetController(Controller):
                                 label=t("gem_dragons." + element.value),
                                 data=element,
                                 on_change=self.on_primordial_change,
-                                col=3,
+                                col={"xxl": 3},
                             )
                             for element in GemElement
                         ],
@@ -243,27 +266,27 @@ class GemSetController(Controller):
                                     ),
                                     border_radius=2,
                                 ),
-                                col=4,
+                                col={"xxl": 4},
                             )
                             for gem in gem_row
                         ],
                     )
                     for gem_row in self.gem_set
                 ],
-                col=6,
+                col={"xxl": 6},
             ),
             Column(
                 data="gem_editor",
                 controls=[
                     ResponsiveRow(
                         controls=[
-                            ability_editor := Column(col=6),
-                            level_editor := Column(col=6),
+                            ability_editor := Column(col={"xxl": 6}),
+                            level_editor := Column(col={"xxl": 6}),
                             gem_editor := Column(),
                         ]
                     )
                 ],
-                col=6,
+                col={"xxl": 6},
                 disabled=self.selected_gem is None,
             ),
         ]
@@ -339,13 +362,13 @@ class GemSetController(Controller):
                             ],
                             disabled=stat.name == Stat.light,
                             on_change=self.on_stat_change,
-                            col=6,
+                            col={"xxl": 6},
                         ),
                         Text(
                             data=stat,
                             value=f"{stat.display_percentage}"
                             + t("strings.% Augmentation Progress"),
-                            col=2,
+                            col={"xxl": 2, "xs": 6},
                         ),
                         Row(
                             controls=[
@@ -446,10 +469,10 @@ class GemSetController(Controller):
                                     on_leave=self.cancel_drop_boost,
                                 ),
                             ],
-                            col=3,
+                            col={"xxl": 3, "xs": 6},
                         ),
                     ],
-                    col=4,
+                    col={"xxl": 4},
                 )
                 gem_editor.controls.append(stat_row)
         else:
@@ -459,8 +482,8 @@ class GemSetController(Controller):
             for i in range(3):
                 stat_row = ResponsiveRow(
                     controls=[
-                        Dropdown(label=t("strings.Change Stat"), col=6),
-                        Text(value=f"0" + t("strings.% Augmentation Progress"), col=2),
+                        Dropdown(label=t("strings.Change Stat"), col={"xxl": 6}),
+                        Text(value=f"0" + t("strings.% Augmentation Progress"), col={"xxl": 2, "xs": 6}),
                         Row(
                             controls=[
                                 Container(
@@ -504,10 +527,10 @@ class GemSetController(Controller):
                                     )
                                 ),
                             ],
-                            col=3,
+                            col={"xxl": 3, "xs": 6},
                         ),
                     ],
-                    col=4,
+                    col={"xxl": 4},
                 )
                 gem_editor.controls.append(stat_row)
         self.calculate_gem_report()
@@ -577,7 +600,7 @@ class GemSetController(Controller):
                     )
                 ],
             ),
-            col=4,
+            col={"xxl": 4},
         )
         low = {"rough": 0}
         medium = {"rough": 0, "precise": 0}
@@ -649,13 +672,13 @@ class GemSetController(Controller):
                 ),
             ],
             horizontal_alignment="center",
-            col=4,
+            col={"xxl": 4},
         )
         self.gem_report.controls.extend(
             [
                 stats_card,
                 costs_card,
-                Card(Text("WIP", size=18), col=4),
+                Card(Text("WIP", size=18), col={"xxl": 4}),
             ]
         )
         asyncio.create_task(self.page.update_async())

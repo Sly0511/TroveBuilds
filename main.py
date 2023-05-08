@@ -112,7 +112,7 @@ class TroveBuilds:
                 view = v(page)
         page.appbar = TroveToolsAppBar(
             leading=Row(controls=[view.icon, page.clock]),
-            title=view.title,
+            title=Text(t(view.title.value)),
             views=page.all_views[1:],
             page=page,
         )
