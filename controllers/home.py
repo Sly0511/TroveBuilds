@@ -1,8 +1,20 @@
 import base64
 from datetime import datetime, timedelta
 
-from flet import Text, Column, Row, Container, Card, ResponsiveRow, Image, Stack, Divider, TextStyle, BoxShadow, \
-    TextSpan
+from flet import (
+    Text,
+    Column,
+    Row,
+    Container,
+    Card,
+    ResponsiveRow,
+    Image,
+    Stack,
+    Divider,
+    TextStyle,
+    BoxShadow,
+    TextSpan,
+)
 
 from models.objects import Controller
 from utils import tasks
@@ -15,9 +27,7 @@ class Widget(Container):
     def __init__(self, controls: list = [], **kwargs):
         super().__init__(
             content=Column(
-                controls=[
-                    *controls
-                ],
+                controls=[*controls],
                 horizontal_alignment="center",
             ),
             on_hover=None,
@@ -47,7 +57,7 @@ class HomeController(Controller):
                 horizontal_alignment="center",
             ),
             height=190,
-            col={"xxl": 2.5}
+            col={"xxl": 2.5},
         )
         self.daily_widgets = Column(
             controls=[
@@ -56,19 +66,30 @@ class HomeController(Controller):
                     controls=[
                         Stack(
                             controls=[
-                                Image(src_base64=base64.b64encode(requests.get(v["banner"]).content).decode("utf-8")),
+                                Image(
+                                    src_base64=base64.b64encode(
+                                        requests.get(v["banner"]).content
+                                    ).decode("utf-8")
+                                ),
                                 Container(
                                     TextSpan(
                                         v["weekday"],
                                         style=TextStyle(
                                             color="#" + v["color"],
-                                            size=16
-                                        )
+                                            shadow=BoxShadow(color="black"),
+                                            size=16,
+                                        ),
                                     ),
                                     left=10,
-                                    top=3
+                                    top=3,
                                 ),
-                                Text(v["name"], color="#" + v["color"], left=10, top=23, size=16),
+                                Text(
+                                    v["name"],
+                                    color="#" + v["color"],
+                                    left=10,
+                                    top=23,
+                                    size=16,
+                                ),
                                 # *[
                                 #     Text(
                                 #         buff,
@@ -95,7 +116,11 @@ class HomeController(Controller):
                     controls=[
                         Stack(
                             controls=[
-                                Image(src_base64=base64.b64encode(requests.get(v["banner"]).content).decode("utf-8")),
+                                Image(
+                                    src_base64=base64.b64encode(
+                                        requests.get(v["banner"]).content
+                                    ).decode("utf-8")
+                                ),
                                 Text(v["name"], left=10, size=16),
                                 *[
                                     Text(
@@ -103,10 +128,10 @@ class HomeController(Controller):
                                         left=10 if buff in ["Buffs"] else 15,
                                         size=10 if buff not in ["Buffs"] else 12,
                                         top=11 + 25 * i,
-                                        weight="bold" if buff in ["Buffs"] else None
+                                        weight="bold" if buff in ["Buffs"] else None,
                                     )
                                     for i, buff in enumerate(["Buffs"] + v["buffs"], 1)
-                                ]
+                                ],
                             ]
                         )
                     ],
@@ -121,21 +146,15 @@ class HomeController(Controller):
             controls=[
                 self.clock_widget,
                 Row(
-                    controls=[
-                        Text("Daily Buffs", size=20),
-                        Divider()
-                    ],
+                    controls=[Text("Daily Buffs", size=20), Divider()],
                 ),
                 self.daily_widgets,
                 Row(
-                    controls=[
-                        Text("Weekly buffs", size=20),
-                        Divider()
-                    ],
+                    controls=[Text("Weekly buffs", size=20), Divider()],
                 ),
-                self.weekly_widgets
+                self.weekly_widgets,
             ],
-            spacing=40
+            spacing=40,
         )
         self.update_clock.start()
         self.update_daily.start()
@@ -160,7 +179,6 @@ class HomeController(Controller):
         try:
             now = datetime.utcnow() - timedelta(hours=11)
             self.daily_widgets.controls[now.weekday()].bg_color = "yellow"
-            # self.daily_widgets.controls[now.weekday()].surface_tint_color = "yellow"
             await self.page.update_async()
         except Exception as e:
             print(e)
@@ -174,5 +192,4 @@ class HomeController(Controller):
         time_split = weeks / 4
         time_find = (time_split - int(time_split)) * 4
         self.weekly_widgets.controls[int(time_find)].bg_color = "yellow"
-        # self.weekly_widgets.controls[int(time_find)].surface_tint_color = "yellow"
         await self.page.update_async()

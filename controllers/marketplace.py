@@ -21,9 +21,10 @@ from flet import (
     Container,
     VerticalDivider,
     MainAxisAlignment,
-    ProgressRing
+    ProgressRing,
+    IconButton,
 )
-from flet_core.icons import REPORT, VERIFIED
+from flet_core.icons import REPORT, VERIFIED, ARROW_FORWARD_IOS, ARROW_BACK_IOS
 
 from models.objects import Controller
 from models.objects.marketplace import Listing, ListingStatus
@@ -31,6 +32,7 @@ from models.objects.user import User
 from utils.functions import long_throttle, throttle, chunks
 from models.objects.marketplace import Item
 from utils import tasks
+from utils.controls import ScrollingFrame
 
 
 MARKET_MAX_SALE = 9999 * 9999 * 16
@@ -43,22 +45,34 @@ class MarketplaceSettings:
     create_amount = None
     create_price = None
     search_word = None
-    listing_status = ListingStatus.listed
+    listing_statuses = [ListingStatus.pending, ListingStatus.listed]
+    listings_max_pages = 0
+    listings_page = 0
+    listings_per_page = 10
+    listings_max_listings = 0
     ylistings_max_pages = 0
     ylistings_page = 0
     ylistings_per_page = 4
     ylistings_max_listings = 0
 
+listing_colors = {
+    ListingStatus.listed: "blue",
+    ListingStatus.pending: "yellow",
+    ListingStatus.sold: "green",
+    ListingStatus.cancelled: "red",
+    ListingStatus.expired: "purple"
+}
+
 
 class MarketplaceController(Controller):
     def setup_controls(self):
-        if not getattr(self.page.constants, 'trove_items'):
+        if not getattr(self.page.constants, "trove_items"):
             self.main = Column(
                 controls=[ProgressRing(), Text("Loading items")],
                 width=self.page.width,
                 height=self.page.height,
                 alignment="center",
-                horizontal_alignment="center"
+                horizontal_alignment="center",
             )
             self.get_items_list.start()
             return
@@ -70,7 +84,9 @@ class MarketplaceController(Controller):
                 )
             )
             self.market = MarketplaceSettings()
-            self.main = ResponsiveRow(disabled=not bool(self.page.constants.discord_user))
+            self.main = ResponsiveRow(
+                disabled=True  # not bool(self.page.constants.discord_user)
+            )
             self.listings = DataTable(
                 columns=[
                     DataColumn(Text("ID")),
@@ -137,9 +153,7 @@ class MarketplaceController(Controller):
                                                 "Create listing",
                                                 data=self.market.selected_item,
                                                 disabled=(
-                                                    not bool(
-                                                        self.market.selected_item
-                                                    )
+                                                    not bool(self.market.selected_item)
                                                     or not bool(
                                                         self.market.create_price
                                                     )
@@ -282,7 +296,7 @@ class MarketplaceController(Controller):
                 Card(
                     Column(
                         controls=[Text("Your Listings", size=22), self.your_listings],
-                        horizontal_alignment="center"
+                        horizontal_alignment="center",
                     ),
                     margin=5,
                     col={"xxl": 7},
@@ -295,13 +309,13 @@ class MarketplaceController(Controller):
                     label="Search item",
                     value=self.market.search_word,
                     on_submit=self.set_search_word,
-                    col=4,
+                    col={"xxl": 4},
                 )
             ]
         )
         asyncio.create_task(self.update_listings())
         asyncio.create_task(self.update_your_listings())
-        self.main.controls.append(self.listings)
+        self.main.controls.append(ScrollingFrame(self.listings))
 
     def setup_events(self):
         ...
@@ -334,9 +348,26 @@ class MarketplaceController(Controller):
     @throttle
     async def update_your_listings(self, event=None):
         self.your_listings.controls.clear()
-        listings = await Listing.find_many({}, limit=10, fetch_links=True).to_list(length=999999)
+        self.your_listings.controls.append(
+            Row(controls=[ProgressRing(), Text("Loading listings...")])
+        )
+        await self.your_listings.update_async()
+        self.your_listings.controls.clear()
+        listings = list(
+            filter(
+                lambda x: x.status in self.market.listing_statuses,
+                await Listing.find_many({}, fetch_links=True).to_list(
+                    length=999999
+                )
+            )
+        )
+        listings.sort(key=lambda x: (self.market.listing_statuses.index(x.status), x.created_at))
         self.market.ylistings_max_listings = len(listings)
         if not self.market.ylistings_max_listings:
+            self.your_listings.controls.append(
+                Text("You haven't listed any items.", size=20)
+            )
+            await self.your_listings.update_async()
             return
         listing_chunks = chunks(listings, self.market.ylistings_per_page)
         self.market.ylistings_max_pages = len(listing_chunks)
@@ -346,11 +377,48 @@ class MarketplaceController(Controller):
             self.market.ylistings_page = 0
         for listing in listing_chunks[self.market.ylistings_page]:
             # Prevent listing others' listings
-            if listing.seller.discord_id != int(self.page.discord_user.id):
+            if listing.seller.discord_id != int(self.page.constants.discord_user.id):
                 continue
+            actions = []
+            if listing.status in [ListingStatus.listed, ListingStatus.pending]:
+                actions.append(
+                    ElevatedButton(
+                        "Cancel",
+                        color="yellow",
+                        data=listing,
+                        on_click=self.cancel_listing,
+                        height=25,
+                    )
+                )
+            actions.append(
+                ElevatedButton(
+                    "Relist",
+                    data=listing,
+                    on_click=self.relist_listing,
+                    height=25,
+                )
+            )
+            if listing.status in [ListingStatus.pending]:
+                actions.append(
+                    ElevatedButton(
+                        "Approve",
+                        color="green",
+                        data=listing,
+                        on_click=self.cancel_listing,
+                        height=25,
+                    )
+                )
+                actions.append(
+                    ElevatedButton(
+                        "Deny",
+                        color="red",
+                        data=listing,
+                        on_click=self.cancel_listing,
+                        height=25,
+                    )
+                )
+
             # Filter listings with bad status
-            if listing.status != self.market.listing_status:
-                continue
             self.your_listings.controls.append(
                 Card(
                     content=Row(
@@ -359,10 +427,15 @@ class MarketplaceController(Controller):
                             Column(
                                 controls=[
                                     Container(
-                                        Text(listing.item.name, color="cyan"),
+                                        Row(
+                                            controls=[
+                                                Text(f"[{listing.status.value}]", color=listing_colors[listing.status]),
+                                                Text(listing.item.name, color="cyan"),
+                                            ]
+                                        ),
                                         data=listing.item.trovesaurus_url,
                                         on_click=self.go_to_url,
-                                        tooltip="Click me for more information"
+                                        tooltip="Click me for more information",
                                     ),
                                     Row(
                                         controls=[
@@ -375,15 +448,20 @@ class MarketplaceController(Controller):
                                                                     src="assets/images/resources/item_crafting_spark.png",
                                                                     width=20,
                                                                 ),
-                                                                Text(f"{listing.price:,}", size=12),
+                                                                Text(
+                                                                    f"{listing.price:,}",
+                                                                    size=12,
+                                                                ),
                                                             ]
                                                         )
                                                     ]
                                                 ),
-                                                surface_tint_color="red"
+                                                surface_tint_color="red",
                                             ),
                                             *[
-                                                Text("or", size=12) if listing.price >= 150_000 else Text()
+                                                Text("or", size=12)
+                                                if listing.price >= 150_000
+                                                else Text()
                                             ],
                                             Card(
                                                 *(
@@ -395,21 +473,25 @@ class MarketplaceController(Controller):
                                                                     width=20,
                                                                 ),
                                                                 Text(
-                                                                    f"{int(listing.better_price[0]):,}", size=12
+                                                                    f"{int(listing.better_price[0]):,}",
+                                                                    size=12,
                                                                 ),
                                                                 Image(
                                                                     src="assets/images/resources/item_crafting_spark.png",
                                                                     width=20,
                                                                 ),
                                                                 Text(
-                                                                    f"{int(listing.better_price[1]):,}", size=12
+                                                                    f"{int(listing.better_price[1]):,}",
+                                                                    size=12,
                                                                 ),
                                                             ]
                                                         )
-                                                    ] if listing.price >= 150_000 else []
+                                                    ]
+                                                    if listing.price >= 150_000
+                                                    else []
                                                 ),
-                                                surface_tint_color="red"
-                                            )
+                                                surface_tint_color="red",
+                                            ),
                                         ]
                                     ),
                                     Row(
@@ -418,10 +500,13 @@ class MarketplaceController(Controller):
                                                 content=Row(
                                                     controls=[
                                                         Text("Quantity:", size=12),
-                                                        Text(f"{listing.amount:,}", size=12)
+                                                        Text(
+                                                            f"{listing.amount:,}",
+                                                            size=12,
+                                                        ),
                                                     ]
                                                 ),
-                                                surface_tint_color="red"
+                                                surface_tint_color="red",
                                             ),
                                             Card(
                                                 content=Row(
@@ -431,50 +516,72 @@ class MarketplaceController(Controller):
                                                             src="assets/images/resources/item_crafting_spark.png",
                                                             width=20,
                                                         ),
-                                                        Text(f"{listing.price_per:,g}", size=12)
+                                                        Text(
+                                                            f"{listing.price_per:,g}",
+                                                            size=12,
+                                                        ),
                                                     ]
                                                 ),
-                                                surface_tint_color="red"
-                                            )
+                                                surface_tint_color="red",
+                                            ),
                                         ]
                                     ),
                                     Row(
-                                        controls=[
-                                            ElevatedButton("Cancel", height=25),
-                                            ElevatedButton("Relist", height=25),
-                                        ],
-                                        alignment=MainAxisAlignment.END
+                                        controls=actions,
+                                        alignment=MainAxisAlignment.END,
                                     ),
                                 ],
-                                spacing=2
+                                spacing=2,
                             ),
                         ]
                     ),
-                    surface_tint_color="blue",
+                    surface_tint_color=listing_colors[listing.status],
                     col={"xs": 12, "sm": 12, "md": 12, "lg": 12, "xl": 6, "xxl": 6},
-                    margin=10
+                    margin=10,
                 )
             )
-        self.your_listings.controls.extend(
-            [
-                ElevatedButton(
-                    "Previous",
-                    disabled=self.market.ylistings_max_pages == 1,
-                    on_click=self.previous_your_listings,
-                    col={"xs": 8, "sm": 4, "md": 4, "lg": 4, "xl": 2, "xxl": 2}
-                ),
-                Text(
-                    f"Page {self.market.ylistings_page+1} of {self.market.ylistings_max_pages}",
-                    text_align="center",
-                    col={"xs": 4, "sm": 2, "md": 2, "lg": 2, "xl": 1, "xxl": 1}
-                ),
-                ElevatedButton(
-                    "Next",
-                    disabled=self.market.ylistings_max_pages == 1,
-                    on_click=self.next_your_listings,
-                    col={"xs": 8, "sm": 4, "md": 4, "lg": 4, "xl": 2, "xxl": 2}
-                )
-            ]
+        self.your_listings.controls.append(
+            ResponsiveRow(
+                controls=[
+                    Text(
+                        col={
+                            "xs": 0,
+                            "sm": 1.5,
+                            "md": 1.5,
+                            "lg": 1.5,
+                            "xl": 2,
+                            "xxl": 3.5,
+                        }
+                    ),
+                    IconButton(
+                        ARROW_BACK_IOS,
+                        disabled=self.market.ylistings_max_pages == 1,
+                        on_click=self.previous_your_listings,
+                        col={"xs": 3, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 2},
+                    ),
+                    Text(
+                        f"Page {self.market.ylistings_page+1} of {self.market.ylistings_max_pages}",
+                        text_align="center",
+                        col={"xs": 5, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 1},
+                    ),
+                    IconButton(
+                        ARROW_FORWARD_IOS,
+                        disabled=self.market.ylistings_max_pages == 1,
+                        on_click=self.next_your_listings,
+                        col={"xs": 3, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 2},
+                    ),
+                    Text(
+                        col={
+                            "xs": 0,
+                            "sm": 1.5,
+                            "md": 1.5,
+                            "lg": 1.5,
+                            "xl": 2,
+                            "xxl": 3.5,
+                        }
+                    ),
+                ]
+            )
         )
         while True:
             await asyncio.sleep(1)
@@ -485,10 +592,7 @@ class MarketplaceController(Controller):
                 ...
 
     def filter_items(self, item):
-        if (
-            self.market.create_category
-            and item.category != self.market.create_category
-        ):
+        if self.market.create_category and item.category != self.market.create_category:
             return False
         if (
             self.market.create_word
@@ -550,7 +654,7 @@ class MarketplaceController(Controller):
                         },
                         {
                             "name": "Reporter ID",
-                            "value": self.page.discord_user.id,
+                            "value": self.page.constants.discord_user.id,
                             "inline": False,
                         },
                     ],
@@ -559,7 +663,7 @@ class MarketplaceController(Controller):
                 }
             ],
         }
-        resp = requests.post(self.page.market_log_webhook, json=message)
+        resp = requests.post(self.page.constants.market_log_webhook, json=message)
         if resp.status_code == 204:
             await event.control.data.save()
             self.page.snack_bar.content.value = "Item reported for removal"
@@ -594,15 +698,15 @@ class MarketplaceController(Controller):
                             "name": "Reported by",
                             "value": "#".join(
                                 [
-                                    self.page.discord_user.username,
-                                    self.page.discord_user.discriminator,
+                                    self.page.constants.discord_user.username,
+                                    self.page.constants.discord_user.discriminator,
                                 ]
                             ),
                             "inline": False,
                         },
                         {
                             "name": "Reporter ID",
-                            "value": self.page.discord_user.id,
+                            "value": self.page.constants.discord_user.id,
                             "inline": False,
                         },
                     ],
@@ -611,7 +715,7 @@ class MarketplaceController(Controller):
                 }
             ],
         }
-        resp = requests.post(self.page.market_log_webhook, json=message)
+        resp = requests.post(self.page.constants.market_log_webhook, json=message)
         if resp.status_code == 204:
             await event.control.data.save()
             self.page.snack_bar.content.value = "Item reported for verification"
@@ -670,15 +774,15 @@ class MarketplaceController(Controller):
                             "name": "Created by",
                             "value": "#".join(
                                 [
-                                    self.page.discord_user.username,
-                                    self.page.discord_user.discriminator,
+                                    self.page.constants.discord_user.username,
+                                    self.page.constants.discord_user.discriminator,
                                 ]
                             ),
                             "inline": False,
                         },
                         {
                             "name": "Creator ID",
-                            "value": self.page.discord_user.id,
+                            "value": self.page.constants.discord_user.id,
                             "inline": False,
                         },
                     ],
@@ -687,19 +791,16 @@ class MarketplaceController(Controller):
                 }
             ],
         }
-        resp = requests.post(self.page.market_log_webhook, json=message)
+        resp = requests.post(self.page.constants.market_log_webhook, json=message)
         if resp.status_code == 204:
             user = await User.find_one(
-                User.discord_id == int(self.page.discord_user.id)
+                User.discord_id == int(self.page.constants.discord_user.id)
             )
             listing = Listing(
                 item=self.market.selected_item,
                 seller=user,
-                price=int(
-                    self.market.create_amount
-                    * self.market.create_price
-                ),
-                amount=self.market.create_price,
+                price=int(self.market.create_amount * self.market.create_price),
+                amount=self.market.create_amount,
             )
             await listing.save()
             self.market.create_word = None
@@ -740,6 +841,19 @@ class MarketplaceController(Controller):
                 item.notrade = raw_item["notrade"]
                 item.noobtain = raw_item["noobtain"]
             self.page.constants.trove_items.append(item)
-        print("Uh")
         await self.page.restart()
         self.get_items_list.cancel()
+
+    async def relist_listing(self, event):
+        self.market.create_amount = event.control.data.amount
+        self.market.create_price = event.control.data.price_per
+        self.market.selected_item = event.control.data.item
+        self.market.create_word = event.control.data.item.name
+        self.setup_controls()
+        await self.page.update_async()
+
+    async def cancel_listing(self, event):
+        event.control.data.status = ListingStatus.cancelled
+        await event.control.data.save()
+        self.setup_controls()
+        await self.update_your_listings()
