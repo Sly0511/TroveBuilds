@@ -64,7 +64,7 @@ class TroveBuilds:
             page.restart = self.restart
             page.open_blank_page = self.open_blank_page
             page.logger = Logger("Trove Builds Core")
-            await self.get_items_list()
+            asyncio.create_task(self.get_items_list())
             # Load configurations
             await self.load_configuration()
         # Setup localization
@@ -112,7 +112,6 @@ class TroveBuilds:
                 view = v(page)
         page.appbar = TroveToolsAppBar(
             leading=Row(controls=[Icon(view.icon), page.clock]),
-            title=Text(t(view.title.value)),
             views=page.all_views[1:],
             page=page,
         )
