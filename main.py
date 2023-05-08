@@ -53,7 +53,7 @@ class TroveBuilds:
                 page.constants.database_client.trovetools,
                 document_models=[User, Listing, Item],
             )
-            page.clock = Text("Trove Time")
+            page.clock = Text((datetime.utcnow() - timedelta(hours=11)).strftime("%a, %b %d\t\t%H:%M"))
             page.login_provider = DiscordOAuth2(
                 client_id=get_key(".env", "DISCORD_CLIENT"),
                 client_secret=get_key(".env", "DISCORD_SECRET"),
@@ -121,10 +121,10 @@ class TroveBuilds:
     async def check_login(self):
         if (
             self.page.auth is None
-            and await self.page.client_storage.contains_key_async("login")
+            and (encrypted_token := await self.page.client_storage.get_async("login")) is not None
         ):
             try:
-                encrypted_token = await self.page.client_storage.get_async("login")
+
                 await self.page.login_async(
                     self.page.login_provider,
                     saved_token=decrypt(
@@ -190,9 +190,9 @@ class TroveBuilds:
         await self.start(self.page, True)
 
     async def load_configuration(self):
-        if await self.page.client_storage.contains_key_async("locale"):
+        if locale_data := await self.page.client_storage.get_async("locale") is not None:
             try:
-                loc = Locale(await self.page.client_storage.get_async("locale"))
+                loc = Locale(locale_data)
                 self.page.constants.app_config.locale = loc
             except ValueError:
                 await self.page.client_storage.set_async(
@@ -218,12 +218,15 @@ class TroveBuilds:
         self.page.clock.value = (datetime.utcnow() - timedelta(hours=11)).strftime(
             "%a, %b %d\t\t%H:%M"
         )
-        now = datetime.utcnow()
-        await asyncio.sleep(60 - now.second)
         try:
             await self.page.clock.update_async()
         except Exception:
             ...
+
+    @update_clock.before_loop
+    async def sync_clock(self):
+        now = datetime.utcnow()
+        await asyncio.sleep(60 - now.second)
 
 
 if __name__ == "__main__":

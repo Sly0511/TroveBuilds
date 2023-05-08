@@ -497,58 +497,59 @@ class GemBuildsController(Controller):
                     top = coefficient
         self.abilities.rows.clear()
         self.abilities.visible = bool(self.selected_build)
-        self.abilities.rows.extend(
-            [
-                *[
-                    DataRow(
-                        cells=[
-                            DataCell(
-                                content=Stack(
-                                    controls=[
-                                        Image(a.icon_path, top=6, left=5),
-                                        *[
-                                            Image(
-                                                "assets/images/abilities/gem_frame.png"
-                                            )
-                                            for i in range(1)
-                                            if a.type == AbilityType.upgrade
-                                        ],
-                                    ],
-                                )
-                            ),
-                            DataCell(content=Text(a.name)),
-                            DataCell(
-                                content=Column(
-                                    controls=[
-                                        Row(
-                                            controls=[
-                                                Text(s.name, size=10, width=70),
-                                                Text(
-                                                    f"{round(s.base + s.multiplier * self.selected_build[6]):,}",
-                                                    size=10,
-                                                    width=70,
-                                                    text_align="center",
-                                                ),
-                                                Text(
-                                                    f"{round(s.base + s.multiplier * self.selected_build[6]*2.5):,}",
-                                                    size=10,
-                                                    width=70,
-                                                    text_align="center",
-                                                ),
+        if self.selected_build is not None:
+            self.abilities.rows.extend(
+                [
+                    *[
+                        DataRow(
+                            cells=[
+                                DataCell(
+                                    content=Stack(
+                                        controls=[
+                                            Image(a.icon_path, top=6, left=5),
+                                            *[
+                                                Image(
+                                                    "assets/images/abilities/gem_frame.png"
+                                                )
+                                                for i in range(1)
+                                                if a.type == AbilityType.upgrade
                                             ],
-                                        )
-                                        for s in a.stages
-                                    ],
-                                    alignment="center",
-                                    spacing=1,
-                                )
-                            ),
-                        ]
-                    )
-                    for a in self.selected_class.abilities
+                                        ],
+                                    )
+                                ),
+                                DataCell(content=Text(a.name)),
+                                DataCell(
+                                    content=Column(
+                                        controls=[
+                                            Row(
+                                                controls=[
+                                                    Text(s.name, size=10, width=70),
+                                                    Text(
+                                                        f"{round(s.base + s.multiplier * self.selected_build[6]):,}",
+                                                        size=10,
+                                                        width=70,
+                                                        text_align="center",
+                                                    ),
+                                                    Text(
+                                                        f"{round(s.base + s.multiplier * self.selected_build[6]*2.5):,}",
+                                                        size=10,
+                                                        width=70,
+                                                        text_align="center",
+                                                    ),
+                                                ],
+                                            )
+                                            for s in a.stages
+                                        ],
+                                        alignment="center",
+                                        spacing=1,
+                                    )
+                                ),
+                            ]
+                        )
+                        for a in self.selected_class.abilities
+                    ]
                 ]
-            ]
-        )
+            )
 
     def setup_events(self):
         ...
