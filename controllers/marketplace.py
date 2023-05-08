@@ -20,7 +20,8 @@ from flet import (
     ElevatedButton,
     Container,
     VerticalDivider,
-    MainAxisAlignment
+    MainAxisAlignment,
+    ProgressRing
 )
 from flet_core.icons import REPORT, VERIFIED
 
@@ -28,6 +29,9 @@ from models.objects import Controller
 from models.objects.marketplace import Listing, ListingStatus
 from models.objects.user import User
 from utils.functions import long_throttle, throttle, chunks
+from models.objects.marketplace import Item
+from utils import tasks
+
 
 MARKET_MAX_SALE = 9999 * 9999 * 16
 
@@ -48,6 +52,16 @@ class MarketplaceSettings:
 
 class MarketplaceController(Controller):
     def setup_controls(self):
+        if not getattr(self.page.constants, 'trove_items'):
+            self.main = Column(
+                controls=[ProgressRing(), Text("Loading items")],
+                width=self.page.width,
+                height=self.page.height,
+                alignment="center",
+                horizontal_alignment="center"
+            )
+            self.get_items_list.start()
+            return
         if not hasattr(self, "market"):
             self.items = self.page.constants.trove_items
             self.categories = sorted(
@@ -56,7 +70,7 @@ class MarketplaceController(Controller):
                 )
             )
             self.market = MarketplaceSettings()
-            self.main = ResponsiveRow(disabled=True)
+            self.main = ResponsiveRow(disabled=not bool(self.page.constants.discord_user))
             self.listings = DataTable(
                 columns=[
                     DataColumn(Text("ID")),
@@ -710,3 +724,22 @@ class MarketplaceController(Controller):
 
     async def go_to_url(self, event):
         await self.page.launch_url_async(event.control.data)
+
+    @tasks.loop(seconds=1)
+    async def get_items_list(self):
+        data = requests.get("https://trovesaurus.com/items.json").json()
+        for raw_item in data:
+            item = await Item.find_one(Item.identifier == raw_item["identifier"])
+            if item is None:
+                item = await Item(**raw_item).save()
+            else:
+                item.name = raw_item["name"]
+                item.type = raw_item["type"]
+                item.description = raw_item["description"]
+                item.icon = raw_item["icon"]
+                item.notrade = raw_item["notrade"]
+                item.noobtain = raw_item["noobtain"]
+            self.page.constants.trove_items.append(item)
+        print("Uh")
+        await self.page.restart()
+        self.get_items_list.cancel()

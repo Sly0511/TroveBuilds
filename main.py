@@ -64,7 +64,6 @@ class TroveBuilds:
             page.restart = self.restart
             page.open_blank_page = self.open_blank_page
             page.logger = Logger("Trove Builds Core")
-            asyncio.create_task(self.get_items_list())
             # Load configurations
             await self.load_configuration()
         # Setup localization
@@ -213,21 +212,6 @@ class TroveBuilds:
 
     async def open_blank_page(self, url):
         await self.page.launch_url_async(url, web_window_name="_blank")
-
-    async def get_items_list(self):
-        data = requests.get("https://trovesaurus.com/items.json").json()
-        for raw_item in data:
-            item = await Item.find_one(Item.identifier == raw_item["identifier"])
-            if item is None:
-                item = await Item(**raw_item).save()
-            else:
-                item.name = raw_item["name"]
-                item.type = raw_item["type"]
-                item.description = raw_item["description"]
-                item.icon = raw_item["icon"]
-                item.notrade = raw_item["notrade"]
-                item.noobtain = raw_item["noobtain"]
-            self.page.constants.trove_items.append(item)
 
     @tasks.loop(seconds=60)
     async def update_clock(self):
