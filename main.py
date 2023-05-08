@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import requests
 from beanie import init_beanie
 from dotenv import get_key
-from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column, Row
+from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column, Row, Icon
 from flet.security import encrypt, decrypt
 from httpx import HTTPStatusError
 from i18n import t
@@ -111,7 +111,7 @@ class TroveBuilds:
                     )
                 view = v(page)
         page.appbar = TroveToolsAppBar(
-            leading=Row(controls=[view.icon, page.clock]),
+            leading=Row(controls=[Icon(view.icon), page.clock]),
             title=Text(t(view.title.value)),
             views=page.all_views[1:],
             page=page,

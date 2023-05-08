@@ -368,7 +368,7 @@ class GemSetController(Controller):
                             data=stat,
                             value=f"{stat.display_percentage}"
                             + t("strings.% Augmentation Progress"),
-                            col={"xxl": 2, "xs": 6},
+                            col={"xxl": 2, "xs": 5},
                         ),
                         Row(
                             controls=[
@@ -469,7 +469,7 @@ class GemSetController(Controller):
                                     on_leave=self.cancel_drop_boost,
                                 ),
                             ],
-                            col={"xxl": 3, "xs": 6},
+                            col={"xxl": 3, "xs": 7},
                         ),
                     ],
                     col={"xxl": 4},

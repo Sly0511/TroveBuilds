@@ -8,7 +8,7 @@ from controllers import GemController
 class GemView(View):
     route = "/gem_simulator"
     title = Text(t("tabs.3"))
-    icon = Icon(SCIENCE_SHARP)
+    icon = SCIENCE_SHARP
 
     def __init__(self, page):
         ctrl = GemController(page=page)

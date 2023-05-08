@@ -5,7 +5,7 @@ from flet_core.icons import QUESTION_MARK
 class View404(View):
     route = "/404"
     title = Text("404 - Not Found")
-    icon = Icon(QUESTION_MARK)
+    icon = QUESTION_MARK
 
     def __init__(self, page):
         super().__init__(

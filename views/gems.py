@@ -8,7 +8,7 @@ from controllers import GemSetController
 class GemSetView(View):
     route = "/gem_calculator"
     title = Text(t("tabs.0"))
-    icon = Icon(DIAMOND_SHARP)
+    icon = DIAMOND_SHARP
 
     def __init__(self, page):
         ctrl = GemSetController(page=page)

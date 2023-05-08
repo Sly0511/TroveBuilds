@@ -6,7 +6,7 @@ from controllers import HomeController
 class HomeView(View):
     route = "/"
     title = Text("Home")
-    icon = Icon(HOME_SHARP)
+    icon = HOME_SHARP
 
     def __init__(self, page):
         ctrl = HomeController(page)

@@ -7,7 +7,7 @@ from controllers import MarketplaceController
 class MarketplaceView(View):
     route = "/marketplace"
     title = Text("[BETA] Marketplace")
-    icon = Icon(COMMENT_BANK)
+    icon = COMMENT_BANK
 
     def __init__(self, page):
         ctrl = MarketplaceController(page)

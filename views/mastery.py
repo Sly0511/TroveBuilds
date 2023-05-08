@@ -7,7 +7,7 @@ from controllers import MasteryController
 class MasteryView(View):
     route = "/mastery"
     title = Text("Mastery")
-    icon = Icon(MENU_BOOK_SHARP)
+    icon = MENU_BOOK_SHARP
 
     def __init__(self, page):
         ctrl = MasteryController(page=page)

@@ -1,6 +1,5 @@
 from flet import (
     AppBar,
-    Icon,
     IconButton,
     PopupMenuButton,
     PopupMenuItem,
@@ -14,6 +13,7 @@ from flet import (
     AlertDialog,
     TextButton,
     MainAxisAlignment,
+    Icon
 )
 from flet_core.colors import SURFACE_VARIANT
 from flet_core.icons import (
@@ -27,9 +27,9 @@ from flet_core.icons import (
     HELP,
     LOGOUT,
 )
+from i18n import t
 
 from utils.localization import Locale
-from i18n import t
 
 
 class TroveToolsAppBar(AppBar):
@@ -40,7 +40,7 @@ class TroveToolsAppBar(AppBar):
         del kwargs["page"]
         actions = []
         if self.page.route != "/":
-            actions.append(IconButton(icon=HOME, on_click=self.change_home))
+            actions.append(IconButton(icon=Icon(HOME), on_click=self.change_home))
         actions.extend(
             [
                 IconButton(
@@ -77,7 +77,7 @@ class TroveToolsAppBar(AppBar):
                         PopupMenuItem(
                             data=view.route,
                             text=t(view.title.value),
-                            icon=view.icon.name,
+                            icon=view.icon,
                             on_click=self.change_route,
                         )
                         for view in self.views
