@@ -40,7 +40,7 @@ class TroveToolsAppBar(AppBar):
         del kwargs["page"]
         actions = []
         if self.page.route != "/":
-            actions.append(IconButton(icon=Icon(HOME), on_click=self.change_home))
+            actions.append(IconButton(icon=HOME, on_click=self.change_home))
         actions.extend(
             [
                 IconButton(
