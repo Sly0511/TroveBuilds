@@ -29,6 +29,7 @@ from flet_core.icons import (
 )
 
 from utils.localization import Locale
+from i18n import t
 
 
 class TroveToolsAppBar(AppBar):
@@ -71,13 +72,11 @@ class TroveToolsAppBar(AppBar):
                 ),
                 VerticalDivider(width=3, visible=False),
                 PopupMenuButton(
-                    content=Container(
-                        Row(controls=[Icon(NOW_WIDGETS_SHARP)])
-                    ),
+                    content=Container(Row(controls=[Icon(NOW_WIDGETS_SHARP)])),
                     items=[
                         PopupMenuItem(
                             data=view.route,
-                            text=view.title.value,
+                            text=t(view.title.value),
                             icon=view.icon.name,
                             on_click=self.change_route,
                         )
