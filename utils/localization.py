@@ -27,7 +27,7 @@ class LocalizationManager:
         set("fallback", Locale.American_English.value)
         # Set the locale based on the settings
         # page.app_config.locale = Locale.Portuguese
-        set("locale", page.app_config.locale.value)
+        set("locale", page.constants.app_config.locale.value)
         LocalizationLogger.debug(
             f"Loaded localization settings -> {json.dumps(config.settings, separators=(',', ':'))}"
         )

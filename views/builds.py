@@ -5,12 +5,14 @@ from controllers import GemBuildsController
 
 
 class GemBuildsView(View):
+    route = "/gem_builds"
+    title = Text("Gem Builds")
+    icon = Icon(TABLE_VIEW)
+
     def __init__(self, page):
         ctrl = GemBuildsController(page)
-        self.title = Text("Gem Builds")
-        self.icon = Icon(TABLE_VIEW)
         super().__init__(
-            route="/gem_builds",
+            route=self.route,
             controls=[
                 Column(controls=[ctrl.character_data, ctrl.data_table, ctrl.features])
             ],

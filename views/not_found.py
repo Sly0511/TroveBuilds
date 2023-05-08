@@ -3,11 +3,13 @@ from flet_core.icons import QUESTION_MARK
 
 
 class View404(View):
+    route = "/404"
+    title = Text("404 - Not Found")
+    icon = Icon(QUESTION_MARK)
+
     def __init__(self, page):
-        self.title = Text("404 - Not Found")
-        self.icon = Icon(QUESTION_MARK)
         super().__init__(
-            route="/404",
+            route=self.route,
             controls=[
                 Column(
                     controls=[

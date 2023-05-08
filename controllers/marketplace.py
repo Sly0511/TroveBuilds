@@ -49,7 +49,7 @@ class MarketplaceSettings:
 class MarketplaceController(Controller):
     def setup_controls(self):
         if not hasattr(self, "market"):
-            self.items = self.page.trove_items
+            self.items = self.page.constants.trove_items
             self.categories = sorted(
                 list(
                     set([i.category for i in self.items if i.category and i.marketable])

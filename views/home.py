@@ -4,13 +4,13 @@ from controllers import HomeController
 
 
 class HomeView(View):
+    route = "/"
+    title = Text("Home")
+    icon = Icon(HOME_SHARP)
+
     def __init__(self, page):
-        self.title = Text("Home")
-        self.icon = Icon(HOME_SHARP)
         ctrl = HomeController(page)
         super().__init__(
-            route="/",
-            controls=[
-                ctrl.widgets
-            ],
+            route=self.route,
+            controls=[ctrl.widgets],
         )

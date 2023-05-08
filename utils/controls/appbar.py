@@ -69,7 +69,7 @@ class TroveToolsAppBar(AppBar):
                     ],
                     tooltip="Change language",
                 ),
-                VerticalDivider(),
+                VerticalDivider(width=3, visible=False),
                 PopupMenuButton(
                     content=Container(
                         Row(controls=[Icon(NOW_WIDGETS_SHARP)])
@@ -86,15 +86,15 @@ class TroveToolsAppBar(AppBar):
                     ],
                     tooltip="Change tool",
                 ),
-                VerticalDivider(),
+                VerticalDivider(width=3, visible=False),
                 (
                     PopupMenuButton(
                         content=Row(
                             controls=[
                                 CircleAvatar(
-                                    foreground_image_url=self.page.discord_user.avatar_url()
+                                    foreground_image_url=self.page.constants.discord_user.avatar_url()
                                 ),
-                                Text(self.page.discord_user.display_name),
+                                Text(self.page.constants.discord_user.display_name),
                             ]
                         ),
                         items=[
@@ -103,7 +103,7 @@ class TroveToolsAppBar(AppBar):
                             ),
                         ],
                     )
-                    if self.page.discord_user
+                    if self.page.constants.discord_user
                     else Container(
                         Row(
                             controls=[
@@ -207,7 +207,7 @@ class TroveToolsAppBar(AppBar):
         await self.page.update_async()
 
     async def change_locale(self, event):
-        self.page.app_config.locale = event.control.data
+        self.page.constants.app_config.locale = event.control.data
         await self.page.client_storage.set_async("locale", event.control.data.value)
         await self.page.restart(True)
 

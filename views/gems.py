@@ -6,12 +6,14 @@ from controllers import GemSetController
 
 
 class GemSetView(View):
+    route = "/gem_calculator"
+    title = Text(t("tabs.0"))
+    icon = Icon(DIAMOND_SHARP)
+
     def __init__(self, page):
         ctrl = GemSetController(page=page)
-        self.title = Text(t("tabs.0"))
-        self.icon = Icon(DIAMOND_SHARP)
         super().__init__(
-            route="/gem_calculator",
+            route=self.route,
             controls=[ctrl.gem_report, ctrl.general_controls, ctrl.gem_altar],
             scroll="auto",
         )

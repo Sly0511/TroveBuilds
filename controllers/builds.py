@@ -310,7 +310,7 @@ class GemBuildsController(Controller):
                     "Last", data=self.max_pages - 1, on_click=self.change_build_page, col={"xs": 3, "xxl": 1}
                 ),
                 TextField(
-                    data=encrypt(self.config.to_base_64(), self.page.secret_key),
+                    data=encrypt(self.config.to_base_64(), self.page.constants.secret_key),
                     label="Insert build string",
                     on_submit=self.set_build_string, col={"xs": 6, "xxl": 3}
                 ),
@@ -385,8 +385,6 @@ class GemBuildsController(Controller):
             builds = self.calculate_results()
             builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
             builds = [[i] + b for i, b in enumerate(builds, 1)]
-            if self.selected_build is None:
-                self.selected_build = builds[0]
             paged_builds = chunks(builds, 10)
             self.max_pages = len(paged_builds)
             if self.build_page < 0:

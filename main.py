@@ -31,6 +31,16 @@ from views import (
 )
 
 
+class Constants:
+    trove_items: list = []
+    database_client: AsyncIOMotorClient = AsyncIOMotorClient()
+    database = None
+    discord_user: DiscordUser = None
+    market_log_webhook: str = None
+    app_config: Config = Config()
+    secret_key: str = get_key(".env", "APP_SECRET")
+
+
 class TroveBuilds:
     def run(self):
         app(target=self.start, assets_dir="assets", view=WEB_BROWSER, port=13010)
@@ -38,16 +48,19 @@ class TroveBuilds:
     async def start(self, page: Page, restart=False, translate=False):
         if not restart:
             self.page = page
-            page.database_client = AsyncIOMotorClient()
-            page.database = await init_beanie(
-                page.database_client.trovetools, document_models=[User, Listing, Item]
+            page.constants = Constants()
+            page.constants.database = await init_beanie(
+                page.constants.database_client.trovetools,
+                document_models=[User, Listing, Item],
             )
             page.clock = Text("Trove Time")
             page.login_provider = DiscordOAuth2(
                 client_id=get_key(".env", "DISCORD_CLIENT"),
                 client_secret=get_key(".env", "DISCORD_SECRET"),
             )
-            self.page.market_log_webhook = get_key(".env", "MARKET_LOG_WEBHOOK")
+            self.page.constants.market_log_webhook = get_key(
+                ".env", "MARKET_LOG_WEBHOOK"
+            )
             page.restart = self.restart
             page.open_blank_page = self.open_blank_page
             page.logger = Logger("Trove Builds Core")
@@ -75,41 +88,39 @@ class TroveBuilds:
         await self.check_login()
         if not hasattr(page, "all_views") or translate:
             page.all_views = [
-                View404(page),
-                HomeView(page),
-                GemSetView(page),
-                GemView(page),
-                StarView(page),
-                MasteryView(page),
-                GemBuildsView(page),
-                MarketplaceView(page),
+                View404,
+                HomeView,
+                GemSetView,
+                GemView,
+                StarView,
+                MasteryView,
+                GemBuildsView,
+                MarketplaceView,
             ]
-        for view in page.all_views:
-            view.appbar = TroveToolsAppBar(
-                leading=Row(controls=[view.icon, page.clock]),
-                title=view.title,
-                views=page.all_views[1:],
-                page=page,
-            )
         # Push UI elements into view
         await page.clean_async()
-        view = page.all_views[0]
+        view = page.all_views[0](page)
         for v in page.all_views[1:]:
             if v.route == page.route:
-                if not self.page.discord_user and isinstance(v, MarketplaceView):
+                if not self.page.constants.discord_user and isinstance(
+                    v, MarketplaceView
+                ):
                     await self.page.login_async(
                         page.login_provider,
                         on_open_authorization_url=self.open_blank_page,
                     )
-                view = v
-        page.appbar = view.appbar
+                view = v(page)
+        page.appbar = TroveToolsAppBar(
+            leading=Row(controls=[view.icon, page.clock]),
+            title=view.title,
+            views=page.all_views[1:],
+            page=page,
+        )
         await page.add_async(Column(controls=view.controls))
         if not self.update_clock.is_running():
             self.update_clock.start()
 
     async def check_login(self):
-        self.page.secret_key = get_key(".env", "APP_SECRET")
-        self.page.discord_user = None
         if (
             self.page.auth is None
             and await self.page.client_storage.contains_key_async("login")
@@ -118,7 +129,9 @@ class TroveBuilds:
                 encrypted_token = await self.page.client_storage.get_async("login")
                 await self.page.login_async(
                     self.page.login_provider,
-                    saved_token=decrypt(encrypted_token, self.page.secret_key),
+                    saved_token=decrypt(
+                        encrypted_token, self.page.constants.secret_key
+                    ),
                 )
                 return
             except HTTPStatusError:
@@ -127,22 +140,26 @@ class TroveBuilds:
                 self.page.logger.debug("User logged out: Invalidated token")
         if self.page.auth is None:
             return
-        self.page.discord_user = DiscordUser(**self.page.auth.user)
-        encrypted_token = encrypt(self.page.auth.token.to_json(), self.page.secret_key)
+        self.page.constants.discord_user = DiscordUser(**self.page.auth.user)
+        encrypted_token = encrypt(
+            self.page.auth.token.to_json(), self.page.constants.secret_key
+        )
         await self.page.client_storage.set_async("login", encrypted_token)
 
     async def on_login(self, event):
         while self.page.auth is None:
             await asyncio.sleep(1)
-        self.page.discord_user = DiscordUser(**self.page.auth.user)
+        self.page.constants.discord_user = DiscordUser(**self.page.auth.user)
         if (
             user := await User.find_one(
-                User.discord_id == int(self.page.discord_user.id)
+                User.discord_id == int(self.page.constants.discord_user.id)
             )
         ) is None:
-            user = await User(discord_id=int(self.page.discord_user.id)).save()
+            user = await User(
+                discord_id=int(self.page.constants.discord_user.id)
+            ).save()
         self.page.logger.debug(
-            f"User Login: [{self.page.discord_user.id}] {self.page.discord_user.display_name}"
+            f"User Login: [{self.page.constants.discord_user.id}] {self.page.constants.discord_user.display_name}"
         )
         if user.blocked:
             await self.page.logout_async()
@@ -150,10 +167,11 @@ class TroveBuilds:
 
     async def on_logout(self, event):
         self.page.logger.debug(
-            f"User Logout: [{self.page.discord_user.id}] {self.page.discord_user.display_name}"
+            f"User Logout: [{self.page.constants.discord_user.id}] {self.page.constants.discord_user.display_name}"
         )
         while self.page.auth is not None:
             await asyncio.sleep(1)
+            self.page.constants.discord_user = None
         await self.restart()
 
     async def restart(self, translate=False):
@@ -174,11 +192,10 @@ class TroveBuilds:
         await self.start(self.page, True)
 
     async def load_configuration(self):
-        self.page.app_config = Config()
         if await self.page.client_storage.contains_key_async("locale"):
             try:
                 loc = Locale(await self.page.client_storage.get_async("locale"))
-                self.page.app_config.locale = loc
+                self.page.constants.app_config.locale = loc
             except ValueError:
                 await self.page.client_storage.set_async(
                     "locale", Locale.American_English.value
@@ -187,7 +204,9 @@ class TroveBuilds:
             await self.page.client_storage.set_async(
                 "locale", Locale.American_English.value
             )
-        self.page.logger.debug("Configuration loaded -> " + repr(self.page.app_config))
+        self.page.logger.debug(
+            "Configuration loaded -> " + repr(self.page.constants.app_config)
+        )
 
     def setup_localization(self):
         LocalizationManager(self.page).update_all_translations()
@@ -196,8 +215,7 @@ class TroveBuilds:
     async def open_blank_page(self, url):
         await self.page.launch_url_async(url, web_window_name="_blank")
 
-    async def get_items_list(self) -> list:
-        self.page.trove_items = []
+    async def get_items_list(self):
         data = requests.get("https://trovesaurus.com/items.json").json()
         for raw_item in data:
             item = await Item.find_one(Item.identifier == raw_item["identifier"])
@@ -210,7 +228,7 @@ class TroveBuilds:
                 item.icon = raw_item["icon"]
                 item.notrade = raw_item["notrade"]
                 item.noobtain = raw_item["noobtain"]
-            self.page.trove_items.append(item)
+            self.page.constants.trove_items.append(item)
 
     @tasks.loop(seconds=60)
     async def update_clock(self):

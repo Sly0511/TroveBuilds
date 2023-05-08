@@ -5,12 +5,14 @@ from controllers import MasteryController
 
 
 class MasteryView(View):
+    route = "/mastery"
+    title = Text("Mastery")
+    icon = Icon(MENU_BOOK_SHARP)
+
     def __init__(self, page):
         ctrl = MasteryController(page=page)
-        self.title = Text("Mastery")
-        self.icon = Icon(MENU_BOOK_SHARP)
         super().__init__(
-            route="/mastery",
+            route=self.route,
             controls=[
                 ctrl.points_input,
                 ctrl.level_input,

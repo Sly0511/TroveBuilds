@@ -5,8 +5,10 @@ from controllers import StarChartController
 
 
 class StarView(View):
+    route = "/star_chart"
+    title = Text("[WIP] Star Chart")
+    icon = Icon(STARS_SHARP)
+
     def __init__(self, page):
         ctrl = StarChartController(page=page)
-        self.title = Text("[WIP] Star Chart")
-        self.icon = Icon(STARS_SHARP)
-        super().__init__("/star_chart", controls=[ctrl.map], spacing=0, padding=0)
+        super().__init__(self.route, controls=[ctrl.map], spacing=0, padding=0)
