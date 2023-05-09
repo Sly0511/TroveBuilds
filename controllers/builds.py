@@ -496,8 +496,9 @@ class GemBuildsController(Controller):
                 if not top:
                     top = coefficient
         self.abilities.rows.clear()
-        self.abilities.visible = bool(self.selected_build)
-        if self.selected_build is not None:
+        self.abilities_table.visible = bool(self.selected_build is not None and len(self.selected_class.abilities))
+        print(self.abilities_table.visible)
+        if self.abilities_table.visible:
             self.abilities.rows.extend(
                 [
                     *[
