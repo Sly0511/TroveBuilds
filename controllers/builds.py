@@ -894,7 +894,7 @@ class GemBuildsController(Controller):
     def get_build_string(self, data):
         string = ""
         string += f"Build: {data[0]}\n"
-        string += f"Light: {data[2]}\n"
+        string += f"Light: {data[3]}\n"
         string += f"Base Damage: {round(data[1], 2)}\n"
         string += f"Bonus Damage: {data[4]}\n"
         string += f"Damage: {round(data[5], 2)}\n"
