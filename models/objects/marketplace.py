@@ -94,8 +94,8 @@ class ListingStatus(Enum):
     listed = "Listed"
     pending = "Pending"
     sold = "Sold"
-    expired = "Expired"
     cancelled = "Cancelled"
+    expired = "Expired"
 
 
 def generate_id():
@@ -135,3 +135,11 @@ class Listing(Document):
     @property
     def better_price(self):
         return divmod(self.price, 9999)
+
+    @property
+    def tank_price(self):
+        return self.better_price[0]
+
+    @property
+    def leftover_price(self):
+        return self.better_price[1]

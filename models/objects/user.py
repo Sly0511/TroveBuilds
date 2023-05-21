@@ -13,16 +13,32 @@ class MarketplaceData(BaseModel):
     seller_downvotes: list[UUID] = []
 
     @property
+    def buyer_rating_valid(self):
+        up = len(self.buyer_upvotes)
+        down = len(self.buyer_upvotes)
+        return up + down >= 5
+
+    @property
     def buyer_rating(self):
         up = len(self.buyer_upvotes)
         down = len(self.buyer_upvotes)
-        return round(up / (up + down) * 5, 2)
+        if not self.buyer_rating_valid:
+            raise ValueError("Not enough votes")
+        return round(round(up / (up + down) * 5 * 2) / 2, 1)
+
+    @property
+    def seller_rating_valid(self):
+        up = len(self.seller_upvotes)
+        down = len(self.seller_downvotes)
+        return up + down >= 5
 
     @property
     def seller_rating(self):
         up = len(self.seller_upvotes)
         down = len(self.seller_downvotes)
-        return round(up / (up + down) * 5, 2)
+        if not self.seller_rating_valid:
+            raise ValueError("Not enough votes")
+        return round(round(up / (up + down) * 5 * 2) / 2, 1)
 
 
 class SavedBuild(Document):

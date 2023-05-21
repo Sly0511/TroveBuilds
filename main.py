@@ -1,7 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
 
-import requests
 from beanie import init_beanie
 from dotenv import get_key
 from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column, Row, Icon
@@ -58,7 +57,7 @@ class TroveBuilds:
                 client_id=get_key(".env", "DISCORD_CLIENT"),
                 client_secret=get_key(".env", "DISCORD_SECRET"),
             )
-            self.page.constants.market_log_webhook = get_key(
+            page.constants.market_log_webhook = get_key(
                 ".env", "MARKET_LOG_WEBHOOK"
             )
             page.restart = self.restart
@@ -101,7 +100,7 @@ class TroveBuilds:
         view = page.all_views[0](page)
         for v in page.all_views[1:]:
             if v.route == page.route:
-                if not self.page.constants.discord_user and isinstance(
+                if not page.constants.discord_user and isinstance(
                     v, MarketplaceView
                 ):
                     await self.page.login_async(
@@ -153,9 +152,8 @@ class TroveBuilds:
                 User.discord_id == int(self.page.constants.discord_user.id)
             )
         ) is None:
-            user = await User(
-                discord_id=int(self.page.constants.discord_user.id)
-            ).save()
+            user = User(discord_id=int(self.page.constants.discord_user.id))
+            await user.save()
         self.page.logger.debug(
             f"User Login: [{self.page.constants.discord_user.id}] {self.page.constants.discord_user.display_name}"
         )

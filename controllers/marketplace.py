@@ -22,11 +22,19 @@ from flet import (
     MainAxisAlignment,
     ProgressRing,
     IconButton,
-    DragTarget,
-    Draggable,
-    border
+    Tabs,
+    Tab,
 )
-from flet_core.icons import REPORT, VERIFIED, ARROW_FORWARD_IOS, ARROW_BACK_IOS
+from flet_core.icons import (
+    REPORT,
+    VERIFIED,
+    ARROW_FORWARD_IOS,
+    ARROW_BACK_IOS,
+    STAR_ROUNDED,
+    STAR_HALF_ROUNDED,
+    STAR_BORDER_ROUNDED,
+    ATTACH_MONEY
+)
 
 from models.objects import Controller
 from models.objects.marketplace import Item
@@ -51,10 +59,8 @@ class MarketplaceSettings:
     listings_page = 0
     listings_per_page = 10
     listings_max_listings = 0
-    ylistings_max_pages = 0
-    ylistings_page = 0
-    ylistings_per_page = 4
-    ylistings_max_listings = 0
+    ylistings = []
+    ylistings_paging_info = {}
 
 
 listing_colors = {
@@ -62,7 +68,7 @@ listing_colors = {
     ListingStatus.pending: "#f1c232",
     ListingStatus.sold: "#4d982c",
     ListingStatus.cancelled: "#e71d1d",
-    ListingStatus.expired: "#a23ef3"
+    ListingStatus.expired: "#a23ef3",
 }
 
 
@@ -92,13 +98,16 @@ class MarketplaceController(Controller):
             self.listings = DataTable(
                 columns=[
                     DataColumn(Text("ID")),
+                    DataColumn(Text("")),
                     DataColumn(Text("Item")),
+                    DataColumn(Text("Amount")),
                     DataColumn(Text("Price")),
                     DataColumn(Text("Tank Price")),
-                    DataColumn(Text("Amount")),
                     DataColumn(Text("Price Each")),
-                    DataColumn(Text("")),
+                    DataColumn(Text("Reputation")),
+                    DataColumn(Text("Actions")),
                 ],
+                visible=bool(self.market.search_word),
                 col=12,
             )
             self.your_listings = ResponsiveRow(alignment="center")
@@ -208,7 +217,7 @@ class MarketplaceController(Controller):
                                                         * self.market.create_amount
                                                     )
                                                 )
-                                                >= 150_000
+                                                >= 9_999
                                                 else []
                                             ),
                                             (
@@ -315,359 +324,461 @@ class MarketplaceController(Controller):
                 )
             ]
         )
-        asyncio.create_task(self.update_listings())
-        asyncio.create_task(self.update_your_listings())
+        self.loading_listings = Row(
+            controls=[ProgressRing(), Text("Loading listings...")], visible=False
+        )
+        self.main.controls.append(self.loading_listings)
         self.main.controls.append(ScrollingFrame(self.listings))
+        asyncio.create_task(self.update_listings())
+        asyncio.create_task(self.update_your_listings(refresh=True))
 
     def setup_events(self):
         ...
 
     async def update_listings(self):
         self.listings.rows.clear()
+        self.listings.visible = bool(self.market.search_word)
         if self.market.search_word:
-            async for listing in Listing.find_many({}, limit=10, fetch_links=True):
-                ...
+            self.loading_listings.visible = True
+            await self.loading_listings.update_async()
+            listings = list(
+                filter(
+                    lambda x: x.status == ListingStatus.listed and
+                              x.seller.discord_id == self.page.constants.discord_user.id,
+                    await Listing.find(
+                        {
+                            "status": "Listed"
+                        },
+                        limit=10,
+                        fetch_links=True
+                    ).to_list(length=99999)
+                )
+            )
+            listings.sort(key=lambda x: (x.price_per, x.item.name))
+            for listing in listings:
+                self.listings.rows.append(
+                    DataRow(
+                        cells=[
+                            DataCell(
+                                Text(listing.uuid),
+                                data=listing.uuid,
+                                on_tap=self.copy_to_clipboard,
+                            ),
+                            DataCell(
+                                Image(src_base64=listing.item.icon_base64, width=25)
+                            ),
+                            DataCell(Text(listing.item.name)),
+                            DataCell(Text(f"x{listing.amount:,}")),
+                            DataCell(
+                                Row(
+                                    controls=[
+                                        Image(
+                                            src="assets/images/resources/item_crafting_spark.png",
+                                            width=20,
+                                        ),
+                                        Text(
+                                            f"{int(listing.price):,}",
+                                            size=12,
+                                        ),
+                                    ]
+                                )
+                            ),
+                            DataCell(
+                                *[
+                                    Row(
+                                        controls=[
+                                            Image(
+                                                src="assets/images/resources/item_crafting_fluxcannister.png",
+                                                width=20,
+                                            ),
+                                            Text(
+                                                f"{int(listing.tank_price):,}",
+                                                size=12,
+                                            ),
+                                            Image(
+                                                src="assets/images/resources/item_crafting_spark.png",
+                                                width=20,
+                                            ),
+                                            Text(
+                                                f"{int(listing.leftover_price):,}",
+                                                size=12,
+                                            ),
+                                        ]
+                                    )
+                                ]
+                                if listing.price > 9_999
+                                else [Text("N/A")]
+                            ),
+                            DataCell(
+                                Row(
+                                    controls=[
+                                        Image(
+                                            src="assets/images/resources/item_crafting_spark.png",
+                                            width=20,
+                                        ),
+                                        Text(
+                                            f"{int(listing.price_per):,}",
+                                            size=12,
+                                        ),
+                                    ]
+                                )
+                            ),
+                            DataCell(
+                                content=Row(
+                                    controls=[
+                                        *(
+                                            [
+                                                *[
+                                                    Icon(STAR_ROUNDED, color="#ffd700")
+                                                    for _ in range(
+                                                        int(listing.seller.market.seller_rating)
+                                                    )
+                                                ],
+                                                *[
+                                                    Icon(STAR_HALF_ROUNDED, color="#ffd700")
+                                                    for _ in range(
+                                                        int(
+                                                            listing.seller.market.seller_rating % 1 * 2
+                                                        )
+                                                    )
+                                                ],
+                                                *[
+                                                    Icon(STAR_BORDER_ROUNDED, color="#ffd700")
+                                                    for _ in range(
+                                                        5
+                                                        - round(
+                                                            listing.seller.market.seller_rating
+                                                        )
+                                                    )
+                                                ]
+                                            ] if listing.seller.market.seller_rating_valid else [
+                                                Text("New Seller")
+                                            ]
+                                        )
+                                    ]
+                                )
+                            ),
+                            # TODO: add methods for buying and reporting a seller
+                            DataCell(
+                                content=Row(
+                                    controls=[
+                                        IconButton(
+                                            ATTACH_MONEY
+                                        ),
+                                        IconButton(
+                                            REPORT,
+                                            data=listing,
+                                            tooltip="Report Seller",
+                                            on_click=self.report_seller
+                                        )
+                                    ]
+                                )
+                            )
+                        ]
+                    )
+                )
         while True:
             await asyncio.sleep(1)
             try:
+                self.loading_listings.visible = False
+                await self.loading_listings.update_async()
                 await self.listings.update_async()
                 break
             except Exception:
                 ...
 
     async def next_your_listings(self, event):
-        self.market.ylistings_page += 1
-        if self.market.ylistings_page > self.market.ylistings_max_pages - 1:
-            self.market.ylistings_page = 0
-        await self.update_your_listings()
+        info = self.market.ylistings_paging_info[event.control.data]
+        info["current"] += 1
+        if info["current"] > info["max_pages"] - 1:
+            info["current"] = 0
+        await self.update_your_listings(tab_status=event.control.data)
 
     async def previous_your_listings(self, event):
-        self.market.ylistings_page -= 1
-        if self.market.ylistings_page < 0:
-            self.market.ylistings_page = self.market.ylistings_max_pages - 1
-        await self.update_your_listings()
+        info = self.market.ylistings_paging_info[event.control.data]
+        info["current"] -= 1
+        if info["current"] < 0:
+            info["current"] = info["max_pages"] - 1
+        await self.update_your_listings(tab_status=event.control.data)
 
     @throttle
-    async def update_your_listings(self, event=None):
-        self.your_listings.controls.clear()
-        self.your_listings.controls.append(
-            Row(controls=[ProgressRing(), Text("Loading listings...")])
+    async def refresh_listings(self, event=None):
+        self.market.ylistings.clear()
+        self.market.ylistings.extend(
+            [
+                listing
+                async for listing in Listing.find_many({}, fetch_links=True)
+                if listing.seller.discord_id == int(self.page.constants.discord_user.id)
+            ]
         )
-        await self.your_listings.update_async()
-        self.your_listings.controls.clear()
-        listings = list(
-            filter(
-                lambda x: x.status in self.market.listing_statuses,
-                await Listing.find_many({}, fetch_links=True).to_list(
-                    length=999999
-                )
-            )
-        )
-        listings.sort(key=lambda x: (self.market.listing_statuses.index(x.status), x.created_at))
-        self.market.ylistings_max_listings = len(listings)
-        listing_chunks = chunks(listings, self.market.ylistings_per_page)
-        self.market.ylistings_max_pages = len(listing_chunks)
-        if self.market.ylistings_page > self.market.ylistings_max_pages:
-            self.market.ylistings_page = self.market.ylistings_max_pages
-        if self.market.ylistings_page < 0:
-            self.market.ylistings_page = 0
-        if not self.market.ylistings_max_listings:
-            self.your_listings.controls.append(
-                Text("You haven't listed any items.", size=20)
-            )
-        else:
-            for listing in listing_chunks[self.market.ylistings_page]:
-                # Prevent listing others' listings
-                if listing.seller.discord_id != int(self.page.constants.discord_user.id):
-                    continue
-                actions = []
-                if listing.status in [ListingStatus.listed, ListingStatus.pending]:
-                    actions.append(
-                        ElevatedButton(
-                            "Cancel",
-                            color="yellow",
-                            data=listing,
-                            on_click=self.cancel_listing,
-                            height=25,
-                        )
-                    )
-                actions.append(
-                    ElevatedButton(
-                        "Relist",
-                        data=listing,
-                        on_click=self.relist_listing,
-                        height=25,
-                    )
-                )
-                if listing.status in [ListingStatus.pending]:
-                    actions.append(
-                        ElevatedButton(
-                            "Approve",
-                            color="green",
-                            data=listing,
-                            on_click=self.cancel_listing,
-                            height=25,
-                        )
-                    )
-                    actions.append(
-                        ElevatedButton(
-                            "Deny",
-                            color="red",
-                            data=listing,
-                            on_click=self.cancel_listing,
-                            height=25,
-                        )
-                    )
 
-                # Filter listings with bad status
-                self.your_listings.controls.append(
-                    Card(
-                        content=Row(
-                            controls=[
-                                Image(src_base64=listing.item.icon_base64, width=125),
-                                Column(
-                                    controls=[
-                                        Container(
+    async def update_your_listings(self, event=None, refresh=False, tab_status=ListingStatus.listed):
+        self.your_listings.controls.clear()
+        if refresh:
+            while True:
+                try:
+                    self.your_listings.controls.append(
+                        Row(controls=[ProgressRing(), Text("Loading listings...")])
+                    )
+                    await self.your_listings.update_async()
+                    break
+                except AssertionError:
+                    await asyncio.sleep(0.1)
+            self.your_listings.controls.clear()
+            await self.refresh_listings()
+        your_listing_tabs = Tabs(height=800, width=450)
+        for tab_index, status in enumerate(ListingStatus):
+            listings = list(filter(lambda x: x.status == status, self.market.ylistings))
+            listings.sort(key=lambda x: -x.created_at.timestamp())
+            paged_listings = chunks(listings, 4)
+            if status in [ListingStatus.pending]:
+                tab_name = f"{status.value} ({len(listings)})"
+            else:
+                tab_name = status.value
+            tab = Tab(
+                tab_content=Text(tab_name, color=listing_colors[status]),
+                content=ResponsiveRow()
+            )
+            if refresh:
+                self.market.ylistings_paging_info[status] = {
+                    "max_pages": len(paged_listings),
+                    "current": 0
+                }
+            info = self.market.ylistings_paging_info[status]
+            if info["current"] > info["max_pages"] - 1:
+                info["current"] = 0
+            elif info["current"] < 0:
+                info["current"] = info["max_pages"] - 1
+            if info["max_pages"]:
+                for listing in paged_listings[info["current"]]:
+                    actions = []
+                    if listing.status in [ListingStatus.listed, ListingStatus.pending]:
+                        actions.append(
+                            ElevatedButton(
+                                "Cancel",
+                                color="yellow",
+                                data=listing,
+                                on_click=self.cancel_listing,
+                                height=25,
+                            )
+                        )
+                    actions.append(
+                        ElevatedButton(
+                            "Relist",
+                            data=listing,
+                            on_click=self.relist_listing,
+                            height=25,
+                        )
+                    )
+                    if listing.status in [ListingStatus.pending]:
+                        # TODO: add methods for sold and not sold
+                        actions.append(
+                            ElevatedButton(
+                                "Sold",
+                                color="green",
+                                data=listing,
+                                on_click=self.cancel_listing,
+                                height=25,
+                            )
+                        )
+                        actions.append(
+                            ElevatedButton(
+                                "Not Sold",
+                                color="red",
+                                data=listing,
+                                on_click=self.cancel_listing,
+                                height=25,
+                            )
+                        )
+                    tab.content.controls.append(
+                        Card(
+                            content=Row(
+                                controls=[
+                                    Image(src_base64=listing.item.icon_base64, width=125),
+                                    Column(
+                                        controls=[
+                                            Container(
+                                                Row(
+                                                    controls=[
+                                                        Text(
+                                                            f"[{listing.status.value}]",
+                                                            color=listing_colors[
+                                                                listing.status
+                                                            ],
+                                                        ),
+                                                        Text(
+                                                            listing.item.name, color="cyan"
+                                                        ),
+                                                        *[
+                                                            Text("Bought by")
+                                                            for i in range(int(status == ListingStatus.pending))
+                                                        ]
+                                                    ]
+                                                ),
+                                                data=listing.item.trovesaurus_url,
+                                                on_click=self.go_to_url,
+                                                tooltip="Click me for more information",
+                                            ),
                                             Row(
                                                 controls=[
-                                                    Text(f"[{listing.status.value}]", color=listing_colors[listing.status]),
-                                                    Text(listing.item.name, color="cyan"),
+                                                    Card(
+                                                        *(
+                                                            [
+                                                                Row(
+                                                                    controls=[
+                                                                        Image(
+                                                                            src="assets/images/resources/item_crafting_spark.png",
+                                                                            width=20,
+                                                                        ),
+                                                                        Text(
+                                                                            f"{listing.price:,}",
+                                                                            size=12,
+                                                                        ),
+                                                                    ]
+                                                                )
+                                                            ]
+                                                        ),
+                                                        surface_tint_color="red",
+                                                    ),
+                                                    *[
+                                                        Text("or", size=12)
+                                                        if listing.price >= 9_999
+                                                        else Text()
+                                                    ],
+                                                    Card(
+                                                        *(
+                                                            [
+                                                                Row(
+                                                                    controls=[
+                                                                        Image(
+                                                                            src="assets/images/resources/item_crafting_fluxcannister.png",
+                                                                            width=20,
+                                                                        ),
+                                                                        Text(
+                                                                            f"{int(listing.better_price[0]):,}",
+                                                                            size=12,
+                                                                        ),
+                                                                        Image(
+                                                                            src="assets/images/resources/item_crafting_spark.png",
+                                                                            width=20,
+                                                                        ),
+                                                                        Text(
+                                                                            f"{int(listing.better_price[1]):,}",
+                                                                            size=12,
+                                                                        ),
+                                                                    ]
+                                                                )
+                                                            ]
+                                                            if listing.price >= 9_999
+                                                            else []
+                                                        ),
+                                                        surface_tint_color="red",
+                                                    ),
                                                 ]
                                             ),
-                                            data=listing.item.trovesaurus_url,
-                                            on_click=self.go_to_url,
-                                            tooltip="Click me for more information",
-                                        ),
-                                        Row(
-                                            controls=[
-                                                Card(
-                                                    *(
-                                                        [
-                                                            Row(
-                                                                controls=[
-                                                                    Image(
-                                                                        src="assets/images/resources/item_crafting_spark.png",
-                                                                        width=20,
-                                                                    ),
-                                                                    Text(
-                                                                        f"{listing.price:,}",
-                                                                        size=12,
-                                                                    ),
-                                                                ]
-                                                            )
-                                                        ]
+                                            Row(
+                                                controls=[
+                                                    Card(
+                                                        content=Row(
+                                                            controls=[
+                                                                Text("Quantity:", size=12),
+                                                                Text(
+                                                                    f"{listing.amount:,}",
+                                                                    size=12,
+                                                                ),
+                                                            ]
+                                                        ),
+                                                        surface_tint_color="red",
                                                     ),
-                                                    surface_tint_color="red",
-                                                ),
-                                                *[
-                                                    Text("or", size=12)
-                                                    if listing.price >= 150_000
-                                                    else Text()
-                                                ],
-                                                Card(
-                                                    *(
-                                                        [
-                                                            Row(
-                                                                controls=[
-                                                                    Image(
-                                                                        src="assets/images/resources/item_crafting_fluxcannister.png",
-                                                                        width=20,
-                                                                    ),
-                                                                    Text(
-                                                                        f"{int(listing.better_price[0]):,}",
-                                                                        size=12,
-                                                                    ),
-                                                                    Image(
-                                                                        src="assets/images/resources/item_crafting_spark.png",
-                                                                        width=20,
-                                                                    ),
-                                                                    Text(
-                                                                        f"{int(listing.better_price[1]):,}",
-                                                                        size=12,
-                                                                    ),
-                                                                ]
-                                                            )
-                                                        ]
-                                                        if listing.price >= 150_000
-                                                        else []
+                                                    Card(
+                                                        content=Row(
+                                                            controls=[
+                                                                Text(
+                                                                    "Price Each:", size=12
+                                                                ),
+                                                                Image(
+                                                                    src="assets/images/resources/item_crafting_spark.png",
+                                                                    width=20,
+                                                                ),
+                                                                Text(
+                                                                    f"{listing.price_per:,g}",
+                                                                    size=12,
+                                                                ),
+                                                            ]
+                                                        ),
+                                                        surface_tint_color="red",
                                                     ),
-                                                    surface_tint_color="red",
-                                                ),
-                                            ]
-                                        ),
-                                        Row(
-                                            controls=[
-                                                Card(
-                                                    content=Row(
-                                                        controls=[
-                                                            Text("Quantity:", size=12),
-                                                            Text(
-                                                                f"{listing.amount:,}",
-                                                                size=12,
-                                                            ),
-                                                        ]
-                                                    ),
-                                                    surface_tint_color="red",
-                                                ),
-                                                Card(
-                                                    content=Row(
-                                                        controls=[
-                                                            Text("Price Each:", size=12),
-                                                            Image(
-                                                                src="assets/images/resources/item_crafting_spark.png",
-                                                                width=20,
-                                                            ),
-                                                            Text(
-                                                                f"{listing.price_per:,g}",
-                                                                size=12,
-                                                            ),
-                                                        ]
-                                                    ),
-                                                    surface_tint_color="red",
-                                                ),
-                                            ]
-                                        ),
-                                        Row(
-                                            controls=actions,
-                                            alignment=MainAxisAlignment.END,
-                                        ),
-                                    ],
-                                    spacing=2,
-                                ),
-                            ]
-                        ),
-                        surface_tint_color=listing_colors[listing.status],
-                        col={"xs": 12, "sm": 12, "md": 12, "lg": 12, "xl": 6, "xxl": 6},
-                        margin=10,
+                                                ]
+                                            ),
+                                            Row(
+                                                controls=actions,
+                                                alignment=MainAxisAlignment.END,
+                                            ),
+                                        ],
+                                        spacing=2,
+                                    ),
+                                ]
+                            ),
+                            surface_tint_color="blue",
+                            col={"xs": 12, "sm": 12, "md": 12, "lg": 12, "xl": 6, "xxl": 6},
+                            margin=10,
+                            height=140
+                        )
+                    )
+                tab.content.controls.append(
+                    ResponsiveRow(
+                        controls=[
+                            Text(
+                                col={
+                                    "xs": 0,
+                                    "sm": 1.5,
+                                    "md": 1.5,
+                                    "lg": 1.5,
+                                    "xl": 2,
+                                    "xxl": 3.5
+                                }
+                            ),
+                            IconButton(
+                                ARROW_BACK_IOS,
+                                data=status,
+                                disabled=info["max_pages"] <= 1,
+                                on_click=self.previous_your_listings,
+                                col={"xs": 3, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 2},
+                            ),
+                            Text(
+                                f"Page {info['current'] + 1} of {info['max_pages']}",
+                                text_align="center",
+                                size=13,
+                                col={"xs": 5, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 1},
+                            ),
+                            IconButton(
+                                ARROW_FORWARD_IOS,
+                                data=status,
+                                disabled=info["max_pages"] <= 1,
+                                on_click=self.next_your_listings,
+                                col={"xs": 3, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 2},
+                            ),
+                            Text(
+                                col={
+                                    "xs": 0,
+                                    "sm": 1.5,
+                                    "md": 1.5,
+                                    "lg": 1.5,
+                                    "xl": 2,
+                                    "xxl": 3.5,
+                                }
+                            ),
+                        ]
                     )
                 )
-        self.your_listings.controls.append(
-            ResponsiveRow(
-                controls=[
-                    Card(
-                        DragTarget(
-                            content=ResponsiveRow(
-                                controls=[
-                                    Card(
-                                        Draggable(
-                                            data=status,
-                                            content=Text(
-                                                status.value,
-                                                text_align="center",
-                                            ),
-                                            content_feedback=Card(
-                                                content=Text(
-                                                    status.value,
-                                                    text_align="center"
-                                                ),
-                                                width=80,
-                                                color=listing_colors[status]
-                                            ),
-                                            group="unused"
-                                        ),
-                                        color=listing_colors[status],
-                                        col=12 / len(ListingStatus)
-                                    )
-                                    for status in ListingStatus
-                                    if status in self.market.listing_statuses
-                                ] + [
-                                    Card(col=12 / len(ListingStatus))
-                                    for _ in range(len(ListingStatus) - len(self.market.listing_statuses))
-                                ]
-                            ),
-                            group="used",
-                            on_accept=self.drag_ylisting_used_status,
-                            on_will_accept=self.drag_will_accept,
-                            on_leave=self.drag_leave
-                        ),
-                        surface_tint_color="blue",
-                        col=6
-                    ),
-                    Card(
-                        DragTarget(
-                            content=ResponsiveRow(
-                                controls=[
-                                    Card(
-                                        Draggable(
-                                            data=status,
-                                            content=Text(
-                                                status.value,
-                                                text_align="center"
-                                            ),
-                                            content_feedback=Card(
-                                                content=Text(
-                                                    status.value,
-                                                    text_align="center"
-                                                ),
-                                                width=80,
-                                                color=listing_colors[status]
-                                            ),
-                                            group="used"
-                                        ),
-                                        color=listing_colors[status],
-                                        col=12 / len(ListingStatus)
-                                    )
-                                    for status in ListingStatus
-                                    if status not in self.market.listing_statuses
-                                ] + [
-                                    Card(col=12 / len(ListingStatus))
-                                    for _ in range(len(self.market.listing_statuses))
-                                ]
-                            ),
-                            group="unused",
-                            on_accept=self.drag_ylisting_unused_status,
-                            on_will_accept=self.drag_will_accept,
-                            on_leave=self.drag_leave
-                        ),
-                        surface_tint_color="blue",
-                        col=6
-                    ),
-                ]
-            )
-        )
-        self.your_listings.controls.append(
-            ResponsiveRow(
-                controls=[
-                    Text(
-                        col={
-                            "xs": 0,
-                            "sm": 1.5,
-                            "md": 1.5,
-                            "lg": 1.5,
-                            "xl": 2,
-                            "xxl": 3.5
-                        }
-                    ),
-                    IconButton(
-                        ARROW_BACK_IOS,
-                        disabled=self.market.ylistings_max_pages == 1,
-                        on_click=self.previous_your_listings,
-                        col={"xs": 3, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 2},
-                    ),
-                    Text(
-                        f"Page {self.market.ylistings_page+1} of {self.market.ylistings_max_pages}",
-                        text_align="center",
-                        col={"xs": 5, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 1},
-                    ),
-                    IconButton(
-                        ARROW_FORWARD_IOS,
-                        disabled=self.market.ylistings_max_pages == 1,
-                        on_click=self.next_your_listings,
-                        col={"xs": 3, "sm": 3, "md": 3, "lg": 3, "xl": 3, "xxl": 2},
-                    ),
-                    Text(
-                        col={
-                            "xs": 0,
-                            "sm": 1.5,
-                            "md": 1.5,
-                            "lg": 1.5,
-                            "xl": 2,
-                            "xxl": 3.5,
-                        }
-                    ),
-                ]
-            )
-        )
+            else:
+                tab.content.controls.append(
+                    Text(f"No listings for {status.value}")
+                )
+            your_listing_tabs.tabs.append(tab)
+            if status == tab_status:
+                your_listing_tabs.selected_index = tab_index
+        self.your_listings.controls.append(ScrollingFrame(your_listing_tabs, height=400, width=450))
         while True:
             await asyncio.sleep(1)
             try:
@@ -835,8 +946,7 @@ class MarketplaceController(Controller):
 
     async def set_search_word(self, event):
         self.market.search_word = event.control.value
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_listings()
 
     async def create_listing(self, event):
         event.control.disabled = True
@@ -940,25 +1050,35 @@ class MarketplaceController(Controller):
     async def cancel_listing(self, event):
         event.control.data.status = ListingStatus.cancelled
         await event.control.data.save()
-        self.setup_controls()
-        await self.update_your_listings()
+        await self.update_your_listings(refresh=True)
 
-    async def drag_ylisting_used_status(self, event):
-        src = self.page.get_control(event.src_id)
-        self.market.listing_statuses.append(src.data)
-        await self.update_your_listings()
-
-    async def drag_ylisting_unused_status(self, event):
-        src = self.page.get_control(event.src_id)
-        self.market.listing_statuses.remove(src.data)
-        await self.update_your_listings()
-
-    async def drag_will_accept(self, event):
-        event.control.border = border.all(
-            2, None if event.data == "true" else "red"
-        )
-        await event.control.update_async()
-
-    async def drag_leave(self, event):
-        event.control.content.border = None
-        await event.control.update_async()
+    async def report_seller(self, event):
+        message = {
+            "username": "Seller Reports",
+            "content": "Requested review of a seller report",
+            "embeds": [
+                {
+                    "title": "Seller Report",
+                    "color": 0x990000,
+                    "fields": [
+                        {
+                            "name": "Reported Seller",
+                            "value": event.control.data.seller.discord_id,
+                            "inline": False,
+                        },
+                        {
+                            "name": "Reported by",
+                            "value": self.page.constants.discord_user.formatted_display_name,
+                            "inline": False,
+                        },
+                        {
+                            "name": "Reported sale",
+                            "value": event.control.data.uuid
+                        }
+                    ],
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "footer": {"text": "Reported"},
+                }
+            ],
+        }
+        resp = requests.post(self.page.constants.market_log_webhook, json=message)

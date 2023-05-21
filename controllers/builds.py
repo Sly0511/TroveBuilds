@@ -73,7 +73,7 @@ class GemBuildsController(Controller):
                                     left=140,
                                 ),
                             ],
-                            col={"xxl": 6}
+                            col={"xxl": 6},
                         ),
                         Column(
                             controls=[
@@ -127,7 +127,7 @@ class GemBuildsController(Controller):
                                     on_change=self.set_build_type,
                                 ),
                             ],
-                            col={"xxl": 6}
+                            col={"xxl": 6},
                         ),
                     ]
                 ),
@@ -285,7 +285,12 @@ class GemBuildsController(Controller):
         self.features.controls.clear()
         self.features.controls.extend(
             [
-                ElevatedButton("First", data=0, on_click=self.change_build_page, col={"xs": 3, "xxl": 1}),
+                ElevatedButton(
+                    "First",
+                    data=0,
+                    on_click=self.change_build_page,
+                    col={"xs": 3, "xxl": 1},
+                ),
                 # ElevatedButton(
                 #     "Backward 5",
                 #     data=self.build_page - 5,
@@ -294,12 +299,14 @@ class GemBuildsController(Controller):
                 ElevatedButton(
                     "Previous",
                     data=self.build_page - 1,
-                    on_click=self.change_build_page, col={"xs": 3, "xxl": 1}
+                    on_click=self.change_build_page,
+                    col={"xs": 3, "xxl": 1},
                 ),
                 ElevatedButton(
                     "Next page",
                     data=self.build_page + 1,
-                    on_click=self.change_build_page, col={"xs": 3, "xxl": 1}
+                    on_click=self.change_build_page,
+                    col={"xs": 3, "xxl": 1},
                 ),
                 # ElevatedButton(
                 #     "Forward 5",
@@ -307,19 +314,26 @@ class GemBuildsController(Controller):
                 #     on_click=self.change_build_page,
                 # ),
                 ElevatedButton(
-                    "Last", data=self.max_pages - 1, on_click=self.change_build_page, col={"xs": 3, "xxl": 1}
+                    "Last",
+                    data=self.max_pages - 1,
+                    on_click=self.change_build_page,
+                    col={"xs": 3, "xxl": 1},
                 ),
                 TextField(
-                    data=encrypt(self.config.to_base_64(), self.page.constants.secret_key),
+                    data=encrypt(
+                        self.config.to_base_64(), self.page.constants.secret_key
+                    ),
                     label="Insert build string",
-                    on_submit=self.set_build_string, col={"xs": 6, "xxl": 3}
+                    on_submit=self.set_build_string,
+                    col={"xs": 6, "xxl": 3},
                 ),
                 Container(
                     content=Row(controls=[Icon(COPY), Text("Copy build string")]),
                     on_click=self.copy_build_string,
                     on_hover=self.copy_build_hover,
                     padding=15,
-                    border_radius=10, col={"xs": 6, "xxl": 3}
+                    border_radius=10,
+                    col={"xs": 6, "xxl": 3},
                 ),
             ]
         )
@@ -362,7 +376,7 @@ class GemBuildsController(Controller):
                 ],
                 heading_row_height=15,
                 data_row_height=80,
-                col={"xxl": 4}
+                col={"xxl": 4},
             )
             self.abilities_table = Card(
                 content=Column(
@@ -375,7 +389,7 @@ class GemBuildsController(Controller):
                 content=ResponsiveRow(
                     controls=[
                         ScrollingFrame(self.coeff_table, col={"xxl": 8}),
-                        self.abilities_table
+                        self.abilities_table,
                     ]
                 )
             )
@@ -484,7 +498,7 @@ class GemBuildsController(Controller):
                                             on_click=self.select_build,
                                         ),
                                     ],
-                                    spacing=0
+                                    spacing=0,
                                 )
                             ),
                         ],
@@ -496,7 +510,9 @@ class GemBuildsController(Controller):
                 if not top:
                     top = coefficient
         self.abilities.rows.clear()
-        self.abilities_table.visible = bool(self.selected_build is not None and len(self.selected_class.abilities))
+        self.abilities_table.visible = bool(
+            self.selected_build is not None and len(self.selected_class.abilities)
+        )
         print(self.abilities_table.visible)
         if self.abilities_table.visible:
             self.abilities.rows.extend(
