@@ -306,7 +306,7 @@ class MarketplaceController(Controller):
                 ),
                 Card(
                     Column(
-                        controls=[Text("Your Listings", size=22), self.your_listings],
+                        controls=[self.your_listings],
                         horizontal_alignment="center",
                     ),
                     margin=5,
