@@ -398,6 +398,7 @@ class GemBuildsController(Controller):
             self.coeff_table.rows.clear()
             builds = self.calculate_results()
             builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
+            best = builds[0]
             builds = [[i] + b for i, b in enumerate(builds, 1)]
             paged_builds = chunks(builds, 10)
             self.max_pages = len(paged_builds)
@@ -469,8 +470,8 @@ class GemBuildsController(Controller):
                             ),
                             DataCell(
                                 content=Text(
-                                    f"{round(abs(coefficient - top) / top * 100, 3)}%"
-                                    if top
+                                    f"{round(abs(coefficient - best[-1]) / best[-1] * 100, 3)}%"
+                                    if rank != 1
                                     else "Best"
                                 )
                             ),
@@ -507,8 +508,6 @@ class GemBuildsController(Controller):
                         else ("#313233" if rank % 2 else "#414243"),
                     )
                 )
-                if not top:
-                    top = coefficient
         self.abilities.rows.clear()
         self.abilities_table.visible = bool(
             self.selected_build is not None and len(self.selected_class.abilities)
