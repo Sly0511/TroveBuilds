@@ -96,6 +96,12 @@ class StarChartController(Controller):
         ...
 
     async def change_lock_status(self, event):
-        event.control.data.switch_lock()
+        if event.control.data.stage_lock(self.star_chart):
+            event.control.data.switch_lock()
+        else:
+            self.page.snack_bar.bgcolor = "red"
+            self.page.snack_bar.content.value = f"You can't exceed the maximum nodes of {self.star_chart.max_nodes}"
+            self.page.snack_bar.open = True
         self.setup_controls()
-        await self.map.update_async()
+        await self.page.update_async()
+        self.page.snack_bar.bgcolor = "green"

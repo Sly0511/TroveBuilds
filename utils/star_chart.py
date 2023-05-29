@@ -4,6 +4,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 from math import radians, sin, cos
 from json import dumps
+from copy import deepcopy
 
 __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 
@@ -55,6 +56,7 @@ __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 
 class StarChart(BaseModel):
     constellations: list = Field(default_factory=list)
+    max_nodes: int = 40
 
     def get_stars(self):
         for constellation in self.constellations:
@@ -67,6 +69,18 @@ class StarChart(BaseModel):
             yield star
             for child in self.__iterate_stars(star):
                 yield child
+
+    @property
+    def activated_stars(self):
+        return [
+            star
+            for star in self.get_stars()
+            if star.unlocked and star.type != StarType.root
+        ]
+
+    @property
+    def activated_stars_count(self):
+        return len(self.activated_stars)
 
     def __str__(self):
         return f"<StarChart constellations=[{', '.join([c.value for c in self.constellations.keys()])}]>"
@@ -159,6 +173,15 @@ class Star(BaseModel):
             self.lock()
         else:
             self.unlock()
+
+    def stage_lock(self, star_chart: StarChart):
+        star_chart = deepcopy(star_chart)
+        star = None
+        for star in star_chart.get_stars():
+            if self.path == star.path:
+                break
+        star.switch_lock()
+        return star_chart.activated_stars_count <= star_chart.max_nodes
 
     def add_child(self, star):
         self.children.append(star)
