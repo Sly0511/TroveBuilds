@@ -59,7 +59,8 @@ class StarChartController(Controller):
                                         left=star.coords[0],
                                         top=star.coords[1],
                                         on_click=self.change_lock_status,
-                                        on_hover=self.show_star_details
+                                        on_hover=self.show_star_details,
+                                        on_long_press=self.max_branch
                                     )
                                     for star in self.star_chart.get_stars()
                                 ],
@@ -244,3 +245,14 @@ class StarChartController(Controller):
         else:
             self.star_details.controls.clear()
         await self.star_details.update_async()
+
+    async def max_branch(self, event):
+        if event.control.data.type != StarType.root:
+            return
+        if self.star_chart.activated_stars_count != 0:
+            return
+        for star in self.star_chart.get_stars():
+            if star.constellation == event.control.data.constellation:
+                star.unlock()
+        self.setup_controls()
+        await self.map.update_async()
