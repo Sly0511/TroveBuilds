@@ -1,10 +1,10 @@
 # import re
 import json
-from enum import Enum
-from pydantic import BaseModel, Field
-from math import radians, sin, cos
-from json import dumps
 from copy import deepcopy
+from enum import Enum
+from math import radians, sin, cos
+
+from pydantic import BaseModel, Field
 
 __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 
@@ -75,6 +75,15 @@ class StarChart(BaseModel):
             yield star
             for child in self.__iterate_stars(star):
                 yield child
+
+    @property
+    def stats_list(self):
+        stats = []
+        for star in self.get_stars():
+            for stat in star.stats:
+                if stat["name"] not in stats:
+                    stats.append(stat["name"])
+        return stats
 
     @property
     def activated_stars(self):

@@ -11,8 +11,11 @@ from flet import (
     DataColumn,
     DataRow,
     DataCell,
-    Container,
-    Divider
+    Divider,
+    Dropdown,
+    dropdown,
+    Icon,
+    icons
 )
 
 from models.objects import Controller
@@ -28,46 +31,53 @@ class RoundButton(ElevatedButton):
 class StarChartController(Controller):
     def setup_controls(self):
         if not hasattr(self, "map"):
+            self.selected_stat = None
             self.star_chart = get_star_chart()
             self.map = ResponsiveRow()
         self.map.controls.clear()
         self.star_details = Column(
             col={"xxl": 2},
         )
+        self.star_buttons = Stack(
+            controls=[
+                Text(
+                    f"{self.star_chart.activated_stars_count}/{self.star_chart.max_nodes}",
+                    size=40,
+                    left=30
+                ),
+                ElevatedButton(
+                    "Reset",
+                    top=50,
+                    left=40,
+                    on_click=self.reset_chart
+                ),
+                *[
+                    RoundButton(
+                        content=(
+                            Icon(icons.STAR_ROUNDED, color="yellow")
+                            if self.selected_stat in [stat["name"] for stat in star.stats] else
+                            None
+                        ),
+                        data=star,
+                        size=12 if star.type == StarType.minor else 20,
+                        bgcolor=star.color,
+                        left=star.coords[0],
+                        top=star.coords[1],
+                        on_click=self.change_lock_status,
+                        on_hover=self.show_star_details,
+                        on_long_press=self.max_branch
+                    )
+                    for star in self.star_chart.get_stars()
+                ],
+            ],
+            width=700,
+            height=850,
+        )
         self.map.controls.extend(
             [
                 ScrollingFrame(
                     content=canvas.Canvas(
-                        content=Stack(
-                            controls=[
-                                Text(
-                                    f"{self.star_chart.activated_stars_count}/{self.star_chart.max_nodes}",
-                                    size=40,
-                                    left=30
-                                ),
-                                ElevatedButton(
-                                    "Reset",
-                                    top=50,
-                                    left=40,
-                                    on_click=self.reset_chart
-                                ),
-                                *[
-                                    RoundButton(
-                                        data=star,
-                                        size=12 if star.type == StarType.minor else 20,
-                                        bgcolor=star.color,
-                                        left=star.coords[0],
-                                        top=star.coords[1],
-                                        on_click=self.change_lock_status,
-                                        on_hover=self.show_star_details,
-                                        on_long_press=self.max_branch
-                                    )
-                                    for star in self.star_chart.get_stars()
-                                ],
-                            ],
-                            width=700,
-                            height=850,
-                        ),
+                        content=self.star_buttons,
                         shapes=[
                             *[
                                 canvas.Path(
@@ -95,6 +105,18 @@ class StarChartController(Controller):
                 self.star_details,
                 Column(
                     controls=[
+                        Dropdown(
+                            value=self.selected_stat or "none",
+                            options=[
+                                dropdown.Option(key="none", text="[None]"),
+                                *[
+                                    dropdown.Option(key=stat, text=stat)
+                                    for stat in self.star_chart.stats_list
+                                ]
+                            ],
+                            label="Find stats",
+                            on_change=self.change_selected_stat
+                        ),
                         Text("Stats", size=22),
                         *([
                               DataTable(
@@ -116,7 +138,7 @@ class StarChartController(Controller):
                               )
                         ] if self.star_chart.activated_stats else [Text("-")])
                     ],
-                    col={"xxl": 2},
+                    col={"xxl": 2.5},
                 ),
                 Column(
                     controls=[
@@ -131,7 +153,7 @@ class StarChartController(Controller):
                               for k, v in self.star_chart.activated_obtainables.items()
                           ] or [Text("-")])
                     ],
-                    col={"xxl": 3},
+                    col={"xxl": 2.5},
                 )
             ]
         )
@@ -256,3 +278,16 @@ class StarChartController(Controller):
                 star.unlock()
         self.setup_controls()
         await self.map.update_async()
+
+    async def change_selected_stat(self, event):
+        self.selected_stat = event.control.value
+        for button in self.star_buttons.controls:
+            if isinstance(button, RoundButton):
+                button.content = None
+        for button in self.star_buttons.controls:
+            if isinstance(button, RoundButton):
+                for stat in button.data.stats:
+                    if stat["name"] == event.control.value:
+                        button.content = Icon(icons.STAR_ROUNDED, color="yellow")
+                        break
+        await self.star_buttons.update_async()
