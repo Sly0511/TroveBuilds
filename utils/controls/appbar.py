@@ -211,7 +211,7 @@ class TroveToolsAppBar(AppBar):
         await self.page.restart(True)
 
     async def change_route(self, event):
-        if self.page.route == event.control.data.route:
+        if self.page.route == event.control.data:
             return
         self.page.route = event.control.data
         await self.page.update_async()
