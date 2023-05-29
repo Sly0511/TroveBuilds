@@ -81,7 +81,7 @@ class TroveToolsAppBar(AppBar):
                             on_click=self.change_route,
                         )
                         for view in self.views
-                        if view.route != "/" and self.page.route != view.route
+                        if view.route != "/"
                     ],
                     tooltip="Change tool",
                 ),
@@ -211,6 +211,8 @@ class TroveToolsAppBar(AppBar):
         await self.page.restart(True)
 
     async def change_route(self, event):
+        if self.page.route == event.control.data.route:
+            return
         self.page.route = event.control.data
         await self.page.update_async()
 
