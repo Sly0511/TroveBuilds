@@ -82,15 +82,27 @@ class Constellation(Enum):
 
 
 class ConstellationSmallColor(Enum):
-    combat = "#ff6600"
-    gathering = "#66ff99"
-    pve = "#33ccff"
+    combat = "#FF8F00"
+    gathering = "#00695C"
+    pve = "#6A1B9A"
 
 
 class ConstellationBigColor(Enum):
-    combat = "red"
-    gathering = "green"
-    pve = "blue"
+    combat = "#D84315"
+    gathering = "#558B2F"
+    pve = "#283593"
+
+
+class ConstellationDisabledSmallColor(Enum):
+    combat = "#aaaaaa"
+    gathering = "#aaaaaa"
+    pve = "#aaaaaa"
+
+
+class ConstellationDisabledBigColor(Enum):
+    combat = "#aaaaaa"
+    gathering = "#aaaaaa"
+    pve = "#aaaaaa"
 
 
 class StarType(Enum):
@@ -111,13 +123,22 @@ class Star(BaseModel):
     parent: object = None
     path: str
     children: list = []
-    color: str = "yellow"
+    angle: list = []
 
     def __str__(self):
         return f'<Star name="{self.name}" type={self.type.value} unlocked={self.unlocked} children={len(self.children)}>'
 
     def __repr__(self):
         return f'<Star name="{self.name}" type={self.type.value} unlocked={self.unlocked} children={len(self.children)}>'
+
+    @property
+    def color(self):
+        color = (
+            ConstellationBigColor[self.constellation.name].value
+            if self.unlocked else
+            ConstellationDisabledBigColor[self.constellation.name].value
+        )
+        return color
 
     @property
     def full_name(self):
@@ -132,6 +153,12 @@ class Star(BaseModel):
         self.unlocked = False
         for child in self.children:
             child.lock()
+
+    def switch_lock(self):
+        if self.unlocked:
+            self.lock()
+        else:
+            self.unlock()
 
     def add_child(self, star):
         self.children.append(star)
@@ -155,11 +182,7 @@ def build_star_chart(star_dict: dict, parent: Star = None):
         abilities=star_dict.get("Abilities", []),
         children=[],
         parent=parent,
-        color=(
-            ConstellationSmallColor[star_dict["Constellation"].lower()].value
-            if StarType(star_dict["Type"]) == StarType.minor else
-            ConstellationBigColor[star_dict["Constellation"].lower()].value
-        )
+        angle=star_dict.get("Connect", []),
     )
     for cstar in star_dict["Stars"]:
         star.add_child(build_star_chart(cstar, star))
@@ -174,7 +197,7 @@ def rotate(origin, point, angle):
     return qx, qy
 
 
-def build_branch(back_rotate, last_position, distance, stars):
+def build_branch(back_rotate, last_position, distance, stars, star_type):
     total_angle = 180
     splits = len(stars) + 1
     division = total_angle / splits
@@ -182,26 +205,54 @@ def build_branch(back_rotate, last_position, distance, stars):
         child_rotation = division * i
         child_position = last_position[0] - distance, last_position[1]
         final_rotation = child_rotation + back_rotate
-        rotated_position = rotate(last_position, child_position, radians(final_rotation))
+        rotated_position = rotate(
+            last_position, child_position, radians(final_rotation)
+        )
         child["Coords"] = rotated_position
+        child["Rotation"] = final_rotation
         build_branch(
-            -(90 - final_rotation), rotated_position, distance, child["Stars"]
+            -(90 - final_rotation),
+            rotated_position,
+            distance,
+            child["Stars"],
+            child["Type"],
         )
 
 
-def rotate_branch(star, origin, angle):
+def rotate_branch(star, origin, angle, distance):
     for child in star["Stars"]:
         child["Coords"] = rotate(origin, child.get("Coords", [0, 0]), angle)
-        rotate_branch(child, origin, angle)
+        connect_position_1 = (
+            star["Coords"][0] - (8 if star["Type"] == "Minor" else 13),
+            star["Coords"][1],
+        )
+        connect_position_2 = (
+            child["Coords"][0] - (8 if child["Type"] == "Minor" else 13),
+            child["Coords"][1],
+        )
+        connect_position_1 = rotate(
+            star["Coords"],
+            connect_position_1,
+            radians(225),
+        )
+        connect_position_2 = rotate(child["Coords"], connect_position_2, radians(225))
+        child["Connect"] = [
+            connect_position_1,
+            connect_position_2,
+        ]
+        rotate_branch(child, origin, angle, distance)
+        del child["Rotation"]
 
 
 def get_star_chart():
     star_chart = json.load(open("data/star_chart.json"))
     obj_star_chart = StarChart()
-    origin = 600, 480
-    point_distance = 120
+    origin = 320, 350
+    point_distance = 55
     constell_backs = [14, 12, 4]
-    for i, (constellation, back_rotate) in enumerate(zip(Constellation, constell_backs)):
+    for i, (constellation, back_rotate) in enumerate(
+        zip(Constellation, constell_backs)
+    ):
         total_angle = 360
         division = total_angle / len(Constellation)
         branch_rotation = division * i
@@ -209,8 +260,11 @@ def get_star_chart():
         rotated_position = rotate(origin, position, radians(branch_rotation))
         constell = star_chart[constellation.value]
         constell["Coords"] = rotated_position
-        build_branch(back_rotate, position, 50, constell["Stars"])
-        rotate_branch(constell, origin, radians(branch_rotation))
+        distance = 43
+        build_branch(
+            back_rotate, position, distance, constell["Stars"], constell["Type"]
+        )
+        rotate_branch(constell, origin, radians(branch_rotation), distance)
 
     for constellation, data in star_chart.items():
         obj_star_chart.constellations.append(build_star_chart(data))
