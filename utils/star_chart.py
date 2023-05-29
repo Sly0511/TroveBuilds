@@ -58,6 +58,12 @@ class StarChart(BaseModel):
     constellations: list = Field(default_factory=list)
     max_nodes: int = 40
 
+    def __str__(self):
+        return f"<StarChart constellations=[{', '.join([c.value for c in self.constellations.keys()])}]>"
+
+    def __repr__(self):
+        return f"<StarChart constellations=[{', '.join([c.value for c in self.constellations.keys()])}]>"
+
     def get_stars(self):
         for constellation in self.constellations:
             yield constellation
@@ -82,12 +88,42 @@ class StarChart(BaseModel):
     def activated_stars_count(self):
         return len(self.activated_stars)
 
-    def __str__(self):
-        return f"<StarChart constellations=[{', '.join([c.value for c in self.constellations.keys()])}]>"
+    @property
+    def activated_stats(self):
+        stats = {}
+        percentage_stats = [
+            "Attack Speed",
+            "Maximum Health %",
+            "Outgoing Damage",
+            "Critical Hit",
+            "Critical Damage",
+            "Incoming Damage",
+            "Damage Reduction",
+            "Random Flask Emblem"
+        ]
+        for star in self.activated_stars:
+            for stat in star.stats:
+                if stat["percentage"]:
+                    stat_name = stat["name"] + " Bonus"
+                else:
+                    stat_name = stat["name"]
+                if not stats.get(stat_name):
+                    stats[stat_name] = [0, (stat_name in percentage_stats or stat_name.endswith("Bonus"))]
+                if stat["value"]:
+                    stats[stat_name][0] += stat["value"]
+                else:
+                    stats[stat_name][0] = "Unknown"
+        return stats
 
-    def __repr__(self):
-        return f"<StarChart constellations=[{', '.join([c.value for c in self.constellations.keys()])}]>"
-
+    @property
+    def activated_obtainables(self):
+        obtained = {}
+        for star in self.activated_stars:
+            for obtainable in star.obtainables:
+                if not obtained.get(obtainable):
+                    obtained[obtainable] = 0
+                obtained[obtainable] += 1
+        return obtained
 
 class Constellation(Enum):
     combat = "Combat"
@@ -129,15 +165,17 @@ class Star(BaseModel):
     constellation: Constellation
     coords: list[int]
     type: StarType
+    acts: StarType
     name: str
     description: str
-    stats: list[str] = []
+    stats: list[dict] = []
     abilities: list[str] = []
     unlocked: bool = False
     parent: object = None
     path: str
     children: list = []
     angle: list = []
+    obtainables: list[str] = []
 
     def __str__(self):
         return f'<Star name="{self.name}" type={self.type.value} unlocked={self.unlocked} children={len(self.children)}>'
@@ -164,7 +202,8 @@ class Star(BaseModel):
             self.parent.unlock()
 
     def lock(self):
-        self.unlocked = False
+        if self.type != StarType.root:
+            self.unlocked = False
         for child in self.children:
             child.lock()
 
@@ -181,7 +220,7 @@ class Star(BaseModel):
             if self.path == star.path:
                 break
         star.switch_lock()
-        return star_chart.activated_stars_count <= star_chart.max_nodes
+        return star_chart.activated_stars_count - star_chart.max_nodes
 
     def add_child(self, star):
         self.children.append(star)
@@ -199,6 +238,7 @@ def build_star_chart(star_dict: dict, parent: Star = None):
         coords=star_dict["Coords"],
         constellation=Constellation(star_dict["Constellation"]),
         type=StarType(star_dict["Type"]),
+        acts=StarType(star_dict["Acts"]),
         name=star_dict["Name"],
         description=star_dict["Description"],
         stats=star_dict.get("Stats", []),
@@ -206,7 +246,8 @@ def build_star_chart(star_dict: dict, parent: Star = None):
         children=[],
         parent=parent,
         angle=star_dict.get("Connect", []),
-        unlocked=StarType(star_dict["Type"]) == StarType.root
+        unlocked=StarType(star_dict["Type"]) == StarType.root,
+        obtainables=star_dict["Obtainables"]
     )
     for cstar in star_dict["Stars"]:
         star.add_child(build_star_chart(cstar, star))
@@ -221,7 +262,7 @@ def rotate(origin, point, angle):
     return qx, qy
 
 
-def build_branch(back_rotate, last_position, distance, stars, star_type):
+def build_branch(back_rotate, last_position, distance, stars):
     total_angle = 180
     splits = len(stars) + 1
     division = total_angle / splits
@@ -238,8 +279,7 @@ def build_branch(back_rotate, last_position, distance, stars, star_type):
             -(90 - final_rotation),
             rotated_position,
             distance,
-            child["Stars"],
-            child["Type"],
+            child["Stars"]
         )
 
 
@@ -286,7 +326,7 @@ def get_star_chart():
         constell["Coords"] = rotated_position
         distance = 43
         build_branch(
-            back_rotate, position, distance, constell["Stars"], constell["Type"]
+            back_rotate, position, distance, constell["Stars"]
         )
         rotate_branch(constell, origin, radians(branch_rotation), distance)
 

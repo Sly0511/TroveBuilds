@@ -7,6 +7,10 @@ from flet import (
     canvas,
     Paint,
     PaintingStyle,
+    DataTable,
+    DataColumn,
+    DataRow,
+    DataCell
 )
 
 from models.objects import Controller
@@ -31,6 +35,17 @@ class StarChartController(Controller):
                     content=canvas.Canvas(
                         content=Stack(
                             controls=[
+                                Text(
+                                    f"{self.star_chart.activated_stars_count}/{self.star_chart.max_nodes}",
+                                    size=40,
+                                    left=30
+                                ),
+                                ElevatedButton(
+                                    "Reset",
+                                    top=50,
+                                    left=40,
+                                    on_click=self.reset_chart
+                                ),
                                 *[
                                     RoundButton(
                                         data=star,
@@ -39,7 +54,6 @@ class StarChartController(Controller):
                                         left=star.coords[0],
                                         top=star.coords[1],
                                         tooltip=star.full_name,
-                                        disabled=star.type == StarType.root,
                                         on_click=self.change_lock_status,
                                     )
                                     for star in self.star_chart.get_stars()
@@ -74,20 +88,34 @@ class StarChartController(Controller):
                 ),
                 Column(
                     controls=[
-                        Text("Star"),
-                        Text("Star"),
-                        Text("Star"),
-                        Text("Star"),
+                        Text("Stats", size=22),
+                        DataTable(
+                            heading_row_height=0,
+                            data_row_height=30,
+                            columns=[
+                                DataColumn(Text()),
+                                DataColumn(Text())
+                            ],
+                            rows=[
+                                DataRow(
+                                    cells=[
+                                        DataCell(Text(k)),
+                                        DataCell(Text(str(v[0]) + (f"%" if v[1] else "")))
+                                    ]
+                                )
+                                for k, v in self.star_chart.activated_stats.items()
+                            ]
+                        ),
+                        Text("Obtainables", size=22),
+                        *([
+                            Text(f"{v}x  {k}")
+                            for k, v in self.star_chart.activated_obtainables.items()
+                        ] or [Text("-")])
                     ],
                     col={"xxl": 3},
                 ),
                 Column(
-                    controls=[
-                        Text("Star"),
-                        Text("Star"),
-                        Text("Star"),
-                        Text("Star"),
-                    ],
+                    controls=[],
                     col={"xxl": 3},
                 ),
             ]
@@ -97,12 +125,19 @@ class StarChartController(Controller):
         ...
 
     async def change_lock_status(self, event):
-        if event.control.data.stage_lock(self.star_chart):
+        staged_lock = event.control.data.stage_lock(self.star_chart)
+        if staged_lock <= 0:
             event.control.data.switch_lock()
         else:
             self.page.snack_bar.bgcolor = "red"
-            self.page.snack_bar.content.value = f"You can't exceed the maximum nodes of {self.star_chart.max_nodes}"
+            self.page.snack_bar.content.value = f"Activating this star exceeds max of {self.star_chart.max_nodes}" \
+            f" by {staged_lock}"
             self.page.snack_bar.open = True
         self.setup_controls()
         await self.page.update_async()
         self.page.snack_bar.bgcolor = "green"
+
+    async def reset_chart(self, _):
+        self.star_chart = get_star_chart()
+        self.setup_controls()
+        await self.page.update_async()
