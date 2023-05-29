@@ -39,6 +39,7 @@ class StarChartController(Controller):
                                         left=star.coords[0],
                                         top=star.coords[1],
                                         tooltip=star.full_name,
+                                        disabled=star.type == StarType.root,
                                         on_click=self.change_lock_status,
                                     )
                                     for star in self.star_chart.get_stars()

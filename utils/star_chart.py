@@ -206,6 +206,7 @@ def build_star_chart(star_dict: dict, parent: Star = None):
         children=[],
         parent=parent,
         angle=star_dict.get("Connect", []),
+        unlocked=StarType(star_dict["Type"]) == StarType.root
     )
     for cstar in star_dict["Stars"]:
         star.add_child(build_star_chart(cstar, star))
