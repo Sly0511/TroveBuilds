@@ -89,7 +89,7 @@ class StarChartController(Controller):
                         width=700,
                         height=850,
                     ),
-                    col={"xxl": 4.5},
+                    col={"xxl": 5},
                 ),
                 self.star_details,
                 Column(
@@ -113,19 +113,24 @@ class StarChartController(Controller):
                                       for k, v in self.star_chart.activated_stats.items()
                                   ]
                               )
-                        ] if self.star_chart.activated_stats else [Text("-")]),
+                        ] if self.star_chart.activated_stats else [Text("-")])
+                    ],
+                    col={"xxl": 2},
+                ),
+                Column(
+                    controls=[
                         Text("Abilities", size=22),
                         *([
-                            Text(f"{v}x  {k}")
-                            for k, v in self.star_chart.activated_obtainables.items()
-                        ] or [Text("-")]),
+                              Text(a)
+                              for a in self.star_chart.activated_abilities
+                          ] or [Text("-")]),
                         Text("Obtainables", size=22),
                         *([
-                            Text(f"{v}x  {k}")
-                            for k, v in self.star_chart.activated_obtainables.items()
-                        ] or [Text("-")])
+                              Text(f"{v}x  {k}")
+                              for k, v in self.star_chart.activated_obtainables.items()
+                          ] or [Text("-")])
                     ],
-                    col={"xxl": 5},
+                    col={"xxl": 3},
                 )
             ]
         )

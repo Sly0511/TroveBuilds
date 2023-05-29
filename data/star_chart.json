@@ -110,6 +110,9 @@
                                                 "Name": "Lucky Strikes 2.0",
                                                 "Description": "More Strikes then equals less pins to hit.",
                                                 "Stats": [],
+                                                "Overwrites": [
+                                                    "combat.a.0"
+                                                ],
                                                 "Abilities": [
                                                     "10% chance when critical hitting to increase Critical Hit Chance by 30% for 10 seconds."
                                                 ],
@@ -237,6 +240,9 @@
                                         "Type": "Major",
                                         "Name": "Reflection 2.0",
                                         "Description": "Reflect even more damage back at your foes.",
+                                        "Overwrites": [
+                                            "combat.a.1"
+                                        ],
                                         "Stats": [],
                                         "Abilities": [
                                             "When taking damage, you have a 20% chance to gain a 30% reflect shield for 10 seconds. Has a 1 minute cooldown."
@@ -315,6 +321,10 @@
                                                                 "Name": "Reflection 3.0",
                                                                 "Description": "This star should help balance melee a little more.",
                                                                 "Stats": [],
+                                                                "Overwrites": [
+                                                                    "combat.a.1",
+                                                                    "combat.a.1.a.0"
+                                                                ],
                                                                 "Abilities": [
                                                                     "When taking damage, you have a 30% chance to gain a 45% reflect shield and 30% damage reduction for 10 seconds. Has a 1 minute cooldown."
                                                                 ],
@@ -489,6 +499,9 @@
                                                 "Name": "Rage 1.5",
                                                 "Description": "Give in to your anger.",
                                                 "Stats": [],
+                                                "Overwrites": [
+                                                    "combat.b.0"
+                                                ],
                                                 "Abilities": [
                                                     "When dropping below 40% health, gain a 8% Outgoing damage buff and 10% Attack Speed for 10 seconds. 120 second cooldown."
                                                 ],
@@ -570,6 +583,10 @@
                                                                 "Name": "Rage 2.5",
                                                                 "Description": "Kind of odd that the intellect tree has a rage mechanic...I guess it's a nerd rage.",
                                                                 "Stats": [],
+                                                                "Overwrites": [
+                                                                    "combat.b.0",
+                                                                    "combat.b.0.a.1.b"
+                                                                ],
                                                                 "Abilities": [
                                                                     "When dropping below 45% health, gain a 10% Outgoing damage buff and 10% Attack Speed for 10 seconds. 120 second cooldown."
                                                                 ],
@@ -614,6 +631,11 @@
                                                                                 "Name": "Rage 3.0",
                                                                                 "Description": "This Star represents our home which was destroyed by the Void.",
                                                                                 "Stats": [],
+                                                                                "Overwrites": [
+                                                                                    "combat.b.0",
+                                                                                    "combat.b.0.a.1.b",
+                                                                                    "combat.b.0.a.1.b.1.b"
+                                                                                ],
                                                                                 "Abilities": [
                                                                                     "When dropping below 45% health, gain a 12% Outgoing damage buff and 10% Attack Speed for 15 seconds. 120 second cooldown."
                                                                                 ],
@@ -692,6 +714,9 @@
                                         "Name": "Weakness 1.5",
                                         "Description": "A star all about seeing overly sized numbers appearing.",
                                         "Stats": [],
+                                        "Overwrites": [
+                                            "combat.b.1"
+                                        ],
                                         "Abilities": [
                                             "10% chance when critical hitting to increases Critical Hit Damage by 25% for 10 seconds."
                                         ],
@@ -869,11 +894,11 @@
                                                                         "value": 15
                                                                     }
                                                                 ],
-                                                                "Abilities": [
+                                                                "Abilities": [],
+                                                                "Stars": [],
+                                                                "Obtainables": [
                                                                     "Grants Staruable when upgrading"
                                                                 ],
-                                                                "Stars": [],
-                                                                "Obtainables": [],
                                                                 "Acts": "Minor"
                                                             }
                                                         ],
@@ -964,12 +989,11 @@
                                         "Path": "gathering.a.0.b.0",
                                         "Constellation": "Gathering",
                                         "Type": "Major",
-                                        "Name": " Harvest",
+                                        "Name": "Harvest",
                                         "Description": "Grow even more crops.",
                                         "Stats": [],
                                         "Abilities": [
-                                            "Increases harvesting by 10%. ",
-                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                            "Increases harvesting by 10%. "
                                         ],
                                         "Stars": [
                                             {
@@ -999,9 +1023,11 @@
                                                         "Name": " Harvest 2.0",
                                                         "Description": "Ultimate Harvest upgrade for any gathering min/maxer.",
                                                         "Stats": [],
+                                                        "Overwrites": [
+                                                            "gathering.a.0.b.0"
+                                                        ],
                                                         "Abilities": [
-                                                            "Increases harvesting by 15%. ",
-                                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                                            "Increases harvesting by 15%. "
                                                         ],
                                                         "Stars": [
                                                             {
@@ -1046,7 +1072,9 @@
                                                                 "Acts": "Minor"
                                                             }
                                                         ],
-                                                        "Obtainables": [],
+                                                        "Obtainables": [
+                                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                                        ],
                                                         "Acts": "Major"
                                                     }
                                                 ],
@@ -1075,9 +1103,11 @@
                                                         "Name": "Shard Searcher 2.0",
                                                         "Description": "Lots more shiny ore to collect.",
                                                         "Stats": [],
+                                                        "Overwrites": [
+                                                            "gathering.a.0"
+                                                        ],
                                                         "Abilities": [
-                                                            "Increases amount of ore mined by 15%. ",
-                                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                                            "Increases amount of ore mined by 15%. "
                                                         ],
                                                         "Stars": [
                                                             {
@@ -1098,15 +1128,17 @@
                                                                         "value": 15
                                                                     }
                                                                 ],
-                                                                "Abilities": [
+                                                                "Abilities": [],
+                                                                "Stars": [],
+                                                                "Obtainables": [
                                                                     "Grants Star Dust when upgrading"
                                                                 ],
-                                                                "Stars": [],
-                                                                "Obtainables": [],
                                                                 "Acts": "Minor"
                                                             }
                                                         ],
-                                                        "Obtainables": [],
+                                                        "Obtainables": [
+                                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                                        ],
                                                         "Acts": "Major"
                                                     }
                                                 ],
@@ -1156,7 +1188,9 @@
                                                 "Acts": "Minor"
                                             }
                                         ],
-                                        "Obtainables": [],
+                                        "Obtainables": [
+                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                        ],
                                         "Acts": "Major"
                                     }
                                 ],
@@ -1242,6 +1276,9 @@
                                                 "Name": "Sundered Flight 2.0",
                                                 "Description": "Fly even faster.",
                                                 "Stats": [],
+                                                "Overwrites": [
+                                                    "gathering.b.0.a.0"
+                                                ],
                                                 "Abilities": [
                                                     "Reduces glide reduction in Uber 10 and lower of Sundered Uplands."
                                                 ],
@@ -1253,6 +1290,10 @@
                                                         "Name": "Sundered Flight 3.0",
                                                         "Description": "I am like a dragon, I only fly away.",
                                                         "Stats": [],
+                                                        "Overwrites": [
+                                                            "gathering.b.0.a.0",
+                                                            "gathering.b.0.a.0.a"
+                                                        ],
                                                         "Abilities": [
                                                             "Reduces glide reduction in all Sundered Uplands."
                                                         ],
@@ -1303,6 +1344,9 @@
                                         "Name": "Long Reach 2.0",
                                         "Description": "When mounted, Harvest at medium range.",
                                         "Stats": [],
+                                        "Overwrites": [
+                                            "gathering.b.0"
+                                        ],
                                         "Abilities": [
                                             "Moderately increases gathering range when mounted. "
                                         ],
@@ -1347,6 +1391,10 @@
                                                         "Name": "Long Reach 3.0",
                                                         "Description": "When mounted Harvest at Loooooooooooonger range. \\nGrants a Balefire Dragon Egg Fragment when unlocked",
                                                         "Stats": [],
+                                                        "Overwrites": [
+                                                            "gathering.b.0",
+                                                            "gathering.b.0.b.0"
+                                                        ],
                                                         "Abilities": [
                                                             "Greatly increases gathering range when mounted."
                                                         ],
@@ -1794,6 +1842,9 @@
                                                                         "Name": "Flask Renewal 2.0",
                                                                         "Description": "A Blessing of bountiful flasks... I really hope this is not too OP... Maybe I need to nerf Death-Defying...",
                                                                         "Stats": [],
+                                                                        "Overwrites": [
+                                                                            "pve.a.0.a.1.a.0"
+                                                                        ],
                                                                         "Abilities": [
                                                                             "10% chance to gain a flask charge when using a Flask."
                                                                         ],
@@ -1871,6 +1922,9 @@
                                 "Name": "Minor Buffing Always",
                                 "Description": "You get a buff, and you get a buff, everybody gets a buff.",
                                 "Stats": [],
+                                "Overwrites": [
+                                    "pve.a.0"
+                                ],
                                 "Abilities": [
                                     "100% chance when using a Flask to gain either an Attack Buff, Defense Buff, or Healing Buff."
                                 ],
@@ -2018,6 +2072,9 @@
                                                 "Name": "Draining Kiss",
                                                 "Description": "With faster attack and higher life leech you may someday be invincible.",
                                                 "Stats": [],
+                                                "Overwrites": [
+                                                    "pve.b.0"
+                                                ],
                                                 "Abilities": [
                                                     "Damaging enemies grants 20% Life Leech. "
                                                 ],
@@ -2125,6 +2182,9 @@
                                                         "Name": " Bounty Hunt",
                                                         "Description": "Looking up at the stars has granted additional buff time.",
                                                         "Stats": [],
+                                                        "Overwrites": [
+                                                            "pve.b.0.a.1.a"
+                                                        ],
                                                         "Abilities": [
                                                             "After defeating a Sundered Uplands 5 Star Boss, gain 15% increased Physical and Magic Damage for 4 hours."
                                                         ],
@@ -2277,6 +2337,9 @@
                                                         "Name": "Depths Boon 2.0",
                                                         "Description": "A little more time to the boon you just got.",
                                                         "Stats": [],
+                                                        "Overwrites": [
+                                                            "pve.b.0.b.1.a"
+                                                        ],
                                                         "Abilities": [
                                                             "Increases the Depths boon damage reduction to 25% and duration to 1 hour."
                                                         ],

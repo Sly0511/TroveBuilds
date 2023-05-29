@@ -125,6 +125,17 @@ class StarChart(BaseModel):
                 obtained[obtainable] += 1
         return obtained
 
+    @property
+    def activated_abilities(self):
+        abilities = {}
+        for star in self.activated_stars:
+            abilities[star.path] = star.abilities
+        for star in self.activated_stars:
+            for ow in star.ability_overwrites:
+                if ow in abilities:
+                    del abilities[ow]
+        return [a for ab_set in abilities.values() for a in ab_set]
+
 class Constellation(Enum):
     combat = "Combat"
     gathering = "Gathering"
@@ -176,6 +187,7 @@ class Star(BaseModel):
     children: list = []
     angle: list = []
     obtainables: list[str] = []
+    ability_overwrites: list[str] = []
 
     def __str__(self):
         return f'<Star name="{self.name}" type={self.type.value} unlocked={self.unlocked} children={len(self.children)}>'
@@ -273,7 +285,8 @@ def build_star_chart(star_dict: dict, parent: Star = None):
         parent=parent,
         angle=star_dict.get("Connect", []),
         unlocked=StarType(star_dict["Type"]) == StarType.root,
-        obtainables=star_dict["Obtainables"]
+        obtainables=star_dict["Obtainables"],
+        ability_overwrites=star_dict.get("Overwrites", [])
     )
     for cstar in star_dict["Stars"]:
         star.add_child(build_star_chart(cstar, star))
