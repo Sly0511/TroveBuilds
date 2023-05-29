@@ -196,6 +196,32 @@ class Star(BaseModel):
     def full_name(self):
         return self.type.value + " star of " + self.name.strip()
 
+    @property
+    def format_stats(self):
+        stats = {}
+        percentage_stats = [
+            "Attack Speed",
+            "Maximum Health %",
+            "Outgoing Damage",
+            "Critical Hit",
+            "Critical Damage",
+            "Incoming Damage",
+            "Damage Reduction",
+            "Random Flask Emblem"
+        ]
+        for stat in self.stats:
+            if stat["percentage"]:
+                stat_name = stat["name"] + " Bonus"
+            else:
+                stat_name = stat["name"]
+            if not stats.get(stat_name):
+                stats[stat_name] = [0, (stat_name in percentage_stats or stat_name.endswith("Bonus"))]
+            if stat["value"]:
+                stats[stat_name][0] += stat["value"]
+            else:
+                stats[stat_name][0] = "Unknown"
+        return stats
+
     def unlock(self):
         self.unlocked = True
         if self.parent is not None:

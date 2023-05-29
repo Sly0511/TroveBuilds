@@ -808,8 +808,7 @@
                                         "Description": "Knowledge is power - with this you will gain even more.",
                                         "Stats": [],
                                         "Abilities": [
-                                            "Increases experience gain by 5%. ",
-                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                            "Increases experience gain by 5%. "
                                         ],
                                         "Stars": [
                                             {
@@ -927,7 +926,9 @@
                                                 "Acts": "Minor"
                                             }
                                         ],
-                                        "Obtainables": [],
+                                        "Obtainables": [
+                                            "Grants a Balefire Dragon Egg Fragment when unlocked"
+                                        ],
                                         "Acts": "Major"
                                     }
                                 ],
