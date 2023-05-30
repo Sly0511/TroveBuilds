@@ -34,7 +34,7 @@ class RoundButton(ElevatedButton):
 class StarChartController(Controller):
     def setup_controls(self):
         if not hasattr(self, "map"):
-            self.selected_stat = "Physical Damage"
+            self.selected_stat = None
             self.star_chart = get_star_chart()
             self.map = ResponsiveRow()
         self.map.controls.clear()
