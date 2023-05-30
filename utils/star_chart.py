@@ -3,6 +3,8 @@ import json
 from copy import deepcopy
 from enum import Enum
 from math import radians, sin, cos
+from flet.security import encrypt, decrypt
+from models.objects import StarBuild
 
 from pydantic import BaseModel, Field
 
@@ -75,6 +77,22 @@ class StarChart(BaseModel):
             yield star
             for child in self.__iterate_stars(star):
                 yield child
+
+    async def get_build(self):
+        paths = [s.path for s in self.activated_stars]
+        if (build := await StarBuild.find_one(StarBuild.paths == paths)) is None:
+            build = StarBuild(paths=paths)
+            await build.save()
+        return build.build
+
+    async def from_string(self, build_id):
+        build = await StarBuild.find_one(StarBuild.build == build_id)
+        if build is None:
+            return False
+        for star in self.get_stars():
+            if star.path in build.paths:
+                star.unlock()
+        return True
 
     @property
     def stats_list(self):
@@ -356,7 +374,7 @@ def rotate_branch(star, origin, angle, distance):
         del child["Rotation"]
 
 
-def get_star_chart():
+def get_star_chart(star_string=None):
     star_chart = json.load(open("data/star_chart.json"))
     obj_star_chart = StarChart()
     origin = 350, 380
@@ -380,5 +398,6 @@ def get_star_chart():
 
     for constellation, data in star_chart.items():
         obj_star_chart.constellations.append(build_star_chart(data))
-
+    if star_string:
+        obj_star_chart.from_string(star_string)
     return obj_star_chart

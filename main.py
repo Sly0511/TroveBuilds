@@ -10,6 +10,7 @@ from i18n import t
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from models import Config
+from models.objects import StarBuild
 from models.objects.discord_user import DiscordUser
 from models.objects.marketplace import Listing, Item
 from models.objects.user import User
@@ -50,7 +51,7 @@ class TroveBuilds:
             page.constants = Constants()
             page.constants.database = await init_beanie(
                 page.constants.database_client.trovetools,
-                document_models=[User, Listing, Item],
+                document_models=[User, Listing, Item, StarBuild],
             )
             page.clock = Text((datetime.utcnow() - timedelta(hours=11)).strftime("%a, %b %d\t\t%H:%M"))
             page.login_provider = DiscordOAuth2(
@@ -135,7 +136,7 @@ class TroveBuilds:
                 await self.page.client_storage.remove_async("login")
                 await self.page.logout_async()
                 self.page.logger.debug("User logged out: Invalidated token")
-        if self.page.auth is None:
+        if self.page.auth is None or self.page.auth.user is None:
             return
         self.page.constants.discord_user = DiscordUser(**self.page.auth.user)
         encrypted_token = encrypt(

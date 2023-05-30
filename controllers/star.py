@@ -18,7 +18,8 @@ from flet import (
     icons,
     ButtonStyle,
     MaterialState,
-    BorderSide
+    BorderSide,
+    TextField
 )
 
 from models.objects import Controller
@@ -37,10 +38,8 @@ class StarChartController(Controller):
             self.selected_stat = None
             self.star_chart = get_star_chart()
             self.map = ResponsiveRow()
+            self.star_details = Column(col={"xxl": 2})
         self.map.controls.clear()
-        self.star_details = Column(
-            col={"xxl": 2},
-        )
         self.star_buttons = Stack(
             controls=[
                 Text(
@@ -112,6 +111,13 @@ class StarChartController(Controller):
                 self.star_details,
                 Column(
                     controls=[
+                        TextField(hint_text="Insert build string", width=250, on_submit=self.set_star_chart_build),
+                        ElevatedButton(
+                            "Copy build",
+                            width=250,
+                            disabled=not bool(self.star_chart.activated_stars_count),
+                            on_click=self.copy_star_chart_build
+                        ),
                         Dropdown(
                             value=self.selected_stat or "none",
                             options=[
@@ -307,3 +313,17 @@ class StarChartController(Controller):
                         )
                         break
         await self.star_buttons.update_async()
+
+    async def copy_star_chart_build(self, _):
+        build_id = await self.star_chart.get_build()
+        await self.page.set_clipboard_async(build_id)
+        self.page.snack_bar.content.value = "Copied to clipboard"
+        self.page.snack_bar.open = True
+        await self.page.snack_bar.update_async()
+
+    async def set_star_chart_build(self, event):
+        self.star_chart = get_star_chart()
+        await self.star_chart.from_string(event.control.value)
+        event.control.value = None
+        self.setup_controls()
+        await self.map.update_async()

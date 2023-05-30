@@ -641,7 +641,7 @@
                                                                                 ],
                                                                                 "Stars": [],
                                                                                 "Obtainables": [
-                                                                                    "Grants Ursa Major when upgrading ",
+                                                                                    "Grants Ursa Major when upgrading",
                                                                                     "Grants a Balefire Dragon Egg Fragment when unlocked"
                                                                                 ],
                                                                                 "Acts": "Major"
@@ -1020,7 +1020,7 @@
                                                         "Path": "gathering.a.0.b.0.a.0",
                                                         "Constellation": "Gathering",
                                                         "Type": "Major",
-                                                        "Name": " Harvest 2.0",
+                                                        "Name": "Harvest 2.0",
                                                         "Description": "Ultimate Harvest upgrade for any gathering min/maxer.",
                                                         "Stats": [],
                                                         "Overwrites": [
@@ -2167,7 +2167,7 @@
                                                 "Path": "pve.b.0.a.1.a",
                                                 "Constellation": "Pve",
                                                 "Type": "Major",
-                                                "Name": " Bounty Hunt Boon",
+                                                "Name": "Bounty Hunt Boon",
                                                 "Description": "Hunting enemies now grants you boons.",
                                                 "Stats": [],
                                                 "Abilities": [
@@ -2179,7 +2179,7 @@
                                                         "Constellation": "Pve",
                                                         "Type": "Minor",
                                                         "Acts": "Major",
-                                                        "Name": " Bounty Hunt",
+                                                        "Name": "Bounty Hunt",
                                                         "Description": "Looking up at the stars has granted additional buff time.",
                                                         "Stats": [],
                                                         "Overwrites": [
@@ -2322,7 +2322,7 @@
                                                 "Path": "pve.b.0.b.1.a",
                                                 "Constellation": "Pve",
                                                 "Type": "Major",
-                                                "Name": " Depths Boon",
+                                                "Name": "Depths Boon",
                                                 "Description": "Delving just got a little bit easier.",
                                                 "Stats": [],
                                                 "Abilities": [
