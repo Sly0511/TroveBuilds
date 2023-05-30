@@ -15,7 +15,10 @@ from flet import (
     Dropdown,
     dropdown,
     Icon,
-    icons
+    icons,
+    ButtonStyle,
+    MaterialState,
+    BorderSide
 )
 
 from models.objects import Controller
@@ -31,7 +34,7 @@ class RoundButton(ElevatedButton):
 class StarChartController(Controller):
     def setup_controls(self):
         if not hasattr(self, "map"):
-            self.selected_stat = None
+            self.selected_stat = "Physical Damage"
             self.star_chart = get_star_chart()
             self.map = ResponsiveRow()
         self.map.controls.clear()
@@ -53,13 +56,17 @@ class StarChartController(Controller):
                 ),
                 *[
                     RoundButton(
-                        content=(
-                            Icon(icons.STAR_ROUNDED, color="yellow")
-                            if self.selected_stat in [stat["name"] for stat in star.stats] else
-                            None
+                        style=ButtonStyle(
+                            side={
+                                MaterialState.DEFAULT: (
+                                    BorderSide(3, "yellow")
+                                    if self.selected_stat in [stat["name"] for stat in star.stats] else
+                                    BorderSide(0, "transparent")
+                                )
+                            }
                         ),
                         data=star,
-                        size=12 if star.type == StarType.minor else 20,
+                        size=17 if star.type == StarType.minor else 25,
                         bgcolor=star.color,
                         left=star.coords[0],
                         top=star.coords[1],
@@ -70,7 +77,7 @@ class StarChartController(Controller):
                     for star in self.star_chart.get_stars()
                 ],
             ],
-            width=700,
+            width=750,
             height=850,
         )
         self.map.controls.extend(
@@ -97,7 +104,7 @@ class StarChartController(Controller):
                                 if star.angle
                             ]
                         ],
-                        width=700,
+                        width=750,
                         height=850,
                     ),
                     col={"xxl": 5},
@@ -115,7 +122,8 @@ class StarChartController(Controller):
                                 ]
                             ],
                             label="Find stats",
-                            on_change=self.change_selected_stat
+                            on_change=self.change_selected_stat,
+                            width=250
                         ),
                         Text("Stats", size=22),
                         *([

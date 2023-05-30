@@ -164,15 +164,15 @@ class ConstellationBigColor(Enum):
 
 
 class ConstellationDisabledSmallColor(Enum):
-    combat = "#aaaaaa"
-    gathering = "#aaaaaa"
-    pve = "#aaaaaa"
+    combat = "#555555"
+    gathering = "#555555"
+    pve = "#555555"
 
 
 class ConstellationDisabledBigColor(Enum):
-    combat = "#aaaaaa"
-    gathering = "#aaaaaa"
-    pve = "#aaaaaa"
+    combat = "#555555"
+    gathering = "#555555"
+    pve = "#555555"
 
 
 class StarType(Enum):
@@ -359,8 +359,8 @@ def rotate_branch(star, origin, angle, distance):
 def get_star_chart():
     star_chart = json.load(open("data/star_chart.json"))
     obj_star_chart = StarChart()
-    origin = 320, 350
-    point_distance = 55
+    origin = 350, 380
+    point_distance = 50
     constell_backs = [14, 12, 4]
     for i, (constellation, back_rotate) in enumerate(
         zip(Constellation, constell_backs)
@@ -372,7 +372,7 @@ def get_star_chart():
         rotated_position = rotate(origin, position, radians(branch_rotation))
         constell = star_chart[constellation.value]
         constell["Coords"] = rotated_position
-        distance = 43
+        distance = 50
         build_branch(
             back_rotate, position, distance, constell["Stars"]
         )
