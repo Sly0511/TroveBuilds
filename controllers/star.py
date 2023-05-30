@@ -103,15 +103,15 @@ class StarChartController(Controller):
                                 if star.angle
                             ]
                         ],
-                        width=750,
-                        height=850,
+                        width=775,
+                        height=870,
                     ),
                     col={"xxl": 5},
                 ),
                 self.star_details,
                 Column(
                     controls=[
-                        TextField(hint_text="Insert build string", width=250, on_submit=self.set_star_chart_build),
+                        TextField(hint_text="Insert build string", width=250, on_change=self.set_star_chart_build),
                         ElevatedButton(
                             "Copy build",
                             width=250,
@@ -323,7 +323,7 @@ class StarChartController(Controller):
 
     async def set_star_chart_build(self, event):
         self.star_chart = get_star_chart()
-        await self.star_chart.from_string(event.control.value)
-        event.control.value = None
-        self.setup_controls()
-        await self.map.update_async()
+        if await self.star_chart.from_string(event.control.value.strip()):
+            event.control.value = None
+            self.setup_controls()
+            await self.map.update_async()

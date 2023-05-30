@@ -377,9 +377,9 @@ def rotate_branch(star, origin, angle, distance):
 def get_star_chart(star_string=None):
     star_chart = json.load(open("data/star_chart.json"))
     obj_star_chart = StarChart()
-    origin = 350, 380
-    point_distance = 50
-    constell_backs = [14, 12, 4]
+    origin = 390, 390
+    point_distance = 60
+    constell_backs = [14, 14, 14]
     for i, (constellation, back_rotate) in enumerate(
         zip(Constellation, constell_backs)
     ):
