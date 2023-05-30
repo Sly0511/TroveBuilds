@@ -329,4 +329,5 @@ class StarChartController(Controller):
             self.page.snack_bar.content.value = f"Loaded build with id {build_id}"
             self.page.snack_bar.open = True
             self.setup_controls()
+            await self.page.snack_bar.update_async()
             await self.map.update_async()
