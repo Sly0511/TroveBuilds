@@ -291,11 +291,19 @@ class StarChartController(Controller):
         self.selected_stat = event.control.value
         for button in self.star_buttons.controls:
             if isinstance(button, RoundButton):
-                button.content = None
+                button.style = None
         for button in self.star_buttons.controls:
             if isinstance(button, RoundButton):
                 for stat in button.data.stats:
                     if stat["name"] == event.control.value:
-                        button.content = Icon(icons.STAR_ROUNDED, color="yellow")
+                        button.style = ButtonStyle(
+                            side={
+                                MaterialState.DEFAULT: (
+                                    BorderSide(3, "yellow")
+                                    if self.selected_stat in [stat["name"] for stat in button.data.stats] else
+                                    BorderSide(0, "transparent")
+                                )
+                            }
+                        )
                         break
         await self.star_buttons.update_async()
