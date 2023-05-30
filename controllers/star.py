@@ -322,8 +322,11 @@ class StarChartController(Controller):
         await self.page.snack_bar.update_async()
 
     async def set_star_chart_build(self, event):
+        build_id = event.control.value.strip()
         self.star_chart = get_star_chart()
-        if await self.star_chart.from_string(event.control.value.strip()):
+        if await self.star_chart.from_string(build_id):
             event.control.value = None
+            self.page.snack_bar.content.value = f"Loaded build with id {build_id}"
+            self.page.snack_bar.open = True
             self.setup_controls()
             await self.map.update_async()
