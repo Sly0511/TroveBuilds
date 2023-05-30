@@ -335,11 +335,11 @@ def rotate_branch(star, origin, angle, distance):
     for child in star["Stars"]:
         child["Coords"] = rotate(origin, child.get("Coords", [0, 0]), angle)
         connect_position_1 = (
-            star["Coords"][0] - (8 if star["Type"] == "Minor" else 13),
+            star["Coords"][0] - (11 if star["Type"] == "Minor" else 17),
             star["Coords"][1],
         )
         connect_position_2 = (
-            child["Coords"][0] - (8 if child["Type"] == "Minor" else 13),
+            child["Coords"][0] - (11 if child["Type"] == "Minor" else 17),
             child["Coords"][1],
         )
         connect_position_1 = rotate(
