@@ -341,6 +341,7 @@ class StarChartController(Controller):
                     await StarBuild.delete_one(StarBuild.build == build.build)
 
     async def set_star_chart_build(self, event):
+        await self.ensure_no_duplicates()
         build_id = event.control.value.strip()
         self.star_chart = get_star_chart()
         if await self.star_chart.from_string(build_id):
