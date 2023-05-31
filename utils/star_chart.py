@@ -80,7 +80,7 @@ class StarChart(BaseModel):
 
     async def get_build(self):
         paths = [s.path for s in self.activated_stars]
-        if (build := await StarBuild.find_one(StarBuild.paths == paths)) is None:
+        if (build := await StarBuild.find_one({"paths": {"$all": paths, "$size": len(paths)}})) is None:
             build = StarBuild(paths=paths)
             await build.save()
         return build.build
