@@ -60,7 +60,7 @@ class GemBuildsController(Controller):
         if not hasattr(self, "character_data"):
             self.character_data = ResponsiveRow()
         preset_builds = [
-            ["GAlej6zP", "MD/Light"],
+            ["zkIdCjZy", "MD/Light"],
             ["Jlc4iMaP", "PD/Light"],
             ["gBus7rhC", "MD+PD/Light"],
             ["Hsjychqv", "MS/MD/Light"],
@@ -269,7 +269,10 @@ class GemBuildsController(Controller):
                         Dropdown(
                             value=(
                                 "custom"
-                                if self.star_chart.build_id and self.star_chart.build_id not in preset_builds else
+                                if (
+                                    self.star_chart.build_id and
+                                    self.star_chart.build_id not in [b[0] for b in preset_builds]
+                                ) else
                                 self.star_chart.build_id
                             ),
                             options=[
