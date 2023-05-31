@@ -153,6 +153,10 @@ class StarChart(BaseModel):
             "Magic Damage",
             "Critical Damage"
         ]
+        percentage_stats = [
+            "Maximum Health %",
+            "Critical Damage"
+        ]
         stats = {}
         for star in self.activated_stars:
             for stat in star.stats:
@@ -163,8 +167,8 @@ class StarChart(BaseModel):
                 else:
                     stat_name = stat["name"]
                 if not stats.get(stat_name):
-                    stats[stat_name] = 0
-                stats[stat_name] += stat["value"]
+                    stats[stat_name] = [0, (stat_name in percentage_stats or stat_name.endswith("Bonus"))]
+                stats[stat_name][0] += stat["value"]
         return stats
 
     @property

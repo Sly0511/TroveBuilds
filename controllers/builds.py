@@ -282,7 +282,7 @@ class GemBuildsController(Controller):
                                         ["none", "none"]
                                     ) if self.star_chart.build_id else ([]),
                                     (
-                                        ["custom", "Custom"]
+                                        [self.star_chart.build_id, "Custom"]
                                     ) if self.star_chart.build_id else ([]),
                                     *preset_builds
                                 ]
@@ -294,6 +294,10 @@ class GemBuildsController(Controller):
                             hint_text="Star Chart Build ID",
                             on_change=self.set_star_chart_build
                         ),
+                        *[
+                            Text(f"{k}: {v[0]}" + ("%" if v[1] else ""))
+                            for k, v in self.star_chart.activated_gem_stats.items()
+                        ],
                         *[
                             TextField(
                                 label="Light",
@@ -698,12 +702,12 @@ class GemBuildsController(Controller):
         )
         # Star Chart stats
         data = self.star_chart.activated_gem_stats
-        first += data.get(damage_type.value, 0)
-        second += data.get("Critical Damage", 0)
-        third += data.get("Light", 0)
-        fourth += data.get(damage_type.value + " Bonus", 0)
-        fifth += data.get("Critical Damage Bonus", 0)
-        sixth += data.get("Light Bonus", 0)
+        first += data.get(damage_type.value, [0])[0]
+        second += data.get("Critical Damage", [0])[0]
+        third += data.get("Light", [0])[0]
+        fourth += data.get(damage_type.value + " Bonus", [0])[0]
+        fifth += data.get("Critical Damage Bonus", [0])[0]
+        sixth += data.get("Light Bonus", [0])[0]
         for build_tuple in builder:
             build = list(build_tuple)
             gem_first, gem_second, gem_third = self.calculate_gem_stats(
