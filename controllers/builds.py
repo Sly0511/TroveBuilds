@@ -37,13 +37,15 @@ from models.objects.builds import (
     DamageType,
     AbilityType,
 )
-from utils.functions import get_attr, throttle, chunks
 from utils.controls import ScrollingFrame
+from utils.functions import get_attr, throttle, chunks
+from utils.star_chart import get_star_chart
 
 
 class GemBuildsController(Controller):
     def setup_controls(self):
         if not hasattr(self, "classes"):
+            self.star_chart = get_star_chart()
             self.selected_build = None
             self.build_page = 0
             self.max_pages = 0
@@ -57,6 +59,14 @@ class GemBuildsController(Controller):
         self.selected_subclass = self.classes.get(self.config.subclass.value, None)
         if not hasattr(self, "character_data"):
             self.character_data = ResponsiveRow()
+        preset_builds = [
+            ["GAlej6zP", "MD/Light"],
+            ["Jlc4iMaP", "PD/Light"],
+            ["gBus7rhC", "MD+PD/Light"],
+            ["Hsjychqv", "MS/MD/Light"],
+            ["SbJ5AoPg", "MS/PD/Light"],
+            ["0XJI18N3", "MS/MD+PD/Light"]
+        ]
         self.character_data.controls = [
             Card(
                 content=ResponsiveRow(
@@ -131,7 +141,7 @@ class GemBuildsController(Controller):
                         ),
                     ]
                 ),
-                col={"xxl": 4},
+                col={"xxl": 3},
             ),
             Card(
                 content=Column(
@@ -199,7 +209,7 @@ class GemBuildsController(Controller):
                             controls=[
                                 Column(
                                     controls=[
-                                        Text("Damage on face"),
+                                        Text("Face\nDamage"),
                                         Switch(
                                             value=not self.config.no_face,
                                             on_change=self.toggle_face,
@@ -209,7 +219,7 @@ class GemBuildsController(Controller):
                                 VerticalDivider(),
                                 Column(
                                     controls=[
-                                        Text("Subclass ability active"),
+                                        Text("Subclass\nactive"),
                                         Switch(
                                             value=self.config.subclass_active,
                                             on_change=self.toggle_subclass_active,
@@ -219,13 +229,22 @@ class GemBuildsController(Controller):
                                 VerticalDivider(),
                                 Column(
                                     controls=[
-                                        Text("Berserker Battler"),
+                                        Text("Berserker\nBattler"),
                                         Switch(
                                             value=self.config.berserker_battler,
                                             on_change=self.toggle_berserker_battler,
                                         ),
                                     ]
                                 ),
+                                Column(
+                                    controls=[
+                                        Text("Cosmic\nPrimordial"),
+                                        Switch(
+                                            value=self.config.cosmic_primordial,
+                                            on_change=self.toggle_cosmic_primordial,
+                                        ),
+                                    ]
+                                )
                             ]
                         ),
                     ],
@@ -247,14 +266,34 @@ class GemBuildsController(Controller):
                         #         )
                         #     ]
                         # ),
-                        Switch(
-                            label="Star Chart",
-                            value=self.config.star_chart,
-                            on_change=self.toggle_star_chart,
+                        Dropdown(
+                            value=(
+                                "custom"
+                                if self.star_chart.build_id and self.star_chart.build_id not in preset_builds else
+                                self.star_chart.build_id
+                            ),
+                            options=[
+                                dropdown.Option(
+                                    key=b[0],
+                                    text=b[1]
+                                )
+                                for b in [
+                                    (
+                                        ["none", "none"]
+                                    ) if self.star_chart.build_id else ([]),
+                                    (
+                                        ["custom", "Custom"]
+                                    ) if self.star_chart.build_id else ([]),
+                                    *preset_builds
+                                ]
+                                if b
+                            ],
+                            on_change=self.set_star_chart_build
                         ),
-                        Text("250 Light\n27% Bonus Damage\n35% Critical Damage")
-                        if self.config.star_chart
-                        else Text(),
+                        TextField(
+                            hint_text="Star Chart Build ID",
+                            on_change=self.set_star_chart_build
+                        ),
                         *[
                             TextField(
                                 label="Light",
@@ -263,21 +302,11 @@ class GemBuildsController(Controller):
                             )
                             for _ in range(1)
                             if self.config.build_type != BuildType.light
-                        ],
-                        Text("Predictions", size=22),
-                        Column(
-                            controls=[
-                                Text("Cosmic Primordial"),
-                                Switch(
-                                    value=self.config.cosmic_primordial,
-                                    on_change=self.toggle_cosmic_primordial,
-                                ),
-                            ]
-                        ),
+                        ]
                     ],
                     spacing=11,
                 ),
-                col={"xxl": 2},
+                col={"xxl": 3},
             ),
         ]
         if not hasattr(self, "features"):
@@ -406,7 +435,6 @@ class GemBuildsController(Controller):
                 self.build_page = self.max_pages - 1
             elif self.build_page > self.max_pages - 1:
                 self.build_page = 0
-            top = 0
             for (
                 rank,
                 build,
@@ -433,15 +461,6 @@ class GemBuildsController(Controller):
                     if len(boosts) > 4
                     else ""
                 )
-                if (
-                    3 <= build[0][0] <= 6
-                    and 3 <= build[0][1] <= 6
-                    and 6 <= build[1][0] <= 12
-                    and 6 <= build[1][1] <= 12
-                ):
-                    cheap = True
-                else:
-                    cheap = False
                 build_data = [
                     build,
                     first,
@@ -512,7 +531,6 @@ class GemBuildsController(Controller):
         self.abilities_table.visible = bool(
             self.selected_build is not None and len(self.selected_class.abilities)
         )
-        print(self.abilities_table.visible)
         if self.abilities_table.visible:
             self.abilities.rows.extend(
                 [
@@ -596,6 +614,8 @@ class GemBuildsController(Controller):
         second = 0
         third = 0
         fourth = 0
+        fifth = 100
+        sixth = 100
         first += self.sum_file_values("damage")
         second += self.sum_file_values("critical_damage")
         third += self.sum_file_values("light")
@@ -639,11 +659,6 @@ class GemBuildsController(Controller):
                 second += stat["value"]
             if stat["name"] == StatName.light.value:
                 third += stat["value"]
-        # Add Star Chart stats
-        if self.config.star_chart:
-            second += 35
-            third += 250
-            fourth += 27
         # Remove critical damage stats from equipments (movement speed builds)
         second -= 44.2 * (3 - self.config.critical_damage_count)
         # Solarion 140 Light
@@ -681,6 +696,14 @@ class GemBuildsController(Controller):
             farm=self.config.build_type in [BuildType.farm],
             coeff=self.config.build_type in [BuildType.health],
         )
+        # Star Chart stats
+        data = self.star_chart.activated_gem_stats
+        first += data.get(damage_type.value, 0)
+        second += data.get("Critical Damage", 0)
+        third += data.get("Light", 0)
+        fourth += data.get(damage_type.value + " Bonus", 0)
+        fifth += data.get("Critical Damage Bonus", 0)
+        sixth += data.get("Light Bonus", 0)
         for build_tuple in builder:
             build = list(build_tuple)
             gem_first, gem_second, gem_third = self.calculate_gem_stats(
@@ -697,17 +720,16 @@ class GemBuildsController(Controller):
                 final = cfirst * (1 + fourth / 100)
             else:
                 final = cfirst
-            coefficient = round(final * (1 + csecond / 100))
+            coefficient = round(final * (1 + (csecond * (fifth / 100)) / 100))
             build_stats = [
                 build,
                 cfirst,
                 csecond,
-                cthird,
+                cthird * (sixth / 100),
                 fourth,
                 final,
                 coefficient,
             ]
-            # if build == [[5, 4], [8, 10], [0, 0, 3], [0, 0, 6]]:
             yield build_stats
 
     def sum_file_values(self, path):
@@ -926,3 +948,16 @@ class GemBuildsController(Controller):
     async def copy_build_hover(self, event):
         event.control.ink = True
         await event.control.update_async()
+
+    async def set_star_chart_build(self, event):
+        build_id = event.control.value.strip()
+        self.star_chart = get_star_chart()
+        if build_id == "none":
+            self.setup_controls()
+            await self.page.update_async()
+            return
+        if await self.star_chart.from_string(build_id):
+            self.page.snack_bar.content.value = f"Loaded build with id {build_id}"
+            self.page.snack_bar.open = True
+            self.setup_controls()
+            await self.page.update_async()

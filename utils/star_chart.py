@@ -3,10 +3,11 @@ import json
 from copy import deepcopy
 from enum import Enum
 from math import radians, sin, cos
-from flet.security import encrypt, decrypt
-from models.objects import StarBuild
+from typing import Optional
 
 from pydantic import BaseModel, Field
+
+from models.objects import StarBuild
 
 __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 
@@ -57,6 +58,7 @@ __all__ = ["StarChart", "Constellation", "Star", "StarType", "get_star_chart"]
 
 
 class StarChart(BaseModel):
+    build_id: Optional[str] = None
     constellations: list = Field(default_factory=list)
     max_nodes: int = 40
 
@@ -89,6 +91,7 @@ class StarChart(BaseModel):
         build = await StarBuild.find_one(StarBuild.build == build_id)
         if build is None:
             return False
+        self.build_id = build_id
         for star in self.get_stars():
             if star.path in build.paths:
                 star.unlock()
@@ -143,6 +146,28 @@ class StarChart(BaseModel):
         return stats
 
     @property
+    def activated_gem_stats(self):
+        gem_stats = [
+            "Light",
+            "Physical Damage",
+            "Magic Damage",
+            "Critical Damage"
+        ]
+        stats = {}
+        for star in self.activated_stars:
+            for stat in star.stats:
+                if stat["name"] not in gem_stats:
+                    continue
+                if stat["percentage"]:
+                    stat_name = stat["name"] + " Bonus"
+                else:
+                    stat_name = stat["name"]
+                if not stats.get(stat_name):
+                    stats[stat_name] = 0
+                stats[stat_name] += stat["value"]
+        return stats
+
+    @property
     def activated_obtainables(self):
         obtained = {}
         for star in self.activated_stars:
@@ -162,6 +187,7 @@ class StarChart(BaseModel):
                 if ow in abilities:
                     del abilities[ow]
         return [a for ab_set in abilities.values() for a in ab_set]
+
 
 class Constellation(Enum):
     combat = "Combat"
