@@ -171,6 +171,23 @@
             "Increases cooldown recovery speed by 25%."
         ]
     },
+    "Earnie": {
+        "stats": [
+            {
+                "name": "Physical Damage",
+                "value": 25.0,
+                "percentage": true
+            },
+            {
+                "name": "Light",
+                "value": 400,
+                "percentage": false
+            }
+        ],
+        "abilities": [
+            "Gain a protective shield when a nearby enemy dies."
+        ]
+    },
     "Staruable": {
         "stats": [
             {
