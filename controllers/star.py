@@ -1,5 +1,3 @@
-import copy
-
 from flet import (
     ElevatedButton,
     Stack,
@@ -16,17 +14,15 @@ from flet import (
     Divider,
     Dropdown,
     dropdown,
-    Icon,
-    icons,
     ButtonStyle,
     MaterialState,
     BorderSide,
     TextField
 )
 
-from models.objects import Controller, StarBuild
-from utils.star_chart import get_star_chart, StarType
+from models.objects import Controller
 from utils.controls.scrolling import ScrollingFrame
+from utils.star_chart import get_star_chart, StarType
 
 
 class RoundButton(ElevatedButton):
@@ -322,23 +318,6 @@ class StarChartController(Controller):
         self.page.snack_bar.content.value = "Copied to clipboard"
         self.page.snack_bar.open = True
         await self.page.snack_bar.update_async()
-
-    async def ensure_no_duplicates(self):
-        builds = await StarBuild.find({}).to_list(length=99999)
-        builds_old = copy.deepcopy(builds)
-        for b in builds_old:
-            for build in builds:
-                if b.build == build.build:
-                    continue
-                if len(b.paths) == len(build.paths):
-                    cancel = False
-                    for p in b.paths:
-                        if p not in build.paths:
-                            cancel = True
-                            break
-                    if cancel:
-                        continue
-                    await StarBuild.delete_one(StarBuild.build == build.build)
 
     async def set_star_chart_build(self, event):
         build_id = event.control.value.strip()
