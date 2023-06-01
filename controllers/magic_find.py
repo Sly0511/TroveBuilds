@@ -9,9 +9,26 @@ class MagicFindController(Controller):
     def setup_controls(self):
         if not hasattr(self, "interface"):
             self.interface = ResponsiveRow()
-            self.control_values = {}
+            self.control_values = {
+                "mastery": 250
+            }
         self.magic_find_data = json.load(open("data/builds/magic_find.json"))
-        buttons = []
+        buttons = [
+            Column(
+                controls=[
+                    Text(f"Mastery - {int(self.control_values['mastery'])}"),
+                    Slider(
+                        data="mastery",
+                        min=500,
+                        max=1000,
+                        divisions=500,
+                        value=self.control_values["mastery"] + 500,
+                        on_change_end=self.mastery_stat,
+                        label="{value}"
+                    )
+                ]
+            )
+        ]
         for source in self.magic_find_data:
             if source["name"] not in self.control_values:
                 self.control_values[source["name"]] = True if source["type"] == "switch" else source["value"]
@@ -21,7 +38,7 @@ class MagicFindController(Controller):
                         Switch(
                             data=source["name"],
                             value=self.control_values[source["name"]],
-                            col={"xxl": 3},
+                            col=3,
                             on_change=self.switch_stat
                         ),
                         Text(
@@ -32,7 +49,7 @@ class MagicFindController(Controller):
                                     f"{round(source['value'], 2)}%"
                                 )
                             ),
-                            col={"xxl": 6}
+                            col=9
                         )
                     ]
                 )
@@ -62,10 +79,10 @@ class MagicFindController(Controller):
             else:
                 continue
             control.col = {"xxl": 6}
-            print(getattr(source, "divisions", None))
             buttons.append(control)
         result = 0
-        for (_, v), source in zip(self.control_values.items(), self.magic_find_data):
+        result += self.control_values["mastery"]
+        for (_, v), source in zip(list(self.control_values.items())[1:], self.magic_find_data):
             if isinstance(v, bool):
                 v = source["value"] if v else 0
             if source["percentage"]:
@@ -75,13 +92,12 @@ class MagicFindController(Controller):
         self.results = Card(
             content=ResponsiveRow(
                 controls=[
-                    Text("Total Magic Find", size=22, col={"xxl": 6}),
-                    Text(round(result, 2), size=22, col={"xxl": 6})
+                    Text("Total Magic Find", size=22, col=6),
+                    Text(round(result), size=22, col=6)
                 ]
             ),
             col={"xxl": 3}
         )
-
         self.interface.controls = [
             Card(
                 content=Column(
@@ -106,5 +122,10 @@ class MagicFindController(Controller):
 
     async def slider_stat(self, event):
         self.control_values[event.control.data] = event.control.value
+        self.setup_controls()
+        await self.page.update_async()
+
+    async def mastery_stat(self, event):
+        self.control_values[event.control.data] = event.control.value - 500
         self.setup_controls()
         await self.page.update_async()
