@@ -3,7 +3,7 @@
         "name": "Dragons",
         "type": "slider",
         "percentage": false,
-        "value": 2800
+        "value": 2850
     },
     {
         "name": "Dragon Badges",
@@ -88,11 +88,5 @@
         "type": "switch",
         "percentage": true,
         "value": 50
-    },
-    {
-        "name": "Patron",
-        "type": "switch",
-        "percentage": true,
-        "value": 100
     }
 ]

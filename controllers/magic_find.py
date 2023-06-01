@@ -12,7 +12,8 @@ class MagicFindController(Controller):
             self.star_chart = get_star_chart()
             self.interface = ResponsiveRow()
             self.control_values = {
-                "mastery": 250
+                "mastery": 250,
+                "Patron": True
             }
         self.magic_find_data = json.load(open("data/builds/magic_find.json"))
         buttons = [
@@ -83,6 +84,23 @@ class MagicFindController(Controller):
             control.col = {"xxl": 6}
             buttons.append(control)
         buttons.append(
+            ResponsiveRow(
+                controls=[
+                    Switch(
+                        data="Patron",
+                        value=self.control_values["Patron"],
+                        col=3,
+                        on_change=self.switch_stat
+                    ),
+                    Text(
+                        "Patron - 200%",
+                        col=9
+                    )
+                ],
+                col=6
+            )
+        )
+        buttons.append(
             TextField(
                 hint_text="Star Chart Build ID | \"none\" to remove",
                 on_change=self.set_star_chart_build,
@@ -104,16 +122,19 @@ class MagicFindController(Controller):
         for k, v in self.star_chart.activated_select_stats("Magic Find").items():
             if not v[1]:
                 result += v[0]
-        for (_, v), source in zip(list(self.control_values.items())[1:], self.magic_find_data):
+        bonus = 0
+        for (_, v), source in zip(list(self.control_values.items())[2:], self.magic_find_data):
             if isinstance(v, bool):
                 v = source["value"] if v else 0
-            if source["percentage"]:
-                result *= 1 + v / 100
-            else:
+            if not source["percentage"]:
                 result += v
+            else:
+                bonus += v
         for k, v in self.star_chart.activated_select_stats("Magic Find").items():
             if v[1]:
-                result *= 1 + v[0] / 100
+                bonus += v[0]
+        result *= 1 + bonus / 100  # Apply bonus pool
+        result *= 2 if self.control_values["Patron"] else 1
         self.results = Card(
             content=ResponsiveRow(
                 controls=[
