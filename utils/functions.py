@@ -5,7 +5,14 @@ import datetime
 import random
 import time
 from random import randint
+from random import sample
+from string import ascii_letters, digits
 from typing import Callable, Generic, Literal, TypeVar, Union, overload
+
+
+def random_id(k=8):
+    return "".join(sample(ascii_letters + digits, k=k))
+
 
 T = TypeVar("T", bool, Literal[True], Literal[False])
 
@@ -149,6 +156,7 @@ def get_attr(iterable, **kwargs):
         except ValueError:
             ...
     return None
+
 
 def chunks(lst, n):
     result = []

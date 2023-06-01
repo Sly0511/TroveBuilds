@@ -17,14 +17,18 @@ from flet import (
     Stack,
     Switch,
     Slider,
-    VerticalDivider,
     Container,
     TextField,
+    Divider,
     IconButton,
     ElevatedButton,
     Icon,
+    Tooltip,
+    TextStyle,
+    Border,
+    BorderSide
+
 )
-from flet.security import encrypt, decrypt
 from flet_core.icons import COPY, CALCULATE
 
 from models.objects import Controller
@@ -55,10 +59,11 @@ class GemBuildsController(Controller):
             self.foods = load(open("data/builds/food.json"))
             self.allies = load(open("data/builds/ally.json"))
             self.config = BuildConfig()
+            self.character_data = ResponsiveRow()
+            self.features = ResponsiveRow()
+            self.interface = ResponsiveRow(vertical_alignment="START")
         self.selected_class = self.classes.get(self.config.character.value, None)
         self.selected_subclass = self.classes.get(self.config.subclass.value, None)
-        if not hasattr(self, "character_data"):
-            self.character_data = ResponsiveRow()
         preset_builds = [
             ["zkIdCjZy", "MD/Light"],
             ["Jlc4iMaP", "PD/Light"],
@@ -67,350 +72,407 @@ class GemBuildsController(Controller):
             ["SbJ5AoPg", "MS/PD/Light"],
             ["0XJI18N3", "MS/MD+PD/Light"]
         ]
-        self.character_data.controls = [
-            Card(
-                content=ResponsiveRow(
-                    controls=[
-                        Stack(
-                            controls=[
-                                Image(
-                                    src=self.selected_class.image_path,
-                                ),
-                                Image(
-                                    src=self.selected_subclass.icon_path,
-                                    width=75,
-                                    top=100,
-                                    left=140,
-                                ),
-                            ],
-                            col={"xxl": 6},
-                        ),
-                        Column(
-                            controls=[
-                                Dropdown(
-                                    label="Class",
-                                    value=self.selected_class.name.name,
-                                    options=[
-                                        dropdown.Option(
-                                            key=c.name,
-                                            text=c.value,
-                                            disabled=c.name
-                                            == self.config.character.name,
-                                        )
-                                        for c in Class
-                                        if not self.config.subclass
-                                        or (
-                                            self.config.subclass
-                                            and c.name != self.config.subclass.name
-                                        )
-                                    ],
-                                    on_change=self.set_class,
-                                ),
-                                Dropdown(
-                                    label="Subclass",
-                                    value=self.selected_subclass.name.name,
-                                    options=[
-                                        dropdown.Option(
-                                            key=c.name,
-                                            text=c.value,
-                                            disabled=c.name
-                                            == self.config.subclass.name,
-                                        )
-                                        for c in Class
-                                        if c.name != self.config.character.name
-                                    ],
-                                    on_change=self.set_subclass,
-                                ),
-                                Dropdown(
-                                    label="Build Type",
-                                    value=self.config.build_type.name,
-                                    options=[
-                                        dropdown.Option(
-                                            key=b.name,
-                                            text=b.value,
-                                            disabled=b.name
-                                            == self.config.build_type.name,
-                                        )
-                                        for b in BuildType
-                                        if b != BuildType.health
-                                    ],
-                                    on_change=self.set_build_type,
-                                ),
-                            ],
-                            col={"xxl": 6},
-                        ),
-                    ]
-                ),
-                col={"xxl": 3},
-            ),
-            Card(
-                content=Column(
-                    controls=[
-                        Dropdown(
-                            label="Ally",
-                            value=self.config.ally,
-                            options=[
-                                dropdown.Option(
-                                    key=name,
-                                    text=name,
-                                    disabled=name == self.config.ally,
-                                )
-                                for name in self.allies.keys()
-                            ],
-                            on_change=self.set_ally,
-                        ),
-                        Text("Stats", size=20),
-                        *[
-                            Text(
-                                str(round(s["value"], 2))
-                                + ("% " if s["percentage"] else " ")
-                                + s["name"]
-                            )
-                            for s in self.allies[self.config.ally]["stats"]
-                        ],
-                        Text("Abilities", size=20),
-                        *[Text(a) for a in self.allies[self.config.ally]["abilities"]],
-                    ]
-                ),
-                col={"xxl": 3},
-            ),
-            Card(
-                content=Column(
-                    controls=[
-                        Dropdown(
-                            label="Food",
-                            value=self.config.food,
-                            options=[
-                                dropdown.Option(
-                                    key=name,
-                                    text=name,
-                                    disabled=name == self.config.food,
-                                )
-                                for name in self.foods.keys()
-                            ],
-                            on_change=self.set_food,
-                        ),
-                        Column(
-                            controls=[
-                                Text(
-                                    f"Critical Damage stats on gear: {self.config.critical_damage_count}"
-                                ),
-                                Slider(
-                                    min=0,
-                                    max=3,
-                                    divisions=3,
-                                    value=self.config.critical_damage_count,
-                                    label="{value}",
-                                    on_change_end=self.set_cd_count,
-                                ),
-                            ]
-                        ),
-                        Row(
-                            controls=[
-                                Column(
-                                    controls=[
-                                        Text("Face\nDamage"),
-                                        Switch(
-                                            value=not self.config.no_face,
-                                            on_change=self.toggle_face,
-                                        ),
-                                    ]
-                                ),
-                                VerticalDivider(),
-                                Column(
-                                    controls=[
-                                        Text("Subclass\nactive"),
-                                        Switch(
-                                            value=self.config.subclass_active,
-                                            on_change=self.toggle_subclass_active,
-                                        ),
-                                    ]
-                                ),
-                                VerticalDivider(),
-                                Column(
-                                    controls=[
-                                        Text("Berserker\nBattler"),
-                                        Switch(
-                                            value=self.config.berserker_battler,
-                                            on_change=self.toggle_berserker_battler,
-                                        ),
-                                    ]
-                                ),
-                                Column(
-                                    controls=[
-                                        Text("Cosmic\nPrimordial"),
-                                        Switch(
-                                            value=self.config.cosmic_primordial,
-                                            on_change=self.toggle_cosmic_primordial,
-                                        ),
-                                    ]
-                                )
-                            ]
-                        ),
-                    ],
-                    spacing=11,
-                ),
-                col={"xxl": 3},
-            ),
-            Card(
-                content=Column(
-                    controls=[
-                        # Column(
-                        #     controls=[
-                        #         Text("Crystal 5 (WIP)"),
-                        #         Switch(
-                        #             label="",
-                        #             value=self.config.crystal_5,
-                        #             on_change=self.toggle_crystal_5,
-                        #             disabled=True
-                        #         )
-                        #     ]
-                        # ),
-                        Dropdown(
-                            value=(
-                                "custom"
-                                if self.star_chart.build_id not in [b[0] for b in preset_builds] else
-                                self.star_chart.build_id
-                            ),
-                            options=[
-                                dropdown.Option(
-                                    key=b[0],
-                                    text=b[1]
-                                )
-                                for b in [
-                                    (
-                                        ["none", "none"]
-                                    ) if self.star_chart.build_id else ([]),
-                                    (
-                                        [self.star_chart.build_id, "Custom"]
-                                    ) if self.star_chart.build_id else ([]),
-                                    *preset_builds
-                                ]
-                                if b
-                            ],
-                            on_change=self.set_star_chart_build
-                        ),
-                        TextField(
-                            hint_text="Star Chart Build ID",
-                            on_change=self.set_star_chart_build
-                        ),
-                        *[
-                            Text(f"{k}: {v[0]}" + ("%" if v[1] else ""))
-                            for k, v in self.star_chart.activated_gem_stats.items()
-                        ],
-                        *[
-                            TextField(
-                                label="Light",
-                                value=str(self.config.light),
-                                on_submit=self.set_light,
-                            )
-                            for _ in range(1)
-                            if self.config.build_type != BuildType.light
-                        ]
-                    ],
-                    spacing=11,
-                ),
-                col={"xxl": 3},
-            ),
-        ]
-        if not hasattr(self, "features"):
-            self.features = ResponsiveRow()
-        self.features.controls.clear()
-        self.features.controls.extend(
-            [
-                ElevatedButton(
-                    "First",
-                    data=0,
-                    on_click=self.change_build_page,
-                    col={"xs": 3, "xxl": 1},
-                ),
-                # ElevatedButton(
-                #     "Backward 5",
-                #     data=self.build_page - 5,
-                #     on_click=self.change_build_page,
-                # ),
-                ElevatedButton(
-                    "Previous",
-                    data=self.build_page - 1,
-                    on_click=self.change_build_page,
-                    col={"xs": 3, "xxl": 1},
-                ),
-                ElevatedButton(
-                    "Next page",
-                    data=self.build_page + 1,
-                    on_click=self.change_build_page,
-                    col={"xs": 3, "xxl": 1},
-                ),
-                # ElevatedButton(
-                #     "Forward 5",
-                #     data=self.build_page + 5,
-                #     on_click=self.change_build_page,
-                # ),
-                ElevatedButton(
-                    "Last",
-                    data=self.max_pages - 1,
-                    on_click=self.change_build_page,
-                    col={"xs": 3, "xxl": 1},
-                ),
-                TextField(
-                    data=encrypt(
-                        self.config.to_base_64(), self.page.constants.secret_key
-                    ),
-                    label="Insert build string",
-                    on_submit=self.set_build_string,
-                    col={"xs": 6, "xxl": 3},
-                ),
-                Container(
-                    content=Row(controls=[Icon(COPY), Text("Copy build string")]),
-                    on_click=self.copy_build_string,
-                    on_hover=self.copy_build_hover,
-                    padding=15,
-                    border_radius=10,
-                    col={"xs": 6, "xxl": 3},
-                ),
-            ]
+        self.coeff_table = DataTable(
+            columns=[
+                DataColumn(label=Text("#")),
+                DataColumn(label=Text("Build")),
+                DataColumn(label=Text("Light")),
+                DataColumn(label=Text("Base Damage")),
+                DataColumn(label=Text("Bonus Damage")),
+                DataColumn(label=Text("Damage")),
+                DataColumn(label=Text("Critical")),
+                DataColumn(label=Text("Coefficient")),
+                DataColumn(label=Text("Deviation")),
+                DataColumn(label=Text("")),
+            ],
+            bgcolor="#212223",
+            col={}
         )
-        if not hasattr(self, "data_table"):
-            self.coeff_table = DataTable(
-                columns=[
-                    DataColumn(label=Text("#")),
-                    DataColumn(label=Text("Build")),
-                    DataColumn(label=Text("Light")),
-                    DataColumn(label=Text("Base Damage")),
-                    DataColumn(label=Text("Bonus Damage")),
-                    DataColumn(label=Text("Damage")),
-                    DataColumn(label=Text("Critical")),
-                    DataColumn(label=Text("Coefficient")),
-                    DataColumn(label=Text("Deviation")),
-                    DataColumn(label=Text("")),
-                ],
-                bgcolor="#212223",
-            )
-            self.abilities = DataTable(
-                columns=[
-                    DataColumn(Text("")),
-                    DataColumn(Text("")),
-                    DataColumn(
-                        Row(
-                            [
-                                Text("", width=70, size=10),
-                                Text(
-                                    "Critical", width=70, size=10, text_align="center"
+        self.interface.controls = [
+            Column(
+                controls=[
+                    Card(
+                        content=ResponsiveRow(
+                            controls=[
+                                Stack(
+                                    controls=[
+                                        Image(
+                                            src=self.selected_class.image_path,
+                                            width=250
+                                        ),
+                                        Image(
+                                            src=self.selected_subclass.icon_path,
+                                            width=125,
+                                            top=100,
+                                            left=140,
+                                        ),
+                                    ],
+                                    col={"xxl": 6},
                                 ),
-                                Text(
-                                    "Emblem 2.5x",
-                                    width=70,
-                                    size=10,
-                                    text_align="center",
+                                Column(
+                                    controls=[
+                                        Dropdown(
+                                            label="Class",
+                                            value=self.selected_class.name.name,
+                                            options=[
+                                                dropdown.Option(
+                                                    key=c.name,
+                                                    text=c.value,
+                                                    disabled=c.name
+                                                             == self.config.character.name,
+                                                )
+                                                for c in Class
+                                                if not self.config.subclass
+                                                   or (
+                                                           self.config.subclass
+                                                           and c.name != self.config.subclass.name
+                                                   )
+                                            ],
+                                            text_size=14,
+                                            height=58,
+                                            on_change=self.set_class,
+                                        ),
+                                        Dropdown(
+                                            label="Subclass",
+                                            value=self.selected_subclass.name.name,
+                                            options=[
+                                                dropdown.Option(
+                                                    key=c.name,
+                                                    text=c.value,
+                                                    disabled=c.name
+                                                             == self.config.subclass.name,
+                                                )
+                                                for c in Class
+                                                if c.name != self.config.character.name
+                                            ],
+                                            text_size=14,
+                                            height=58,
+                                            on_change=self.set_subclass,
+                                        ),
+                                        Dropdown(
+                                            label="Build Type",
+                                            value=self.config.build_type.name,
+                                            options=[
+                                                dropdown.Option(
+                                                    key=b.name,
+                                                    text=b.value,
+                                                    disabled=b.name
+                                                             == self.config.build_type.name,
+                                                )
+                                                for b in BuildType
+                                                if b != BuildType.health
+                                            ],
+                                            text_size=14,
+                                            height=58,
+                                            on_change=self.set_build_type,
+                                        ),
+                                        Tooltip(
+                                            message="\n".join(
+                                                [
+                                                    "Stats",
+                                                    *[
+                                                        " - " + str(round(s["value"], 2))
+                                                        + ("% " if s["percentage"] else " ")
+                                                        + s["name"]
+                                                        for s in self.foods[self.config.food]["stats"]
+                                                    ]
+                                                ]
+                                            ),
+                                            content=Column(
+                                                controls=[
+                                                    Dropdown(
+                                                        label="Food",
+                                                        value=self.config.food,
+                                                        options=[
+                                                            dropdown.Option(
+                                                                key=name,
+                                                                text=food["qualified_name"],
+                                                                disabled=name == self.config.food,
+                                                            )
+                                                            for name, food in self.foods.items()
+                                                        ],
+                                                        text_size=14,
+                                                        height=58,
+                                                        on_change=self.set_food,
+                                                    )
+                                                ]
+                                            ),
+                                            border_radius=10,
+                                            bgcolor="#1E1E28",
+                                            text_style=TextStyle(color="#cccccc"),
+                                            border=Border(
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc")
+                                            )
+                                        ),
+                                        Tooltip(
+                                            message="\n".join(
+                                                [
+                                                    "Stats",
+                                                    *[
+                                                        " - " + str(round(s["value"], 2))
+                                                        + ("% " if s["percentage"] else " ")
+                                                        + s["name"]
+                                                        for s in self.allies[self.config.ally]["stats"]
+                                                    ],
+                                                    "Abilities",
+                                                    *[
+                                                        " - " + a
+                                                        for a in self.allies[self.config.ally]["abilities"]
+                                                    ]
+                                                ]
+                                            ),
+                                            content=Column(
+                                                controls=[
+                                                    Dropdown(
+                                                        label="Ally",
+                                                        value=self.config.ally,
+                                                        options=[
+                                                            dropdown.Option(
+                                                                key=name,
+                                                                text=ally["qualified_name"],
+                                                                disabled=name == self.config.ally,
+                                                            )
+                                                            for name, ally in self.allies.items()
+                                                        ],
+                                                        text_size=14,
+                                                        height=58,
+                                                        on_change=self.set_ally,
+                                                    )
+                                                ]
+                                            ),
+                                            border_radius=10,
+                                            bgcolor="#1E1E28",
+                                            text_style=TextStyle(color="#cccccc"),
+                                            border=Border(
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc")
+                                            )
+                                        )
+                                    ],
+                                    col={"xxl": 6},
                                 ),
                             ]
                         )
                     ),
+                    Card(
+                        content=Column(
+                            controls=[
+                                # Column(
+                                #     controls=[
+                                #         Text("Crystal 5 (WIP)"),
+                                #         Switch(
+                                #             label="",
+                                #             value=self.config.crystal_5,
+                                #             on_change=self.toggle_crystal_5,
+                                #             disabled=True
+                                #         )
+                                #     ]
+                                # ),
+                                Dropdown(
+                                    value=(
+                                        "custom"
+                                        if self.star_chart.build_id not in [b[0] for b in preset_builds] else
+                                        self.star_chart.build_id
+                                    ),
+                                    options=[
+                                        dropdown.Option(
+                                            key=b[0],
+                                            text=b[1]
+                                        )
+                                        for b in [
+                                            (
+                                                ["none", "none"]
+                                            ) if self.star_chart.build_id else ([]),
+                                            (
+                                                [self.star_chart.build_id, "Custom"]
+                                            ) if self.star_chart.build_id else ([]),
+                                            *preset_builds
+                                        ]
+                                        if b
+                                    ],
+                                    text_size=14,
+                                    height=58,
+                                    label="StarChart",
+                                    on_change=self.set_star_chart_build
+                                ),
+                                TextField(
+                                    hint_text="Star Chart Build ID",
+                                    on_change=self.set_star_chart_build,
+                                    text_size=14,
+                                    height=58,
+                                ),
+                                *[
+                                    Text(f"{k}: {v[0]}" + ("%" if v[1] else ""))
+                                    for k, v in self.star_chart.activated_gem_stats.items()
+                                ],
+                                *[
+                                    TextField(
+                                        label="Light",
+                                        value=str(self.config.light),
+                                        on_submit=self.set_light,
+                                    )
+                                    for _ in range(1)
+                                    if self.config.build_type != BuildType.light
+                                ]
+                            ],
+                            spacing=11,
+                        )
+                    ),
+                    Card(
+                        content=Column(
+                            controls=[
+                                ResponsiveRow(
+                                    controls=[
+                                        Text(
+                                            f"Gear Critical Damage: {self.config.critical_damage_count}",
+                                            col={"xxl": 4}
+                                        ),
+                                        Slider(
+                                            min=0,
+                                            max=3,
+                                            divisions=3,
+                                            value=self.config.critical_damage_count,
+                                            label="{value}",
+                                            on_change_end=self.set_cd_count,
+                                            col={"xxl": 8}
+                                        ),
+                                    ]
+                                ),
+                                Divider(thickness=1),
+                                ResponsiveRow(
+                                    controls=[
+                                        Column(
+                                            controls=[
+                                                Text("Face Damage"),
+                                                Switch(
+                                                    value=not self.config.no_face,
+                                                    on_change=self.toggle_face,
+                                                ),
+                                            ],
+                                            col={"xxl": 3}
+                                        ),
+                                        Column(
+                                            controls=[
+                                                Text("Subclass active"),
+                                                Switch(
+                                                    value=self.config.subclass_active,
+                                                    on_change=self.toggle_subclass_active,
+                                                ),
+                                            ],
+                                            col={"xxl": 3}
+                                        ),
+                                        Column(
+                                            controls=[
+                                                Text("Berserker Battler"),
+                                                Switch(
+                                                    value=self.config.berserker_battler,
+                                                    on_change=self.toggle_berserker_battler,
+                                                ),
+                                            ],
+                                            col={"xxl": 3}
+                                        ),
+                                        Column(
+                                            controls=[
+                                                Text("Cosmic Primordial"),
+                                                Switch(
+                                                    value=self.config.cosmic_primordial,
+                                                    on_change=self.toggle_cosmic_primordial,
+                                                ),
+                                            ],
+                                            col={"xxl": 3}
+                                        )
+                                    ]
+                                ),
+                            ],
+                            spacing=5,
+                        )
+                    )
                 ],
-                heading_row_height=15,
-                data_row_height=80,
-                col={"xxl": 4},
+                col={"xxl": 4}
+            ),
+            Column(
+                controls=[
+                    ResponsiveRow(
+                        controls=[
+                            ScrollingFrame(self.coeff_table)
+                        ]
+                    ),
+                    self.features
+                ],
+                col={"xxl": 8}
             )
+        ]
+        self.features.controls.clear()
+        self.features.controls = [
+            ElevatedButton(
+                "First",
+                data=0,
+                on_click=self.change_build_page,
+                col={"xs": 3, "xxl": 2},
+            ),
+            ElevatedButton(
+                "Previous",
+                data=self.build_page - 1,
+                on_click=self.change_build_page,
+                col={"xs": 3, "xxl": 2},
+            ),
+            ElevatedButton(
+                "Next page",
+                data=self.build_page + 1,
+                on_click=self.change_build_page,
+                col={"xs": 3, "xxl": 2},
+            ),
+            ElevatedButton(
+                "Last",
+                data=self.max_pages - 1,
+                on_click=self.change_build_page,
+                col={"xs": 3, "xxl": 2},
+            ),
+            TextField(
+                label="Insert Gem Build ID",
+                on_change=self.set_build_string,
+                col={"xs": 6, "xxl": 2},
+            ),
+            Container(
+                content=Row(controls=[Icon(COPY), Text("Copy Gem Build")]),
+                on_click=self.copy_build_string,
+                on_hover=self.copy_build_hover,
+                padding=15,
+                border_radius=10,
+                col={"xs": 6, "xxl": 2},
+            ),
+        ]
+        self.abilities = DataTable(
+            columns=[
+                DataColumn(Text("")),
+                DataColumn(Text("")),
+                DataColumn(
+                    Row(
+                        [
+                            Text("", width=70, size=10),
+                            Text(
+                                "Critical", width=70, size=10, text_align="center"
+                            ),
+                            Text(
+                                "Emblem 2.5x",
+                                width=70,
+                                size=10,
+                                text_align="center",
+                            ),
+                        ]
+                    )
+                ),
+            ],
+            heading_row_height=15,
+            data_row_height=80,
+            col={"xxl": 4},
+        )
+        if not hasattr(self, "data_table"):
             self.abilities_table = Card(
                 content=Column(
                     controls=[Text("Abilities", size=22), self.abilities],
@@ -900,13 +962,22 @@ class GemBuildsController(Controller):
         await self.page.update_async()
 
     async def set_build_string(self, event):
-        try:
-            self.config = BuildConfig.from_base_64(
-                decrypt(event.control.value, self.page.secret_key)
-            )
-        except:
-            ...
-        self.setup_controls()
+        build_id = event.control.value.strip().split("-")[-1].strip()
+        if build := await BuildConfig.find_one(BuildConfig.build_id == build_id):
+            self.config = build
+            self.setup_controls()
+            await self.page.update_async()
+
+    async def copy_build_string(self, _):
+        current = None
+        async for build in BuildConfig.find({}):
+            if self.config == build:
+                current = build
+        if not current:
+            await self.config.save()
+        await self.page.set_clipboard_async("GB-" + self.config.build_id)
+        self.page.snack_bar.content.value = f"Copied build GB-{self.config.build_id} to clipboard"
+        self.page.snack_bar.open = True
         await self.page.update_async()
 
     async def select_build(self, event):
@@ -917,12 +988,6 @@ class GemBuildsController(Controller):
         self.page.snack_bar.content.value = "Ability build changed"
         self.page.snack_bar.open = True
         self.setup_controls()
-        await self.page.update_async()
-
-    async def copy_build_string(self, _):
-        await self.page.set_clipboard_async(self.features.controls[0].data)
-        self.page.snack_bar.content.value = "Copied to clipboard"
-        self.page.snack_bar.open = True
         await self.page.update_async()
 
     async def copy_to_clipboard(self, event):
@@ -954,14 +1019,16 @@ class GemBuildsController(Controller):
         await event.control.update_async()
 
     async def set_star_chart_build(self, event):
-        build_id = event.control.value.strip()
+        build_id = event.control.value.strip().split("-")[-1].strip()
         self.star_chart = get_star_chart()
         if build_id == "none":
+            self.config.star_chart = None
             self.setup_controls()
             await self.page.update_async()
             return
         if await self.star_chart.from_string(build_id):
             self.page.snack_bar.content.value = f"Loaded build with id {build_id}"
             self.page.snack_bar.open = True
+            self.config.star_chart = build_id
             self.setup_controls()
             await self.page.update_async()

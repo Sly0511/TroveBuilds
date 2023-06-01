@@ -1,11 +1,6 @@
 from beanie import Document, Indexed
 from pydantic import Field
-from random import sample
-from string import ascii_letters, digits
-
-
-def random_id():
-    return "".join(sample(ascii_letters + digits, k=8))
+from utils.functions import random_id
 
 
 class StarBuild(Document):

@@ -1,5 +1,6 @@
 {
-    "Freerange Electrolytic Crystals": {
+    "delve_freerange": {
+        "qualified_name": "Freerange Electrolytic Crystals",
         "stats": [
             {
                 "name": "Light",
@@ -8,7 +9,8 @@
             }
         ]
     },
-    "Premium Fish Soup": {
+    "fishing_generic_3_base": {
+        "qualified_name": "Premium Fish Soup",
         "stats": [
             {
                 "name": "Light",
@@ -17,7 +19,8 @@
             }
         ]
     },
-    "Premium Fish Fillet": {
+    "fishing_phys_3_base": {
+        "qualified_name": "Premium Fish Fillet",
         "stats": [
             {
                 "name": "Light",
@@ -36,7 +39,8 @@
             }
         ]
     },
-    "Premium Fish Kabobs": {
+    "fishing_spell_3_base": {
+        "qualified_name": "Premium Fish Kabobs",
         "stats": [
             {
                 "name": "Light",

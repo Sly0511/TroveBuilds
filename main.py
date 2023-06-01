@@ -10,7 +10,7 @@ from i18n import t
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from models import Config
-from models.objects import StarBuild
+from models.objects import StarBuild, BuildConfig
 from models.objects.discord_user import DiscordUser
 from models.objects.marketplace import Listing, Item
 from models.objects.user import User
@@ -51,7 +51,7 @@ class TroveBuilds:
             page.constants = Constants()
             page.constants.database = await init_beanie(
                 page.constants.database_client.trovetools,
-                document_models=[User, Listing, Item, StarBuild],
+                document_models=[User, Listing, Item, StarBuild, BuildConfig],
             )
             page.clock = Text((datetime.utcnow() - timedelta(hours=11)).strftime("%a, %b %d\t\t%H:%M"))
             page.login_provider = DiscordOAuth2(

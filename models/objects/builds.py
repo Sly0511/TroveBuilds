@@ -1,8 +1,10 @@
-from pydantic import BaseModel
 from enum import Enum
 from typing import Optional
-from base64 import b64encode, b64decode
-from json import loads
+
+from beanie import Document
+from pydantic import BaseModel, Field
+
+from utils.functions import random_id
 
 
 class BuildType(Enum):
@@ -123,25 +125,45 @@ class Food(Enum):
     kabobs = "Premium Fish Kabobs"
 
 
-class BuildConfig(BaseModel):
+class BuildConfig(Document):
+    build_id: str = Field(default_factory=random_id)
     build_type: BuildType = BuildType.light
     character: Class = Class.bard
     subclass: Class = Class.boomeranger
-    food: str = "Freerange Electrolytic Crystals"
-    ally: str = "[MS|JP] Clownish Kicker"
+    food: str = "delve_freerange"
+    ally: str = "boot_clown"
     berserker_battler: bool = False
     critical_damage_count: int = 3
     no_face: bool = False
     light: int = 0
     subclass_active: bool = False
-    star_chart: bool = True
+    star_chart: Optional[str] = None
     # Prediction based
     cosmic_primordial: bool = False
     crystal_5: bool = False
 
-    def to_base_64(self):
-        return b64encode(self.json().encode('utf-8')).decode('utf-8')
+    def __eq__(self, other):
+        if not isinstance(other, BuildConfig):
+            return False
+        keys = [
+            "build_type",
+            "character",
+            "subclass",
+            "food",
+            "ally",
+            "berserker_battler",
+            "critical_damage_count",
+            "no_face",
+            "light",
+            "subclass_active",
+            "star_chart",
+            "cosmic_primordial",
+            "crystal_5"
+        ]
+        for key in keys:
+            if getattr(self, key) != getattr(other, key):
+                return False
+        return True
 
-    @classmethod
-    def from_base_64(cls, data):
-        return cls(**loads(b64decode(data.encode("utf-8")).decode("utf-8")))
+    def __ne__(self, other):
+        return not self.__eq__(other)

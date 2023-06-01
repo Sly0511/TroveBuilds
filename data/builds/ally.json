@@ -1,5 +1,6 @@
 {
-    "[MD|LT] Starry Skyfire": {
+    "phoenix_stars": {
+        "qualified_name": "[MD|LT] Starry Skyfire",
         "stats": [
             {
                 "name": "Light",
@@ -16,7 +17,8 @@
             "Increases cooldown recovery speed by 25%."
         ]
     },
-    "[MD|LT] Orchian": {
+    "octopus_flower_prestige": {
+        "qualified_name": "[MD|LT] Orchian",
         "stats": [
             {
                 "name": "Light",
@@ -33,7 +35,8 @@
             "Gain a movement speed boost when a nearby enemy dies."
         ]
     },
-    "[MD|LT] Aevyr": {
+    "delve_dragonfly_jadedrake": {
+        "qualified_name": "[MD|LT] Aevyr",
         "stats": [
             {
                 "name": "Light",
@@ -51,7 +54,8 @@
             "Gain a movement speed boost when a nearby enemy dies."
         ]
     },
-    "[MD] Prefect Penguin": {
+    "qubesly_penguin_gentleman": {
+        "qualified_name": "[MD] Prefect Penguin",
         "stats": [
             {
                 "name": "Magic Damage",
@@ -64,7 +68,8 @@
             "Gain a movement speed boost when a nearby enemy dies."
         ]
     },
-    "[MD|LT] Puck": {
+    "delve_goldfish_balladine": {
+        "qualified_name": "[MD|LT] Puck",
         "stats": [
             {
                 "name": "Light",
@@ -81,7 +86,8 @@
             "Increases cooldown recovery speed by 25%."
         ]
     },
-    "[MD] Chronomancer Qubesly": {
+    "qubesly_chronomancer": {
+        "qualified_name": "[MD] Chronomancer Qubesly",
         "stats": [
             {
                 "name": "Magic Damage",
@@ -93,7 +99,8 @@
             "Increases cooldown recovery speed by 25%."
         ]
     },
-    "[PD|LT] Scorpius": {
+    "spidermonkey_stars": {
+        "qualified_name": "[PD|LT] Scorpius",
         "stats": [
             {
                 "name": "Light",
@@ -111,7 +118,8 @@
             "Gain a movement speed boost when a nearby enemy dies."
         ]
     },
-    "[PD|LT] Animated Jug": {
+    "delve_tato_jug": {
+        "qualified_name": "[PD|LT] Animated Jug",
         "stats": [
             {
                 "name": "Light",
@@ -129,7 +137,8 @@
             "Gain a movement speed boost when a nearby enemy dies."
         ]
     },
-    "[PD] Rapt Berserker": {
+    "raptor_zerker": {
+        "qualified_name": "[PD] Rapt Berserker",
         "stats": [
             {
                 "name": "Physical Damage",
@@ -142,7 +151,8 @@
             "Gain a movement speed boost when a nearby enemy dies."
         ]
     },
-    "[PD|LT] Jingles": {
+    "delve_stack_coins": {
+        "qualified_name": "[PD|LT] Jingles",
         "stats": [
             {
                 "name": "Light",
@@ -159,7 +169,8 @@
             "Increases cooldown recovery speed by 25%."
         ]
     },
-    "[PD] Lil Burgie": {
+    "stack_hamburger": {
+        "qualified_name": "[PD] Lil Burgie",
         "stats": [
             {
                 "name": "Physical Damage",
@@ -171,7 +182,8 @@
             "Increases cooldown recovery speed by 25%."
         ]
     },
-    "[PD|LT] Earnie": {
+    "goat_prestige": {
+        "qualified_name": "[PD|LT] Earnie",
         "stats": [
             {
                 "name": "Physical Damage",
@@ -188,7 +200,8 @@
             "Gain a protective shield when a nearby enemy dies."
         ]
     },
-    "[LT|MS] Staruable": {
+    "quarble_stars": {
+        "qualified_name": "[LT|MS] Staruable",
         "stats": [
             {
                 "name": "Light",
@@ -206,7 +219,8 @@
             "Gain a movement speed boost when a nearby enemy dies."
         ]
     },
-    "[MS|JP] Clownish Kicker": {
+    "boot_clown": {
+        "qualified_name": "[MS|JP] Clownish Kicker",
         "stats": [
             {
                 "name": "Jump",

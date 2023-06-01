@@ -14,6 +14,6 @@ class GemBuildsView(View):
         super().__init__(
             route=self.route,
             controls=[
-                Column(controls=[ctrl.character_data, ctrl.data_table, ctrl.features])
+                Column(controls=[ctrl.interface])
             ],
         )
