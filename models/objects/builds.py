@@ -128,7 +128,7 @@ class BuildConfig(BaseModel):
     character: Class = Class.bard
     subclass: Class = Class.boomeranger
     food: str = "Freerange Electrolytic Crystals"
-    ally: str = "Clownish Kicker"
+    ally: str = "[MS|JP] Clownish Kicker"
     berserker_battler: bool = False
     critical_damage_count: int = 3
     no_face: bool = False
