@@ -6,7 +6,7 @@ from controllers import MagicFindController
 
 class MagicFindView(View):
     route = "/magic_find"
-    title = Text("Magic Find")
+    title = Text("[WIP] Magic Find")
     icon = MENU_BOOK_SHARP
 
     def __init__(self, page):
