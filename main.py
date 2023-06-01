@@ -28,6 +28,7 @@ from views import (
     GemBuildsView,
     MarketplaceView,
     View404,
+    MagicFindView
 )
 
 
@@ -93,6 +94,7 @@ class TroveBuilds:
                 GemView,
                 StarView,
                 MasteryView,
+                MagicFindView,
                 GemBuildsView,
                 MarketplaceView,
             ]

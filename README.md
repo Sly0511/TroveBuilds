@@ -9,9 +9,20 @@ This app also is intended to offer tools and functionality that helps a player n
 have an overall understanding of how the game works.
 
 ### Features
+- General trove information at a glance
+- Real time clock of the server time
 - Trove Gem system fully simulated with some quality of life inputs added for testing.
 - Mastery calculations of not only Mastery points and level but also the stats given by these.
 - Discord Logins are supported with the goal of allowing me to save data for you to use on different sessions, the tokens that discord sends to my app are not saved on my server, they are instead encrypted on my server and then saved into your browser, this ensures that YOU own your own data and that if my server gets hacked, no information is leaked about you or your account.
+- Simulation of the Star Chart with search functionality and cross implementation with gem builds.
+
+### Contributors
+- **Nikstar**, despite a fucking nuisance he motivates me to keep making new stuff and learn more about programming, also helps me a ton with data and player experience as well as giving me ideas of new tools to make.
+- **Etaew**, thank you for the help not only with assets, data but also promoting my applications and work.
+- **Asled**, thanks for helping me test and improve with feedback the application, not only that but giving me guidance in certain aspects of the game I don't have much knowledge in (such as actually playing it).
+- **Cronicle**, thanks for helping me redesign the interface into a more concise and usable format, I really suck at front-end you experience and will to help is amazing.
+- **LunarStation**, this man blocked my ass but still thank you for your work which most time inspired me to automate and make tools around.
+- **Toffinnek**, thanks for the help in making certain interface and mechanical decisions that make it a better experience using the app and also giving feedback on improvements, thanks for the comic relief as well that's always nice to giggle for a second.
 
 ### Contributions
 
