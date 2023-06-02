@@ -1,11 +1,10 @@
 import json
 
-from flet import ResponsiveRow, Column, Switch, Slider, Card, Text, TextField
+from flet import ResponsiveRow, Column, Switch, Card, Text, TextField
 
 from models.objects import Controller
+from utils.controls import AutoNumberField, NumberField
 from utils.star_chart import get_star_chart
-from utils.controls import NumberField
-from utils.functions import long_throttle
 
 
 class MagicFindController(Controller):
@@ -61,7 +60,7 @@ class MagicFindController(Controller):
             elif source["type"] == "slider":
                 control = ResponsiveRow(
                     controls=[
-                        NumberField(
+                        AutoNumberField(
                             data=source["name"],
                             type=int,
                             value=self.control_values[source["name"]],
