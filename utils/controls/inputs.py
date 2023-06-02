@@ -4,8 +4,8 @@ from typing import Optional, Union
 from utils.functions import long_throttle
 
 
-int_regex = re.compile("^\d+$")
-float_regex = re.compile("^\d+((?:\.|\,)\d*)?$")
+int_regex = re.compile("^-?\d+$")
+float_regex = re.compile("^-?\d+((?:\.|\,)\d*)?$")
 
 
 class NumberField(TextField):
@@ -48,14 +48,12 @@ class NumberField(TextField):
             event.control.number_value = event.control.ensured_type(event.control.value)
             if (minimum := event.control.min) is not None:
                 if event.control.number_value < minimum:
-                    event.control.border_color = "red"
-                    event.control.label_style = TextStyle(color="red")
-                    return await event.control.update_async()
+                    event.control.number_value = self.min
+                    event.control.value = str(event.control.number_value)
             if (maximum := event.control.max) is not None:
                 if event.control.number_value > maximum:
-                    event.control.border_color = "red"
-                    event.control.label_style = TextStyle(color="red")
-                    return await event.control.update_async()
+                    event.control.number_value = self.max
+                    event.control.value = str(event.control.number_value)
             if event.control.step is not None:
                 mult, rest = divmod(event.control.number_value, event.control.step)
                 event.control.number_value = mult * event.control.step
