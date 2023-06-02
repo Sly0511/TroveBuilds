@@ -28,7 +28,7 @@ class MagicFindController(Controller):
                         max=1000,
                         on_change=self.mastery_stat,
                         label="Mastery Level",
-                        col=6
+                        col={"xxl": 6}
                     )
                 ]
             )
@@ -90,7 +90,7 @@ class MagicFindController(Controller):
                         col=9
                     )
                 ],
-                col=6
+                col={"xxl": 6}
             )
         )
         buttons.append(
