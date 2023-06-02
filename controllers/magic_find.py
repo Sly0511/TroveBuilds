@@ -4,6 +4,8 @@ from flet import ResponsiveRow, Column, Switch, Slider, Card, Text, TextField
 
 from models.objects import Controller
 from utils.star_chart import get_star_chart
+from utils.controls import NumberField
+from utils.functions import long_throttle
 
 
 class MagicFindController(Controller):
@@ -17,17 +19,17 @@ class MagicFindController(Controller):
             }
         self.magic_find_data = json.load(open("data/builds/magic_find.json"))
         buttons = [
-            Column(
+            ResponsiveRow(
                 controls=[
-                    Text(f"Mastery - {int(self.control_values['mastery'])}"),
-                    Slider(
+                    NumberField(
                         data="mastery",
+                        type=int,
+                        value=self.control_values["mastery"] + 500,
                         min=500,
                         max=1000,
-                        divisions=500,
-                        value=self.control_values["mastery"] + 500,
-                        on_change_end=self.mastery_stat,
-                        label="{value}"
+                        on_change=self.mastery_stat,
+                        label="Mastery Level",
+                        col=6
                     )
                 ]
             )
@@ -59,23 +61,15 @@ class MagicFindController(Controller):
             elif source["type"] == "slider":
                 control = ResponsiveRow(
                     controls=[
-                        Text(
-                            (
-                                source["name"] + " - " + str(
-                                    source["value"]
-                                    if not source["percentage"] else
-                                    f"{round(source['value'], 2)}%"
-                                )
-                            )
-                        ),
-                        Slider(
+                        NumberField(
                             data=source["name"],
+                            type=int,
                             value=self.control_values[source["name"]],
                             min=0,
                             max=source["value"],
-                            divisions=int(source["value"] / 50),
-                            label="{value}",
-                            on_change_end=self.slider_stat
+                            step=50,
+                            on_change=self.slider_stat,
+                            label=source["name"],
                         )
                     ]
                 )
@@ -133,13 +127,13 @@ class MagicFindController(Controller):
         for k, v in self.star_chart.activated_select_stats("Magic Find").items():
             if v[1]:
                 bonus += v[0]
-        result *= 1 + bonus / 100  # Apply bonus pool
+        result *= 1 + bonus / 100
         result *= 2 if self.control_values["Patron"] else 1
         self.results = Card(
             content=ResponsiveRow(
                 controls=[
                     Text("Total Magic Find", size=22, col=6),
-                    Text(round(result), size=22, col=6)
+                    Text(str(round(result, 2)), size=22, col=6)
                 ]
             ),
             col={"xxl": 3}
@@ -163,16 +157,22 @@ class MagicFindController(Controller):
 
     async def switch_stat(self, event):
         self.control_values[event.control.data] = event.control.value
+        self.page.snack_bar.content.value = f"Updated {event.control.data}"
+        self.page.snack_bar.open = True
         self.setup_controls()
         await self.page.update_async()
 
     async def slider_stat(self, event):
-        self.control_values[event.control.data] = event.control.value
+        self.control_values[event.control.data] = int(event.control.value)
+        self.page.snack_bar.content.value = f"Updated {event.control.data}"
+        self.page.snack_bar.open = True
         self.setup_controls()
         await self.page.update_async()
 
     async def mastery_stat(self, event):
-        self.control_values[event.control.data] = event.control.value - 500
+        self.control_values[event.control.data] = int(event.control.value) - 500
+        self.page.snack_bar.content.value = f"Updated {event.control.data}"
+        self.page.snack_bar.open = True
         self.setup_controls()
         await self.page.update_async()
 

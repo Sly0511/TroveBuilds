@@ -113,7 +113,7 @@ def long_throttle(actual_handler, data={}, delay=1.5):
 
     I did not get a degree, don't sue me"""
 
-    async def wrapper(e, i=None):
+    async def wrapper(e, **kwargs):
         """Simple filter for queries that shouldn't run."""
 
         data["last_change"] = datetime.datetime.utcnow().timestamp()
@@ -122,7 +122,7 @@ def long_throttle(actual_handler, data={}, delay=1.5):
             datetime.datetime.utcnow().timestamp() - data["last_change"]
             >= delay - delay * 0.1
         ):
-            await actual_handler(e, i)
+            await actual_handler(e, **kwargs)
 
     return wrapper
 
