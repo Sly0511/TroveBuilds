@@ -16,7 +16,6 @@ from flet import (
     Draggable,
     DragTarget,
     Stack,
-    VerticalDivider,
 )
 from i18n import t
 

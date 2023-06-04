@@ -1,19 +1,22 @@
 import flet as ft
 
 
-class ScrollingFrame(ft.Container):
-    def __init__(self, content, vertical_scrollbar_always_visible=True, **kwargs):
-        super().__init__(**kwargs)
+class ScrollingFrame(ft.UserControl):
+    def __init__(self, content, vertical_scrollbar_always_visible=True, expand=True, **kwargs):
+        super().__init__(expand=expand, **kwargs)
 
-        self.expand = True
+        self.content_control = content
+        self.vertical_scrollbar_always_visible = vertical_scrollbar_always_visible
 
-        first_dimension = ft.Column if vertical_scrollbar_always_visible else ft.Row
-        second_dimension = ft.Row if vertical_scrollbar_always_visible else ft.Column
+    def build(self):
+        first_dimension = ft.Column if self.vertical_scrollbar_always_visible else ft.Row
+        second_dimension = ft.Row if self.vertical_scrollbar_always_visible else ft.Column
 
-        self.content = first_dimension([other_direction := second_dimension([container := ft.Container()])])
+        scroller = first_dimension(
+            [other_direction := second_dimension([ft.Container(self.content_control)])],
+        )
 
-        self.content.expand = True
-        self.content.scroll = ft.ScrollMode.AUTO
+        scroller.scroll = ft.ScrollMode.AUTO
         other_direction.scroll = ft.ScrollMode.AUTO
 
-        container.content = content
+        return scroller

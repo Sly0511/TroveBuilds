@@ -26,8 +26,7 @@ from flet import (
     Tooltip,
     TextStyle,
     Border,
-    BorderSide
-
+    BorderSide,
 )
 from flet_core.icons import COPY, CALCULATE
 
@@ -70,7 +69,7 @@ class GemBuildsController(Controller):
             ["gBus7rhC", "MD+PD/Light"],
             ["Hsjychqv", "MS/MD/Light"],
             ["SbJ5AoPg", "MS/PD/Light"],
-            ["0XJI18N3", "MS/MD+PD/Light"]
+            ["0XJI18N3", "MS/MD+PD/Light"],
         ]
         self.coeff_table = DataTable(
             columns=[
@@ -85,8 +84,10 @@ class GemBuildsController(Controller):
                 DataColumn(label=Text("Deviation")),
                 DataColumn(label=Text("")),
             ],
-            bgcolor="#212223",
-            col={}
+            heading_row_height=40,
+            data_row_height=40,
+            column_spacing=48,
+            bgcolor="#212223"
         )
         self.interface.controls = [
             Column(
@@ -98,7 +99,7 @@ class GemBuildsController(Controller):
                                     controls=[
                                         Image(
                                             src=self.selected_class.image_path,
-                                            width=250
+                                            width=250,
                                         ),
                                         Image(
                                             src=self.selected_subclass.icon_path,
@@ -119,14 +120,15 @@ class GemBuildsController(Controller):
                                                     key=c.name,
                                                     text=c.value,
                                                     disabled=c.name
-                                                             == self.config.character.name,
+                                                    == self.config.character.name,
                                                 )
                                                 for c in Class
                                                 if not self.config.subclass
-                                                   or (
-                                                           self.config.subclass
-                                                           and c.name != self.config.subclass.name
-                                                   )
+                                                or (
+                                                    self.config.subclass
+                                                    and c.name
+                                                    != self.config.subclass.name
+                                                )
                                             ],
                                             text_size=14,
                                             height=58,
@@ -140,7 +142,7 @@ class GemBuildsController(Controller):
                                                     key=c.name,
                                                     text=c.value,
                                                     disabled=c.name
-                                                             == self.config.subclass.name,
+                                                    == self.config.subclass.name,
                                                 )
                                                 for c in Class
                                                 if c.name != self.config.character.name
@@ -157,7 +159,7 @@ class GemBuildsController(Controller):
                                                     key=b.name,
                                                     text=b.value,
                                                     disabled=b.name
-                                                             == self.config.build_type.name,
+                                                    == self.config.build_type.name,
                                                 )
                                                 for b in BuildType
                                                 if b != BuildType.health
@@ -171,11 +173,18 @@ class GemBuildsController(Controller):
                                                 [
                                                     "Stats",
                                                     *[
-                                                        " - " + str(round(s["value"], 2))
-                                                        + ("% " if s["percentage"] else " ")
+                                                        " - "
+                                                        + str(round(s["value"], 2))
+                                                        + (
+                                                            "% "
+                                                            if s["percentage"]
+                                                            else " "
+                                                        )
                                                         + s["name"]
-                                                        for s in self.foods[self.config.food]["stats"]
-                                                    ]
+                                                        for s in self.foods[
+                                                            self.config.food
+                                                        ]["stats"]
+                                                    ],
                                                 ]
                                             ),
                                             content=Column(
@@ -186,8 +195,11 @@ class GemBuildsController(Controller):
                                                         options=[
                                                             dropdown.Option(
                                                                 key=name,
-                                                                text=food["qualified_name"],
-                                                                disabled=name == self.config.food,
+                                                                text=food[
+                                                                    "qualified_name"
+                                                                ],
+                                                                disabled=name
+                                                                == self.config.food,
                                                             )
                                                             for name, food in self.foods.items()
                                                         ],
@@ -204,24 +216,33 @@ class GemBuildsController(Controller):
                                                 BorderSide(width=2, color="#cccccc"),
                                                 BorderSide(width=2, color="#cccccc"),
                                                 BorderSide(width=2, color="#cccccc"),
-                                                BorderSide(width=2, color="#cccccc")
-                                            )
+                                                BorderSide(width=2, color="#cccccc"),
+                                            ),
                                         ),
                                         Tooltip(
                                             message="\n".join(
                                                 [
                                                     "Stats",
                                                     *[
-                                                        " - " + str(round(s["value"], 2))
-                                                        + ("% " if s["percentage"] else " ")
+                                                        " - "
+                                                        + str(round(s["value"], 2))
+                                                        + (
+                                                            "% "
+                                                            if s["percentage"]
+                                                            else " "
+                                                        )
                                                         + s["name"]
-                                                        for s in self.allies[self.config.ally]["stats"]
+                                                        for s in self.allies[
+                                                            self.config.ally
+                                                        ]["stats"]
                                                     ],
                                                     "Abilities",
                                                     *[
                                                         " - " + a
-                                                        for a in self.allies[self.config.ally]["abilities"]
-                                                    ]
+                                                        for a in self.allies[
+                                                            self.config.ally
+                                                        ]["abilities"]
+                                                    ],
                                                 ]
                                             ),
                                             content=Column(
@@ -232,8 +253,11 @@ class GemBuildsController(Controller):
                                                         options=[
                                                             dropdown.Option(
                                                                 key=name,
-                                                                text=ally["qualified_name"],
-                                                                disabled=name == self.config.ally,
+                                                                text=ally[
+                                                                    "qualified_name"
+                                                                ],
+                                                                disabled=name
+                                                                == self.config.ally,
                                                             )
                                                             for name, ally in self.allies.items()
                                                         ],
@@ -250,9 +274,9 @@ class GemBuildsController(Controller):
                                                 BorderSide(width=2, color="#cccccc"),
                                                 BorderSide(width=2, color="#cccccc"),
                                                 BorderSide(width=2, color="#cccccc"),
-                                                BorderSide(width=2, color="#cccccc")
-                                            )
-                                        )
+                                                BorderSide(width=2, color="#cccccc"),
+                                            ),
+                                        ),
                                     ],
                                     col={"xxl": 6},
                                 ),
@@ -276,29 +300,27 @@ class GemBuildsController(Controller):
                                 Dropdown(
                                     value=(
                                         "custom"
-                                        if self.star_chart.build_id not in [b[0] for b in preset_builds] else
-                                        self.star_chart.build_id
+                                        if self.star_chart.build_id
+                                        not in [b[0] for b in preset_builds]
+                                        else self.star_chart.build_id
                                     ),
                                     options=[
-                                        dropdown.Option(
-                                            key=b[0],
-                                            text=b[1]
-                                        )
+                                        dropdown.Option(key=b[0], text=b[1])
                                         for b in [
-                                            (
-                                                ["none", "none"]
-                                            ) if self.star_chart.build_id else ([]),
-                                            (
-                                                [self.star_chart.build_id, "Custom"]
-                                            ) if self.star_chart.build_id else ([]),
-                                            *preset_builds
+                                            (["none", "none"])
+                                            if self.star_chart.build_id
+                                            else ([]),
+                                            ([self.star_chart.build_id, "Custom"])
+                                            if self.star_chart.build_id
+                                            else ([]),
+                                            *preset_builds,
                                         ]
                                         if b
                                     ],
                                     text_size=14,
                                     height=58,
                                     label="StarChart",
-                                    on_change=self.set_star_chart_build
+                                    on_change=self.set_star_chart_build,
                                 ),
                                 TextField(
                                     hint_text="Star Chart Build ID",
@@ -318,7 +340,7 @@ class GemBuildsController(Controller):
                                     )
                                     for _ in range(1)
                                     if self.config.build_type != BuildType.light
-                                ]
+                                ],
                             ],
                             spacing=11,
                         )
@@ -330,7 +352,7 @@ class GemBuildsController(Controller):
                                     controls=[
                                         Text(
                                             f"Gear Critical Damage: {self.config.critical_damage_count}",
-                                            col={"xxl": 4}
+                                            col={"xxl": 4},
                                         ),
                                         Slider(
                                             min=0,
@@ -339,7 +361,7 @@ class GemBuildsController(Controller):
                                             value=self.config.critical_damage_count,
                                             label="{value}",
                                             on_change_end=self.set_cd_count,
-                                            col={"xxl": 8}
+                                            col={"xxl": 8},
                                         ),
                                     ]
                                 ),
@@ -354,7 +376,7 @@ class GemBuildsController(Controller):
                                                     on_change=self.toggle_face,
                                                 ),
                                             ],
-                                            col={"xxl": 3}
+                                            col={"xxl": 3},
                                         ),
                                         Column(
                                             controls=[
@@ -364,7 +386,7 @@ class GemBuildsController(Controller):
                                                     on_change=self.toggle_subclass_active,
                                                 ),
                                             ],
-                                            col={"xxl": 3}
+                                            col={"xxl": 3},
                                         ),
                                         Column(
                                             controls=[
@@ -374,7 +396,7 @@ class GemBuildsController(Controller):
                                                     on_change=self.toggle_berserker_battler,
                                                 ),
                                             ],
-                                            col={"xxl": 3}
+                                            col={"xxl": 3},
                                         ),
                                         Column(
                                             controls=[
@@ -384,28 +406,24 @@ class GemBuildsController(Controller):
                                                     on_change=self.toggle_cosmic_primordial,
                                                 ),
                                             ],
-                                            col={"xxl": 3}
-                                        )
+                                            col={"xxl": 3},
+                                        ),
                                     ]
                                 ),
                             ],
                             spacing=5,
                         )
-                    )
+                    ),
                 ],
-                col={"xxl": 4}
+                col={"xxl": 4},
             ),
             Column(
                 controls=[
-                    ResponsiveRow(
-                        controls=[
-                            ScrollingFrame(self.coeff_table)
-                        ]
-                    ),
-                    self.features
+                    ResponsiveRow(controls=[ScrollingFrame(self.coeff_table)]),
+                    self.features,
                 ],
-                col={"xxl": 8}
-            )
+                col={"xxl": 8},
+            ),
         ]
         self.features.controls.clear()
         self.features.controls = [
@@ -455,9 +473,7 @@ class GemBuildsController(Controller):
                     Row(
                         [
                             Text("", width=70, size=10),
-                            Text(
-                                "Critical", width=70, size=10, text_align="center"
-                            ),
+                            Text("Critical", width=70, size=10, text_align="center"),
                             Text(
                                 "Emblem 2.5x",
                                 width=70,
@@ -495,7 +511,7 @@ class GemBuildsController(Controller):
             builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
             best = builds[0]
             builds = [[i] + b for i, b in enumerate(builds, 1)]
-            paged_builds = chunks(builds, 10)
+            paged_builds = chunks(builds, 15)
             self.max_pages = len(paged_builds)
             if self.build_page < 0:
                 self.build_page = self.max_pages - 1
@@ -976,7 +992,9 @@ class GemBuildsController(Controller):
         if not current:
             await self.config.save()
         await self.page.set_clipboard_async("GB-" + self.config.build_id)
-        self.page.snack_bar.content.value = f"Copied build GB-{self.config.build_id} to clipboard"
+        self.page.snack_bar.content.value = (
+            f"Copied build GB-{self.config.build_id} to clipboard"
+        )
         self.page.snack_bar.open = True
         await self.page.update_async()
 

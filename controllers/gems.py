@@ -26,13 +26,9 @@ from flet import (
     DataCell,
     Tabs,
     Tab,
-    Stack,
-    IconButton,
-    Icon
+    Stack
 )
 from i18n import t
-
-from flet_core.icons import EXPOSURE_PLUS_1, EXPOSURE_MINUS_1, EXPOSURE_ZERO
 
 from models.objects import Controller
 from models.objects.gem import (

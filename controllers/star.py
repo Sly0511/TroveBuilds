@@ -14,8 +14,6 @@ from flet import (
     Divider,
     Dropdown,
     dropdown,
-    Icon,
-    icons,
     ButtonStyle,
     MaterialState,
     BorderSide,
@@ -23,8 +21,8 @@ from flet import (
 )
 
 from models.objects import Controller
-from utils.star_chart import get_star_chart, StarType
 from utils.controls.scrolling import ScrollingFrame
+from utils.star_chart import get_star_chart, StarType
 
 
 class RoundButton(ElevatedButton):
@@ -76,7 +74,7 @@ class StarChartController(Controller):
                     for star in self.star_chart.get_stars()
                 ],
             ],
-            width=750,
+            width=775,
             height=850,
         )
         self.map.controls.extend(
@@ -106,7 +104,7 @@ class StarChartController(Controller):
                         width=775,
                         height=870,
                     ),
-                    col={"xxl": 5},
+                    col={"xxl": 5.5},
                 ),
                 self.star_details,
                 Column(
@@ -152,7 +150,7 @@ class StarChartController(Controller):
                               )
                         ] if self.star_chart.activated_stats else [Text("-")])
                     ],
-                    col={"xxl": 2.5},
+                    col={"xxl": 2},
                 ),
                 Column(
                     controls=[

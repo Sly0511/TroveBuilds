@@ -1,6 +1,8 @@
 import base64
 from datetime import datetime, timedelta
+from json import load
 
+import requests
 from flet import (
     Text,
     Column,
@@ -15,12 +17,10 @@ from flet import (
     BoxShadow,
     TextSpan,
 )
+from pytz import UTC
 
 from models.objects import Controller
 from utils import tasks
-from json import load
-import requests
-from pytz import UTC
 
 
 class Widget(Container):

@@ -1,6 +1,6 @@
 import json
 
-from flet import ResponsiveRow, Column, Switch, Card, Text, TextField
+from flet import ResponsiveRow, Column, Switch, Card, Text, TextField, Row
 
 from models.objects import Controller
 from utils.controls import AutoNumberField, NumberField
@@ -11,11 +11,8 @@ class MagicFindController(Controller):
     def setup_controls(self):
         if not hasattr(self, "interface"):
             self.star_chart = get_star_chart()
-            self.interface = ResponsiveRow()
-            self.control_values = {
-                "mastery": 250,
-                "Patron": True
-            }
+            self.interface = ResponsiveRow(vertical_alignment="START")
+            self.control_values = {"mastery": 250, "Patron": True}
         self.magic_find_data = json.load(open("data/builds/magic_find.json"))
         buttons = [
             ResponsiveRow(
@@ -28,33 +25,35 @@ class MagicFindController(Controller):
                         max=1000,
                         on_change=self.mastery_stat,
                         label="Mastery Level",
-                        col={"xxl": 6}
+                        col={"xxl": 6},
                     )
                 ]
             )
         ]
         for source in self.magic_find_data:
             if source["name"] not in self.control_values:
-                self.control_values[source["name"]] = True if source["type"] == "switch" else source["value"]
+                self.control_values[source["name"]] = (
+                    True if source["type"] == "switch" else source["value"]
+                )
             if source["type"] == "switch":
-                control = ResponsiveRow(
+                control = Row(
                     controls=[
                         Switch(
                             data=source["name"],
                             value=self.control_values[source["name"]],
-                            col=3,
-                            on_change=self.switch_stat
+                            on_change=self.switch_stat,
                         ),
                         Text(
                             (
-                                source["name"] + " - " + str(
+                                source["name"]
+                                + " - "
+                                + str(
                                     source["value"]
-                                    if not source["percentage"] else
-                                    f"{round(source['value'], 2)}%"
+                                    if not source["percentage"]
+                                    else f"{round(source['value'], 2)}%"
                                 )
                             ),
-                            col=9
-                        )
+                        ),
                     ]
                 )
             elif source["type"] == "slider":
@@ -77,36 +76,35 @@ class MagicFindController(Controller):
             control.col = {"xxl": 6}
             buttons.append(control)
         buttons.append(
-            ResponsiveRow(
+            Row(
                 controls=[
                     Switch(
                         data="Patron",
                         value=self.control_values["Patron"],
                         col=3,
-                        on_change=self.switch_stat
+                        on_change=self.switch_stat,
                     ),
-                    Text(
-                        "Patron - 200%",
-                        col=9
-                    )
+                    Text("Patron - 200%", col=9),
                 ],
-                col={"xxl": 6}
+                col={"xxl": 6},
             )
         )
         buttons.append(
             TextField(
-                hint_text="Star Chart Build ID | \"none\" to remove",
+                hint_text='Star Chart Build ID | "none" to remove',
                 on_change=self.set_star_chart_build,
                 text_size=14,
                 height=58,
-                col={"xxl": 6}
+                col={"xxl": 6},
             )
         )
         buttons.append(
             Column(
                 controls=[
                     Text(f"{k}: {v[0]}" + ("%" if v[1] else ""))
-                    for k, v in self.star_chart.activated_select_stats("Magic Find").items()
+                    for k, v in self.star_chart.activated_select_stats(
+                        "Magic Find"
+                    ).items()
                 ]
             )
         )
@@ -116,7 +114,9 @@ class MagicFindController(Controller):
             if not v[1]:
                 result += v[0]
         bonus = 0
-        for (_, v), source in zip(list(self.control_values.items())[2:], self.magic_find_data):
+        for (_, v), source in zip(
+            list(self.control_values.items())[2:], self.magic_find_data
+        ):
             if isinstance(v, bool):
                 v = source["value"] if v else 0
             if not source["percentage"]:
@@ -129,26 +129,14 @@ class MagicFindController(Controller):
         result *= 1 + bonus / 100
         result *= 2 if self.control_values["Patron"] else 1
         self.results = Card(
-            content=ResponsiveRow(
-                controls=[
-                    Text("Total Magic Find", size=22, col=6),
-                    Text(str(round(result, 2)), size=22, col=6)
-                ]
-            ),
-            col={"xxl": 3}
+            Text(f"Magic Find: {round(result)}", size=50), col={"xxl": 3.5}
         )
         self.interface.controls = [
             Card(
-                content=Column(
-                    controls=[
-                        ResponsiveRow(
-                            controls=buttons
-                        )
-                    ]
-                ),
-                col={"xxl": 5}
+                content=Column(controls=[ResponsiveRow(controls=buttons)]),
+                col={"xxl": 5},
             ),
-            self.results
+            self.results,
         ]
 
     def setup_events(self):
