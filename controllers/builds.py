@@ -82,12 +82,11 @@ class GemBuildsController(Controller):
                 DataColumn(label=Text("Critical")),
                 DataColumn(label=Text("Coefficient")),
                 DataColumn(label=Text("Deviation")),
-                DataColumn(label=Text("")),
+                DataColumn(label=Text("Actions")),
             ],
             heading_row_height=40,
             data_row_height=40,
-            column_spacing=48,
-            bgcolor="#212223"
+            bgcolor="#212223",
         )
         self.interface.controls = [
             Column(
@@ -99,13 +98,14 @@ class GemBuildsController(Controller):
                                     controls=[
                                         Image(
                                             src=self.selected_class.image_path,
-                                            width=250,
+                                            scale=1.2,
+                                            height=350,
                                         ),
                                         Image(
                                             src=self.selected_subclass.icon_path,
-                                            width=125,
-                                            top=100,
-                                            left=140,
+                                            width=150,
+                                            bottom=25,
+                                            right=-10,
                                         ),
                                     ],
                                     col={"xxl": 6},
@@ -134,22 +134,35 @@ class GemBuildsController(Controller):
                                             height=58,
                                             on_change=self.set_class,
                                         ),
-                                        Dropdown(
-                                            label="Subclass",
-                                            value=self.selected_subclass.name.name,
-                                            options=[
-                                                dropdown.Option(
-                                                    key=c.name,
-                                                    text=c.value,
-                                                    disabled=c.name
-                                                    == self.config.subclass.name,
-                                                )
-                                                for c in Class
-                                                if c.name != self.config.character.name
-                                            ],
-                                            text_size=14,
-                                            height=58,
-                                            on_change=self.set_subclass,
+                                        Tooltip(
+                                            message="WIP",
+                                            content=Dropdown(
+                                                label="Subclass",
+                                                value=self.selected_subclass.name.name,
+                                                options=[
+                                                    dropdown.Option(
+                                                        key=c.name,
+                                                        text=c.value,
+                                                        disabled=c.name
+                                                        == self.config.subclass.name,
+                                                    )
+                                                    for c in Class
+                                                    if c.name
+                                                    != self.config.character.name
+                                                ],
+                                                text_size=14,
+                                                height=58,
+                                                on_change=self.set_subclass,
+                                            ),
+                                            border_radius=10,
+                                            bgcolor="#1E1E28",
+                                            text_style=TextStyle(color="#cccccc"),
+                                            border=Border(
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc"),
+                                                BorderSide(width=2, color="#cccccc"),
+                                            ),
                                         ),
                                         Dropdown(
                                             label="Build Type",
@@ -280,7 +293,8 @@ class GemBuildsController(Controller):
                                     ],
                                     col={"xxl": 6},
                                 ),
-                            ]
+                            ],
+                            vertical_alignment="CENTER",
                         )
                     ),
                     Card(
@@ -368,47 +382,62 @@ class GemBuildsController(Controller):
                                 Divider(thickness=1),
                                 ResponsiveRow(
                                     controls=[
-                                        Column(
+                                        ResponsiveRow(
                                             controls=[
-                                                Text("Face Damage"),
                                                 Switch(
                                                     value=not self.config.no_face,
                                                     on_change=self.toggle_face,
                                                 ),
+                                                Text(
+                                                    "Face Damage", text_align="center"
+                                                ),
                                             ],
+                                            alignment="center",
                                             col={"xxl": 3},
                                         ),
-                                        Column(
+                                        ResponsiveRow(
                                             controls=[
-                                                Text("Subclass active"),
                                                 Switch(
                                                     value=self.config.subclass_active,
                                                     on_change=self.toggle_subclass_active,
                                                 ),
+                                                Text(
+                                                    "Subclass active",
+                                                    text_align="center",
+                                                ),
                                             ],
+                                            alignment="center",
                                             col={"xxl": 3},
                                         ),
-                                        Column(
+                                        ResponsiveRow(
                                             controls=[
-                                                Text("Berserker Battler"),
                                                 Switch(
                                                     value=self.config.berserker_battler,
                                                     on_change=self.toggle_berserker_battler,
                                                 ),
+                                                Text(
+                                                    "Berserker Battler",
+                                                    text_align="center",
+                                                ),
                                             ],
+                                            alignment="center",
                                             col={"xxl": 3},
                                         ),
-                                        Column(
+                                        ResponsiveRow(
                                             controls=[
-                                                Text("Cosmic Primordial"),
                                                 Switch(
                                                     value=self.config.cosmic_primordial,
                                                     on_change=self.toggle_cosmic_primordial,
                                                 ),
+                                                Text(
+                                                    "Cosmic Primordial",
+                                                    text_align="center",
+                                                ),
                                             ],
+                                            alignment="center",
                                             col={"xxl": 3},
                                         ),
-                                    ]
+                                    ],
                                 ),
                             ],
                             spacing=5,
@@ -499,10 +528,11 @@ class GemBuildsController(Controller):
             self.data_table = Container(
                 content=ResponsiveRow(
                     controls=[
-                        ScrollingFrame(self.coeff_table, col={"xxl": 8}),
+                        ScrollingFrame(self.coeff_table),
                         self.abilities_table,
                     ]
-                )
+                ),
+                col={"xxl": 8},
             )
         self.abilities_table.visible = bool(self.selected_build)
         if self.config.character:
