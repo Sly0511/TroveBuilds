@@ -60,12 +60,6 @@
         "value": 250
     },
     {
-        "name": "Sunday | Loot Day",
-        "type": "switch",
-        "percentage": false,
-        "value": 100
-    },
-    {
         "name": "Clover",
         "type": "switch",
         "percentage": false,

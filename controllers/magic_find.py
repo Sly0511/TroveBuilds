@@ -12,7 +12,7 @@ class MagicFindController(Controller):
         if not hasattr(self, "interface"):
             self.star_chart = get_star_chart()
             self.interface = ResponsiveRow(vertical_alignment="START")
-            self.control_values = {"mastery": 250, "Patron": True}
+            self.control_values = {"mastery": 250, "Sunday": True, "Patron": True}
         self.magic_find_data = json.load(open("data/builds/magic_find.json"))
         buttons = [
             ResponsiveRow(
@@ -46,7 +46,7 @@ class MagicFindController(Controller):
                         Text(
                             (
                                 source["name"]
-                                + " - "
+                                + " \u2022 "
                                 + str(
                                     source["value"]
                                     if not source["percentage"]
@@ -79,12 +79,29 @@ class MagicFindController(Controller):
             Row(
                 controls=[
                     Switch(
+                        data="Sunday",
+                        value=self.control_values["Sunday"],
+                        col=3,
+                        on_change=self.switch_stat,
+                    ),
+                    Text(
+                        f"Sunday Loot Day \u2022 {400 if self.control_values['Patron'] else 100}",
+                        col=9
+                    ),
+                ],
+                col={"xxl": 6},
+            )
+        )
+        buttons.append(
+            Row(
+                controls=[
+                    Switch(
                         data="Patron",
                         value=self.control_values["Patron"],
                         col=3,
                         on_change=self.switch_stat,
                     ),
-                    Text("Patron - 200%", col=9),
+                    Text("Patron \u2022 200%", col=9),
                 ],
                 col={"xxl": 6},
             )
@@ -115,7 +132,7 @@ class MagicFindController(Controller):
                 result += v[0]
         bonus = 0
         for (_, v), source in zip(
-            list(self.control_values.items())[2:], self.magic_find_data
+            list(self.control_values.items())[3:], self.magic_find_data
         ):
             if isinstance(v, bool):
                 v = source["value"] if v else 0
@@ -128,6 +145,9 @@ class MagicFindController(Controller):
                 bonus += v[0]
         result *= 1 + bonus / 100
         result *= 2 if self.control_values["Patron"] else 1
+        sunday_bonus = (400 if self.control_values['Patron'] else 100) if self.control_values["Sunday"] else 0
+        sunday_bonus *= 1 + bonus / 100
+        result += sunday_bonus
         self.results = Card(
             Text(f"Magic Find: {round(result)}", size=50), col={"xxl": 3.5}
         )
