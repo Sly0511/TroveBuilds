@@ -1,3 +1,4 @@
+import asyncio
 import base64
 from datetime import datetime, timedelta
 from json import load
@@ -16,6 +17,12 @@ from flet import (
     TextStyle,
     BoxShadow,
     TextSpan,
+    LinearGradient,
+    alignment,
+    Tooltip,
+    Border,
+    BorderSide,
+    BlendMode
 )
 from pytz import UTC
 
@@ -37,10 +44,14 @@ class Widget(Container):
 
 class HomeController(Controller):
     def setup_controls(self):
-        self.daily_data = load(open("data/daily_buffs.json", encoding="utf-8"))
-        self.weekly_data = load(open("data/weekly_buffs.json", encoding="utf-8"))
-        self.date = Text("Trove Time", size=20, col={"xxl": 6})
-        self.clock = Text("Trove Time", size=20, col={"xxl": 6})
+        if not hasattr(self, "widgets"):
+            self.widgets = ResponsiveRow(
+                spacing=40,
+            )
+            self.daily_data = load(open("data/daily_buffs.json", encoding="utf-8"))
+            self.weekly_data = load(open("data/weekly_buffs.json", encoding="utf-8"))
+            self.date = Text("Trove Time", size=20, col={"xxl": 6})
+            self.clock = Text("Trove Time", size=20, col={"xxl": 6})
         self.clock_widget = Card(
             content=Column(
                 controls=[
@@ -57,52 +68,74 @@ class HomeController(Controller):
                 horizontal_alignment="center",
             ),
             height=190,
-            col={"xxl": 2.5},
+            col={"xxl": 2.5}
         )
         self.daily_widgets = Column(
             controls=[
                 Widget(
                     data=k,
                     controls=[
-                        Stack(
-                            controls=[
-                                Image(
-                                    src_base64=base64.b64encode(
-                                        requests.get(v["banner"]).content
-                                    ).decode("utf-8")
-                                ),
-                                Container(
-                                    TextSpan(
-                                        v["weekday"],
-                                        style=TextStyle(
-                                            color="#" + v["color"],
-                                            shadow=BoxShadow(color="black"),
-                                            size=16,
-                                        ),
+                        Tooltip(
+                            message="\n".join(
+                                [
+                                    "Normal",
+                                    *[
+                                        " \u2022 " + b
+                                        for b in v["normal_buffs"]
+                                    ],
+                                    "Patreon",
+                                    *[
+                                        " \u2022 " + b
+                                        for b in v["premium_buffs"]
+                                    ],
+                                ]
+                            ),
+                            content=Stack(
+                                controls=[
+                                    Image(
+                                        color="black",
+                                        src_base64=base64.b64encode(
+                                            requests.get(v["banner"]).content
+                                        ).decode("utf-8")
                                     ),
-                                    left=10,
-                                    top=3,
-                                ),
-                                Text(
-                                    v["name"],
-                                    color="#" + v["color"],
-                                    left=10,
-                                    top=23,
-                                    size=16,
-                                ),
-                                # *[
-                                #     Text(
-                                #         buff,
-                                #         left=10 if buff in ["Buffs", "Patron Buffs"] else 15,
-                                #         size=8 if buff not in ["Buffs", "Patron Buffs"] else 10,
-                                #         top=22+14*i,
-                                #         weight="bold" if buff in ["Buffs", "Patron Buffs"] else None
-                                #     )
-                                #     for i, buff in enumerate(
-                                #         ["Buffs"] + v["normal_buffs"] + ["Patron Buffs"] + v["premium_buffs"], 1
-                                #     )
-                                # ]
-                            ]
+                                    Container(
+                                        gradient=LinearGradient(
+                                            begin=alignment.center_left,
+                                            end=alignment.center_right,
+                                            colors=[
+                                                "#ff000000",
+                                                "#00000000",
+                                            ],
+                                        ),
+                                        width=200,
+                                        height=46,
+                                    ),
+                                    Text(
+                                        v["weekday"],
+                                        color="#cccccc",
+                                        left=10,
+                                        top=3,
+                                        size=16
+                                    ),
+                                    Text(
+                                        v["name"],
+                                        color="#cccccc",
+                                        left=10,
+                                        top=23,
+                                    )
+                                ]
+                            ),
+                            border_radius=10,
+                            bgcolor="#1E1E28",
+                            text_style=TextStyle(color="#cccccc"),
+                            border=Border(
+                                BorderSide(width=2, color="#" + v["color"]),
+                                BorderSide(width=2, color="#" + v["color"]),
+                                BorderSide(width=2, color="#" + v["color"]),
+                                BorderSide(width=2, color="#" + v["color"])
+                            ),
+                            prefer_below=False,
+                            wait_duration=250
                         )
                     ],
                 )
@@ -114,48 +147,81 @@ class HomeController(Controller):
                 Widget(
                     data=k,
                     controls=[
-                        Stack(
-                            controls=[
-                                Image(
-                                    src_base64=base64.b64encode(
-                                        requests.get(v["banner"]).content
-                                    ).decode("utf-8")
-                                ),
-                                Text(v["name"], left=10, size=16),
-                                *[
+                        Tooltip(
+                            message="\n".join(
+                                [
+                                    "Buffs",
+                                    *[
+                                        " \u2022 " + b
+                                        for b in v["buffs"]
+                                    ]
+                                ]
+                            ),
+                            content=Stack(
+                                controls=[
+                                    Image(
+                                        color="black",
+                                        src_base64=base64.b64encode(
+                                            requests.get(v["banner"]).content
+                                        ).decode("utf-8")
+                                    ),
+                                    Container(
+                                        gradient=LinearGradient(
+                                            begin=alignment.center_left,
+                                            end=alignment.center_right,
+                                            colors=[
+                                                "#ff000000",
+                                                "#00000000",
+                                            ],
+                                        ),
+                                        width=200,
+                                        height=182,
+                                    ),
                                     Text(
-                                        buff,
-                                        left=10 if buff in ["Buffs"] else 15,
-                                        size=10 if buff not in ["Buffs"] else 12,
-                                        top=11 + 25 * i,
-                                        weight="bold" if buff in ["Buffs"] else None,
+                                        v["name"],
+                                        color="#cccccc",
+                                        size=16,
+                                        left=10,
+                                        top=3,
                                     )
-                                    for i, buff in enumerate(["Buffs"] + v["buffs"], 1)
-                                ],
-                            ]
+                                ]
+                            ),
+                            border_radius=10,
+                            bgcolor="#1E1E28",
+                            text_style=TextStyle(color="#cccccc"),
+                            border=Border(
+                                BorderSide(width=2, color="#" + v["color"]),
+                                BorderSide(width=2, color="#" + v["color"]),
+                                BorderSide(width=2, color="#" + v["color"]),
+                                BorderSide(width=2, color="#" + v["color"])
+                            ),
+                            prefer_below=False,
+                            wait_duration=250
                         )
                     ],
-                    col={"xxl": 12 / len(self.weekly_data.values())},
+                    col={"xxl": 6}
                 )
                 for k, v in self.weekly_data.items()
-            ]
-        )
-        self.next_daily_widget = Widget()
-        self.next_weekly_widget = Widget()
-        self.widgets = ResponsiveRow(
-            controls=[
-                self.clock_widget,
-                Row(
-                    controls=[Text("Daily Buffs", size=20), Divider()],
-                ),
-                self.daily_widgets,
-                Row(
-                    controls=[Text("Weekly buffs", size=20), Divider()],
-                ),
-                self.weekly_widgets,
             ],
-            spacing=40,
         )
+        self.widgets.controls = [
+            self.clock_widget,
+            Container(),
+            Column(
+                controls=[
+                    Text("Daily Buffs", size=20),
+                    self.daily_widgets
+                ],
+                col={"xxl": 3}
+            ),
+            Column(
+                controls=[
+                    Text("Weekly buffs", size=20),
+                    self.weekly_widgets
+                ],
+                col={"xxl": 5}
+            )
+        ]
         self.update_clock.start()
         self.update_daily.start()
         self.update_weekly.start()
@@ -176,20 +242,36 @@ class HomeController(Controller):
 
     @tasks.loop(seconds=60)
     async def update_daily(self):
+        await asyncio.sleep(3)
         try:
             now = datetime.utcnow() - timedelta(hours=11)
-            self.daily_widgets.controls[now.weekday()].bg_color = "yellow"
-            await self.page.update_async()
+            for control in self.daily_widgets.controls:
+                stack = control.content.controls[0].content
+                if int(control.data) == now.weekday():
+                    stack.controls[0].color = None
+                    stack.controls[0].color_blend_mode = None
+                else:
+                    stack.controls[0].color = "black"
+                    stack.controls[0].color_blend_mode = BlendMode.SATURATION
+            await self.daily_widgets.update_async()
         except Exception as e:
             print(e)
 
     @tasks.loop(seconds=60)
     async def update_weekly(self):
-        initial = datetime(2020, 3, 23, tzinfo=UTC) - timedelta(hours=11)
+        await asyncio.sleep(3)
+        initial = datetime(2020, 3, 30, tzinfo=UTC) - timedelta(hours=11)
         now = datetime.utcnow() - timedelta(hours=11)
         week_length = 60 * 60 * 24 * 7
         weeks = (now.timestamp() - initial.timestamp()) // week_length
         time_split = weeks / 4
         time_find = (time_split - int(time_split)) * 4
-        self.weekly_widgets.controls[int(time_find)].bg_color = "yellow"
-        await self.page.update_async()
+        for control in self.weekly_widgets.controls:
+            stack = control.content.controls[0].content
+            if int(control.data) == int(time_find):
+                stack.controls[0].color = None
+                stack.controls[0].color_blend_mode = None
+            else:
+                stack.controls[0].color = "black"
+                stack.controls[0].color_blend_mode = BlendMode.SATURATION
+        await self.weekly_widgets.update_async()

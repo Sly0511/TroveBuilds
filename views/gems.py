@@ -1,4 +1,4 @@
-from flet import View, Icon, Text
+from flet import View, Text
 from flet_core.icons import DIAMOND_SHARP
 from i18n import t
 

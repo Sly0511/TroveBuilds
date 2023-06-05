@@ -77,7 +77,7 @@ class TroveBuilds:
         page.on_route_change = self.route_change
         page.on_keyboard_event = self.keyboard_shortcut
         # Setup app interface data
-        page.theme = Theme(color_scheme_seed="red")
+        page.theme = Theme()
         page.theme_mode = await page.client_storage.get_async("theme") or "DARK"
         page.window_maximizable = True
         page.window_maximized = True
