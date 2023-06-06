@@ -41,11 +41,24 @@ class Widget(Container):
         )
 
 
+class RowWidget(Container):
+    def __init__(self, controls: list = [], **kwargs):
+        super().__init__(
+            content=Row(
+                controls=[*controls],
+                vertical_alignment="center",
+                spacing=0
+            ),
+            on_hover=None,
+            **kwargs
+        )
+
+
 class HomeController(Controller):
     def setup_controls(self):
         if not hasattr(self, "widgets"):
             self.widgets = ResponsiveRow(
-                spacing=40,
+                spacing=0,
             )
             self.daily_data = load(open("data/daily_buffs.json", encoding="utf-8"))
             self.weekly_data = load(open("data/weekly_buffs.json", encoding="utf-8"))
@@ -69,9 +82,9 @@ class HomeController(Controller):
             height=190,
             col={"xxl": 2.5}
         )
-        self.daily_widgets = Column(
+        self.daily_widgets = ResponsiveRow(
             controls=[
-                Widget(
+                RowWidget(
                     data=k,
                     controls=[
                         Tooltip(
@@ -96,7 +109,8 @@ class HomeController(Controller):
                                         color_blend_mode=BlendMode.SATURATION,
                                         src_base64=base64.b64encode(
                                             requests.get(v["banner"]).content
-                                        ).decode("utf-8")
+                                        ).decode("utf-8"),
+                                        left=-125
                                     ),
                                     Container(
                                         gradient=LinearGradient(
@@ -135,16 +149,17 @@ class HomeController(Controller):
                                 BorderSide(width=2, color="#" + v["color"])
                             ),
                             prefer_below=False,
-                            wait_duration=250
+                            wait_duration=250,
                         )
                     ],
+                    col=12/7
                 )
                 for k, v in self.daily_data.items()
             ],
         )
         self.weekly_widgets = ResponsiveRow(
             controls=[
-                Widget(
+                RowWidget(
                     data=k,
                     controls=[
                         Tooltip(
@@ -200,7 +215,7 @@ class HomeController(Controller):
                             wait_duration=250
                         )
                     ],
-                    col={"xxl": 6}
+                    col={"xxl": 3}
                 )
                 for k, v in self.weekly_data.items()
             ],
@@ -277,26 +292,19 @@ class HomeController(Controller):
         )
         self.widgets.controls = [
             self.clock_widget,
-            Container(),
             Column(
                 controls=[
-                    Text("Daily Buffs", size=20),
-                    self.daily_widgets
-                ],
-                col={"xxl": 3}
-            ),
-            Column(
-                controls=[
-                    Text("Weekly buffs", size=20),
+                    self.daily_widgets,
                     self.weekly_widgets
                 ],
-                col={"xxl": 5}
+                col=9.5
             ),
             Column(
                 controls=[
                     Text("Cranny Rotation", size=20),
                     self.cranny_widgets
                 ],
+                spacing=0,
                 col={"xxl": 3}
             )
         ]
