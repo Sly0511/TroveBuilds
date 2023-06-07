@@ -49,23 +49,23 @@ class GemController(Controller):
                                 text=t("gem_tiers.Radiant"),
                                 on_click=self.reroll_radiant,
                                 bgcolor=GemTierColor.radiant.value,
-                                color="black"
+                                color="black",
                             ),
                             ElevatedButton(
                                 text=t("gem_tiers.Stellar"),
                                 on_click=self.reroll_stellar,
                                 bgcolor=GemTierColor.stellar.value,
-                                color="black"
+                                color="black",
                             ),
                             ElevatedButton(
                                 text=t("gem_tiers.Crystal"),
                                 on_click=self.reroll_crystal,
                                 bgcolor=GemTierColor.crystal.value,
-                                color="black"
+                                color="black",
                             ),
                             Text(t("gem_types.Lesser")),
                             Switch(value=self.empower, on_change=self.switch_empower),
-                            Text(t("gem_types.Empowered"))
+                            Text(t("gem_types.Empowered")),
                         ],
                         alignment="center",
                     ),
@@ -78,7 +78,8 @@ class GemController(Controller):
                         color=f"#{self.selected_gem.color.value}",
                     ),
                     Text(
-                        value=t("stats.Power Rank") + f": {round(self.selected_gem.power_rank)}",
+                        value=t("stats.Power Rank")
+                        + f": {round(self.selected_gem.power_rank)}",
                         size=19,
                     ),
                     DragTarget(
@@ -211,7 +212,10 @@ class GemController(Controller):
                                                                     border=Border(
                                                                         *(
                                                                             [
-                                                                                BorderSide(2, "black")
+                                                                                BorderSide(
+                                                                                    2,
+                                                                                    "black",
+                                                                                )
                                                                             ]
                                                                             * 4
                                                                         )
@@ -219,7 +223,9 @@ class GemController(Controller):
                                                                     border_radius=0,
                                                                     col=3,
                                                                 )
-                                                                for _ in range(3 - stat.boosts)
+                                                                for _ in range(
+                                                                    3 - stat.boosts
+                                                                )
                                                             ],
                                                         ],
                                                         spacing=0,
@@ -316,9 +322,30 @@ class GemController(Controller):
                                     ResponsiveRow(
                                         controls=[
                                             Container(col={"xs": 3.3}),
-                                            Container(content=Text("2.5%"), col={"xs": 1.5}),
-                                            Container(content=Text("5.0%"), col={"xs": 1.5}),
-                                            Container(content=Text("12.5%"), col={"xs": 1.5}),
+                                            Container(
+                                                content=Text(
+                                                    f"{round(2.5/(stat.boosts + 1), 2)}%"
+                                                    if stat
+                                                    else "2.50%"
+                                                ),
+                                                col={"xs": 1.5},
+                                            ),
+                                            Container(
+                                                content=Text(
+                                                    f"{round(5.0/(stat.boosts + 1), 2)}%"
+                                                    if stat
+                                                    else "5.00%"
+                                                ),
+                                                col={"xs": 1.5},
+                                            ),
+                                            Container(
+                                                content=Text(
+                                                    f"{round(12.5/(stat.boosts + 1), 2)}%"
+                                                    if stat
+                                                    else "12.5%"
+                                                ),
+                                                col={"xs": 1.5},
+                                            ),
                                             Container(col={"xs": 3}),
                                         ],
                                     ),
@@ -417,11 +444,14 @@ class GemController(Controller):
     async def switch_empower(self, event):
         self.empower = event.control.value
         if self.empower:
-            gem = EmpoweredGem.random_gem(element=self.selected_gem.element, tier=self.selected_gem.tier)
+            gem = EmpoweredGem.random_gem(
+                element=self.selected_gem.element, tier=self.selected_gem.tier
+            )
         else:
-            gem = LesserGem.random_gem(element=self.selected_gem.element, tier=self.selected_gem.tier)
+            gem = LesserGem.random_gem(
+                element=self.selected_gem.element, tier=self.selected_gem.tier
+            )
         self.setup_controls(gem, None)
-
 
     async def reroll_radiant(self, _):
         gem_type = EmpoweredGem if self.empower else LesserGem

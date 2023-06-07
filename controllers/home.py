@@ -297,7 +297,7 @@ class HomeController(Controller):
                     self.daily_widgets,
                     self.weekly_widgets
                 ],
-                col=9.5
+                col={"xxl": 9.5}
             ),
             Column(
                 controls=[
