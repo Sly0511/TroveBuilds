@@ -825,11 +825,13 @@ class GemBuildsController(Controller):
             csecond = second + gem_second
             cthird = third + gem_third
             if self.config.build_type not in [BuildType.health]:
-                if class_bonus := get_attr(
-                    self.selected_class.bonuses, name=damage_type.value
-                ):
-                    cfirst *= 1 + (class_bonus / 100)
+                class_bonus = None
+                for bonus in self.selected_class.bonuses:
+                    if bonus.name == damage_type:
+                        class_bonus = bonus.value
                 final = cfirst * (1 + fourth / 100)
+                if class_bonus is not None:
+                    final *= 1 + (class_bonus / 100)
             else:
                 final = cfirst
             coefficient = round(final * (1 + (csecond * (fifth / 100)) / 100))
