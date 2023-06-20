@@ -82,7 +82,11 @@ class StarChart(BaseModel):
 
     async def get_build(self):
         paths = [s.path for s in self.activated_stars]
-        if (build := await StarBuild.find_one({"paths": {"$all": paths, "$size": len(paths)}})) is None:
+        if (
+            build := await StarBuild.find_one(
+                {"paths": {"$all": paths, "$size": len(paths)}}
+            )
+        ) is None:
             build = StarBuild(paths=paths)
             await build.save()
         return build.build
@@ -129,7 +133,7 @@ class StarChart(BaseModel):
             "Critical Damage",
             "Incoming Damage",
             "Damage Reduction",
-            "Random Flask Emblem"
+            "Random Flask Emblem",
         ]
         for star in self.activated_stars:
             for stat in star.stats:
@@ -138,7 +142,10 @@ class StarChart(BaseModel):
                 else:
                     stat_name = stat["name"]
                 if not stats.get(stat_name):
-                    stats[stat_name] = [0, (stat_name in percentage_stats or stat_name.endswith("Bonus"))]
+                    stats[stat_name] = [
+                        0,
+                        (stat_name in percentage_stats or stat_name.endswith("Bonus")),
+                    ]
                 if stat["value"]:
                     stats[stat_name][0] += stat["value"]
                 else:
@@ -147,16 +154,8 @@ class StarChart(BaseModel):
 
     @property
     def activated_gem_stats(self):
-        gem_stats = [
-            "Light",
-            "Physical Damage",
-            "Magic Damage",
-            "Critical Damage"
-        ]
-        percentage_stats = [
-            "Maximum Health %",
-            "Critical Damage"
-        ]
+        gem_stats = ["Light", "Physical Damage", "Magic Damage", "Critical Damage"]
+        percentage_stats = ["Maximum Health %", "Critical Damage"]
         stats = {}
         for star in self.activated_stars:
             for stat in star.stats:
@@ -167,14 +166,15 @@ class StarChart(BaseModel):
                 else:
                     stat_name = stat["name"]
                 if not stats.get(stat_name):
-                    stats[stat_name] = [0, (stat_name in percentage_stats or stat_name.endswith("Bonus"))]
+                    stats[stat_name] = [
+                        0,
+                        (stat_name in percentage_stats or stat_name.endswith("Bonus")),
+                    ]
                 stats[stat_name][0] += stat["value"]
         return stats
 
     def activated_select_stats(self, stat_name):
-        gem_stats = [
-            "Magic Find"
-        ]
+        gem_stats = ["Magic Find"]
         stats = {}
         for star in self.activated_stars:
             for stat in star.stats:
@@ -209,6 +209,24 @@ class StarChart(BaseModel):
                 if ow in abilities:
                     del abilities[ow]
         return [a for ab_set in abilities.values() for a in ab_set]
+
+    @property
+    def activated_abilities_stats(self):
+        abilities = {}
+        for star in self.activated_stars:
+            if star.ability_values:
+                abilities[star.path] = {
+                    "path": star.path,
+                    "name": star.full_name,
+                    "description": "\n".join(star.abilities),
+                    "active": False,
+                    "values": star.ability_values
+                }
+        for star in self.activated_stars:
+            for ow in star.ability_overwrites:
+                if ow in abilities:
+                    del abilities[ow]
+        return [ab for ab in abilities.values()]
 
 
 class Constellation(Enum):
@@ -256,6 +274,7 @@ class Star(BaseModel):
     description: str
     stats: list[dict] = []
     abilities: list[str] = []
+    ability_values: list[dict] = []
     unlocked: bool = False
     parent: object = None
     path: str
@@ -274,8 +293,8 @@ class Star(BaseModel):
     def color(self):
         color = (
             ConstellationBigColor[self.constellation.name].value
-            if self.unlocked else
-            ConstellationDisabledBigColor[self.constellation.name].value
+            if self.unlocked
+            else ConstellationDisabledBigColor[self.constellation.name].value
         )
         return color
 
@@ -294,7 +313,7 @@ class Star(BaseModel):
             "Critical Damage",
             "Incoming Damage",
             "Damage Reduction",
-            "Random Flask Emblem"
+            "Random Flask Emblem",
         ]
         for stat in self.stats:
             if stat["percentage"]:
@@ -302,7 +321,10 @@ class Star(BaseModel):
             else:
                 stat_name = stat["name"]
             if not stats.get(stat_name):
-                stats[stat_name] = [0, (stat_name in percentage_stats or stat_name.endswith("Bonus"))]
+                stats[stat_name] = [
+                    0,
+                    (stat_name in percentage_stats or stat_name.endswith("Bonus")),
+                ]
             if stat["value"]:
                 stats[stat_name][0] += stat["value"]
             else:
@@ -338,12 +360,6 @@ class Star(BaseModel):
     def add_child(self, star):
         self.children.append(star)
 
-    def add_stats(self, stats: list[str]):
-        self.stats.extend(stats)
-
-    def add_abilities(self, abilities: list[str]):
-        self.stats.extend(abilities)
-
 
 def build_star_chart(star_dict: dict, parent: Star = None):
     star = Star(
@@ -356,12 +372,13 @@ def build_star_chart(star_dict: dict, parent: Star = None):
         description=star_dict["Description"],
         stats=star_dict.get("Stats", []),
         abilities=star_dict.get("Abilities", []),
+        ability_values=star_dict.get("Ability_Values", []),
         children=[],
         parent=parent,
         angle=star_dict.get("Connect", []),
         unlocked=StarType(star_dict["Type"]) == StarType.root,
         obtainables=star_dict["Obtainables"],
-        ability_overwrites=star_dict.get("Overwrites", [])
+        ability_overwrites=star_dict.get("Overwrites", []),
     )
     for cstar in star_dict["Stars"]:
         star.add_child(build_star_chart(cstar, star))
@@ -389,12 +406,7 @@ def build_branch(back_rotate, last_position, distance, stars):
         )
         child["Coords"] = rotated_position
         child["Rotation"] = final_rotation
-        build_branch(
-            -(90 - final_rotation),
-            rotated_position,
-            distance,
-            child["Stars"]
-        )
+        build_branch(-(90 - final_rotation), rotated_position, distance, child["Stars"])
 
 
 def rotate_branch(star, origin, angle, distance):
@@ -439,9 +451,7 @@ def get_star_chart(star_string=None):
         constell = star_chart[constellation.value]
         constell["Coords"] = rotated_position
         distance = 50
-        build_branch(
-            back_rotate, position, distance, constell["Stars"]
-        )
+        build_branch(back_rotate, position, distance, constell["Stars"])
         rotate_branch(constell, origin, radians(branch_rotation), distance)
 
     for constellation, data in star_chart.items():

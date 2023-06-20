@@ -29,7 +29,7 @@
                         "Description": "Slot machine of extra damage. I like it.",
                         "Stats": [],
                         "Abilities": [
-                            "5% chance when critical hitting to increase Critical Hit Chance by 20% for 10 seconds."
+                            "5% chance when critical hitting to increase Critical Hit by 20% for 10 seconds."
                         ],
                         "Stars": [
                             {
@@ -114,14 +114,14 @@
                                                     "combat.a.0"
                                                 ],
                                                 "Abilities": [
-                                                    "10% chance when critical hitting to increase Critical Hit Chance by 30% for 10 seconds."
+                                                    "10% chance when critical hitting to increase Critical Hit by 30% for 10 seconds."
                                                 ],
                                                 "Stars": [
                                                     {
                                                         "Path": "combat.a.0.a.1.b.0",
                                                         "Constellation": "Combat",
                                                         "Type": "Minor",
-                                                        "Name": "Accuracy, Intellect, and Strength",
+                                                        "Name": "Accuracy, Intellect and Strength",
                                                         "Description": "Wow... Magic and Physical Damage with a little Critical Hit... Maybe this should be a Major Star.",
                                                         "Stats": [
                                                             {
@@ -688,7 +688,14 @@
                         "Description": "You have found the Weakness, now keep on attacking.",
                         "Stats": [],
                         "Abilities": [
-                            "5% chance when critical hitting to increase Critical Hit Damage by 15% for 10 seconds."
+                            "5% chance when critical hitting to increase Critical Damage by 15% for 10 seconds."
+                        ],
+                        "Ability_Values": [
+                            {
+                                "name": "Critical Damage",
+                                "percentage": false,
+                                "value": 15
+                            }
                         ],
                         "Stars": [
                             {
@@ -718,7 +725,14 @@
                                             "combat.b.1"
                                         ],
                                         "Abilities": [
-                                            "10% chance when critical hitting to increases Critical Hit Damage by 25% for 10 seconds."
+                                            "10% chance when critical hitting to increases Critical Damage by 25% for 10 seconds."
+                                        ],
+                                        "Ability_Values": [
+                                            {
+                                                "name": "Critical Damage",
+                                                "percentage": false,
+                                                "value": 25
+                                            }
                                         ],
                                         "Stars": [],
                                         "Obtainables": []
@@ -964,7 +978,7 @@
                                 "Path": "gathering.a.0.b",
                                 "Constellation": "Gathering",
                                 "Type": "Minor",
-                                "Name": "Alchemy, Heartiness, and Leaping",
+                                "Name": "Alchemy, Heartiness and Leaping",
                                 "Description": "Leap for the stars!!!!",
                                 "Stats": [
                                     {
@@ -1441,7 +1455,7 @@
                                                                 "Constellation": "Gathering",
                                                                 "Type": "Major",
                                                                 "Acts": "Minor",
-                                                                "Name": "Heartiness, Haste, and Mining",
+                                                                "Name": "Heartiness, Haste and Mining",
                                                                 "Description": "Intense searching has led you to greater speed and adaptability.",
                                                                 "Stats": [
                                                                     {
@@ -1640,7 +1654,19 @@
                         "Description": "Random buffs are always great because they are buffs.",
                         "Stats": [],
                         "Abilities": [
-                            "50% chance when using a Flask to gain either an Attack Buff, Defense Buff, or Healing Buff."
+                            "50% chance when using a Flask to gain either a 25% Bonus Damage, 200 Stability, or 200% Bonus Health Regen."
+                        ],
+                        "Ability_Values": [
+                            {
+                                "name": "Physical Damage",
+                                "percentage": true,
+                                "value": 25
+                            },
+                            {
+                                "name": "Magic Damage",
+                                "percentage": true,
+                                "value": 25
+                            }
                         ],
                         "Stars": [
                             {
@@ -1920,13 +1946,25 @@
                                 "Constellation": "Pve",
                                 "Type": "Major",
                                 "Name": "Minor Buffing Always",
-                                "Description": "You get a buff, and you get a buff, everybody gets a buff.",
+                                "Description": "You get a buff and you get a buff, everybody gets a buff.",
                                 "Stats": [],
                                 "Overwrites": [
                                     "pve.a.0"
                                 ],
                                 "Abilities": [
-                                    "100% chance when using a Flask to gain either an Attack Buff, Defense Buff, or Healing Buff."
+                                    "100% chance when using a Flask to gain either a 25% Bonus Damage, 200 Stability, or 200% Bonus Health Regen."
+                                ],
+                                "Ability_Values": [
+                                    {
+                                        "name": "Physical Damage",
+                                        "percentage": true,
+                                        "value": 25
+                                    },
+                                    {
+                                        "name": "Magic Damage",
+                                        "percentage": true,
+                                        "value": 25
+                                    }
                                 ],
                                 "Stars": [
                                     {
@@ -2173,6 +2211,18 @@
                                                 "Abilities": [
                                                     "After defeating a Sundered Uplands 5 Star Boss, gain 10% increased Physical and Magic Damage for 4 hours."
                                                 ],
+                                                "Ability_Values": [
+                                                    {
+                                                        "name": "Physical Damage",
+                                                        "percentage": true,
+                                                        "value": 10
+                                                    },
+                                                    {
+                                                        "name": "Magic Damage",
+                                                        "percentage": true,
+                                                        "value": 10
+                                                    }
+                                                ],
                                                 "Stars": [
                                                     {
                                                         "Path": "pve.b.0.a.1.a.0",
@@ -2187,6 +2237,18 @@
                                                         ],
                                                         "Abilities": [
                                                             "After defeating a Sundered Uplands 5 Star Boss, gain 15% increased Physical and Magic Damage for 4 hours."
+                                                        ],
+                                                        "Ability_Values": [
+                                                            {
+                                                                "name": "Physical Damage",
+                                                                "percentage": true,
+                                                                "value": 15
+                                                            },
+                                                            {
+                                                                "name": "Magic Damage",
+                                                                "percentage": true,
+                                                                "value": 15
+                                                            }
                                                         ],
                                                         "Stars": [],
                                                         "Obtainables": []

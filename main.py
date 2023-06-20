@@ -26,9 +26,8 @@ from views import (
     StarView,
     HomeView,
     GemBuildsView,
-    MarketplaceView,
     View404,
-    MagicFindView
+    MagicFindView,
 )
 
 
@@ -54,13 +53,12 @@ class TroveBuilds:
                 page.constants.database_client.trovetools,
                 document_models=[User, Listing, Item, StarBuild, BuildConfig],
             )
-            page.clock = Text((datetime.utcnow() - timedelta(hours=11)).strftime("%a, %b %d\t\t%H:%M"))
+            page.clock = Text(
+                (datetime.utcnow() - timedelta(hours=11)).strftime("%a, %b %d\t\t%H:%M")
+            )
             page.login_provider = DiscordOAuth2(
                 client_id=get_key(".env", "DISCORD_CLIENT"),
                 client_secret=get_key(".env", "DISCORD_SECRET"),
-            )
-            page.constants.market_log_webhook = get_key(
-                ".env", "MARKET_LOG_WEBHOOK"
             )
             page.restart = self.restart
             page.open_blank_page = self.open_blank_page
@@ -96,20 +94,12 @@ class TroveBuilds:
                 MasteryView,
                 MagicFindView,
                 GemBuildsView,
-                MarketplaceView,
             ]
         # Push UI elements into view
         await page.clean_async()
         view = page.all_views[0](page)
         for v in page.all_views[1:]:
             if v.route == page.route:
-                if not page.constants.discord_user and isinstance(
-                    v, MarketplaceView
-                ):
-                    await self.page.login_async(
-                        page.login_provider,
-                        on_open_authorization_url=self.open_blank_page,
-                    )
                 view = v(page)
         page.appbar = TroveToolsAppBar(
             leading=Row(controls=[Icon(view.icon), page.clock]),
@@ -123,7 +113,8 @@ class TroveBuilds:
     async def check_login(self):
         if (
             self.page.auth is None
-            and (encrypted_token := await self.page.client_storage.get_async("login")) is not None
+            and (encrypted_token := await self.page.client_storage.get_async("login"))
+            is not None
         ):
             try:
 
@@ -191,7 +182,10 @@ class TroveBuilds:
         await self.start(self.page, True)
 
     async def load_configuration(self):
-        if locale_data := await self.page.client_storage.get_async("locale") is not None:
+        if (
+            locale_data := await self.page.client_storage.get_async("locale")
+            is not None
+        ):
             try:
                 loc = Locale(locale_data)
                 self.page.constants.app_config.locale = loc

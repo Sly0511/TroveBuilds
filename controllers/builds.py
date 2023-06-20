@@ -49,6 +49,7 @@ class GemBuildsController(Controller):
     def setup_controls(self):
         if not hasattr(self, "classes"):
             self.star_chart = get_star_chart()
+            self.star_chart_abilities = []
             self.selected_build = None
             self.build_page = 0
             self.max_pages = 0
@@ -355,6 +356,23 @@ class GemBuildsController(Controller):
                                     for _ in range(1)
                                     if self.config.build_type != BuildType.light
                                 ],
+                                ResponsiveRow(
+                                    controls=[
+                                        Column(
+                                            controls=[
+                                                Text(ability["name"], size=14),
+                                                Text(ability["description"], size=10),
+                                                Switch(
+                                                    data=ability,
+                                                    value=ability["active"],
+                                                    on_change=self.switch_star_buff
+                                                )
+                                            ],
+                                            col={"xxl": 6}
+                                        )
+                                        for ability in self.star_chart_abilities
+                                    ]
+                                )
                             ],
                             spacing=11,
                         )
@@ -538,7 +556,7 @@ class GemBuildsController(Controller):
         if self.config.character:
             self.coeff_table.rows.clear()
             builds = self.calculate_results()
-            builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[6]])
+            builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[-1]])
             best = builds[0]
             builds = [[i] + b for i, b in enumerate(builds, 1)]
             paged_builds = chunks(builds, 15)
@@ -555,6 +573,7 @@ class GemBuildsController(Controller):
                 third,
                 fourth,
                 final,
+                class_bonus,
                 coefficient,
             ) in paged_builds[self.build_page]:
                 boosts = []
@@ -580,6 +599,7 @@ class GemBuildsController(Controller):
                     third,
                     fourth,
                     final,
+                    class_bonus,
                     coefficient,
                 ]
                 self.coeff_table.rows.append(
@@ -619,6 +639,7 @@ class GemBuildsController(Controller):
                                                     third,
                                                     fourth,
                                                     final,
+                                                    class_bonus,
                                                     coefficient,
                                                 ]
                                             ),
@@ -816,6 +837,19 @@ class GemBuildsController(Controller):
         fourth += data.get(damage_type.value + " Bonus", [0])[0]
         fifth += data.get("Critical Damage Bonus", [0])[0]
         sixth += data.get("Light Bonus", [0])[0]
+        # Star Chart ability stats
+        for ability in self.star_chart_abilities:
+            if ability["active"]:
+                for value in ability["values"]:
+                    if value["name"] == damage_type.value:
+                        if value["percentage"]:
+                            fourth += value["value"]
+                        else:
+                            first += value["value"]
+                    if value["name"] == "Critical Damage":
+                        second += value["value"]
+                    if value["name"] == "Light":
+                        third += value["value"]
         for build_tuple in builder:
             build = list(build_tuple)
             gem_first, gem_second, gem_third = self.calculate_gem_stats(
@@ -824,16 +858,13 @@ class GemBuildsController(Controller):
             cfirst = first + gem_first
             csecond = second + gem_second
             cthird = third + gem_third
-            if self.config.build_type not in [BuildType.health]:
-                class_bonus = None
-                for bonus in self.selected_class.bonuses:
-                    if bonus.name == damage_type:
-                        class_bonus = bonus.value
-                final = cfirst * (1 + fourth / 100)
-                if class_bonus is not None:
-                    final *= 1 + (class_bonus / 100)
-            else:
-                final = cfirst
+            class_bonus = None
+            for bonus in self.selected_class.bonuses:
+                if bonus.name == damage_type:
+                    class_bonus = bonus.value
+            final = cfirst * (1 + fourth / 100)
+            if class_bonus is not None:
+                final *= 1 + (class_bonus / 100)
             coefficient = round(final * (1 + (csecond * (fifth / 100)) / 100))
             build_stats = [
                 build,
@@ -842,6 +873,7 @@ class GemBuildsController(Controller):
                 cthird * (sixth / 100),
                 fourth,
                 final,
+                class_bonus,
                 coefficient,
             ]
             yield build_stats
@@ -1055,7 +1087,9 @@ class GemBuildsController(Controller):
         string += f"Bonus Damage: {data[4]}\n"
         string += f"Damage: {round(data[5], 2)}\n"
         string += f"Critical Damage: {data[2]}\n"
-        string += f"Coefficient: {data[6]}"
+        if data[6] is not None:
+            string += f"Class Bonus: {data[6]}"
+        string += f"Coefficient: {data[7]}"
         return string
 
     async def copy_build_clipboard(self, event):
@@ -1073,6 +1107,7 @@ class GemBuildsController(Controller):
         self.star_chart = get_star_chart()
         if build_id == "none":
             self.config.star_chart = None
+            self.star_chart_abilities = []
             self.setup_controls()
             await self.page.update_async()
             return
@@ -1080,5 +1115,11 @@ class GemBuildsController(Controller):
             self.page.snack_bar.content.value = f"Loaded build with id {build_id}"
             self.page.snack_bar.open = True
             self.config.star_chart = build_id
+            self.star_chart_abilities = self.star_chart.activated_abilities_stats
             self.setup_controls()
             await self.page.update_async()
+
+    async def switch_star_buff(self, event):
+        event.control.data["active"] = event.control.value
+        self.setup_controls()
+        await self.page.update_async()
