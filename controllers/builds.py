@@ -556,7 +556,12 @@ class GemBuildsController(Controller):
         if self.config.character:
             self.coeff_table.rows.clear()
             builds = self.calculate_results()
-            builds = sorted(builds, key=lambda x: [abs(x[3] - self.config.light), -x[-1]])
+            builds.sort(
+                key=lambda x: (
+                    [abs(x[3] - self.config.light), -x[-1]]
+                    if self.config.light else -x[-1]
+                )
+            )
             best = builds[0]
             builds = [[i] + b for i, b in enumerate(builds, 1)]
             paged_builds = chunks(builds, 15)
@@ -941,14 +946,14 @@ class GemBuildsController(Controller):
             for x in range(4)
             for y in range(4)
             for z in range(4)
-            if x + y + z == 3 and (z == 0 if not farm else True)
+            if x + y + z == 3 and (z == 3 if not farm else True)
         ]
         fourth_set = [
             [x, y, z]
             for x in range(7)
             for y in range(7)
             for z in range(7)
-            if x + y + z == 6 and (z == 0 if not farm else True)
+            if x + y + z == 6 and (z == 6 if not farm else True)
         ]
         return itertools.product(first_set, second_set, third_set, fourth_set)
 
@@ -1098,6 +1103,7 @@ class GemBuildsController(Controller):
 
     async def switch_star_buff(self, event):
         event.control.data["active"] = event.control.value
+        await self.update_builds()
 
     async def update_builds(self):
         for control in self.page.controls:

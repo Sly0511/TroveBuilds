@@ -107,9 +107,7 @@ class HomeController(Controller):
                                     Image(
                                         color="black",
                                         color_blend_mode=BlendMode.SATURATION,
-                                        src_base64=base64.b64encode(
-                                            requests.get(v["banner"]).content
-                                        ).decode("utf-8"),
+                                        src=v["banner"],
                                         left=-125
                                     ),
                                     Container(
@@ -177,9 +175,7 @@ class HomeController(Controller):
                                     Image(
                                         color="black",
                                         color_blend_mode=BlendMode.SATURATION,
-                                        src_base64=base64.b64encode(
-                                            requests.get(v["banner"]).content
-                                        ).decode("utf-8")
+                                        src=v["banner"]
                                     ),
                                     Container(
                                         gradient=LinearGradient(
