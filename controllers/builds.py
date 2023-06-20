@@ -965,13 +965,11 @@ class GemBuildsController(Controller):
             self.config.ally = "Starry Skyfire"
         elif damage_type == DamageType.physical:
             self.config.ally = "Scorpius"
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def set_subclass(self, event):
         self.config.subclass = Class[event.control.value]
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def set_build_type(self, event):
         self.config.build_type = BuildType[event.control.value]
@@ -979,70 +977,56 @@ class GemBuildsController(Controller):
             self.config.light = 12000
         else:
             self.config.light = 0
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def toggle_face(self, _):
         self.config.no_face = not self.config.no_face
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def set_cd_count(self, event):
         self.config.critical_damage_count = int(event.control.value)
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def toggle_subclass_active(self, _):
         self.config.subclass_active = not self.config.subclass_active
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def toggle_cosmic_primordial(self, _):
         self.config.cosmic_primordial = not self.config.cosmic_primordial
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def toggle_crystal_5(self, _):
         self.config.crystal_5 = not self.config.crystal_5
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def set_food(self, event):
         self.config.food = event.control.value
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def set_ally(self, event):
         self.config.ally = event.control.value
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def toggle_berserker_battler(self, _):
         self.config.berserker_battler = not self.config.berserker_battler
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def toggle_star_chart(self, _):
         self.config.star_chart = not self.config.star_chart
-        self.setup_controls()
-        await self.page.update_async()
-
+        await self.update_builds()
     async def set_light(self, event):
         self.config.light = int(event.control.value)
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def change_build_page(self, event):
         self.build_page = event.control.data
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def set_build_string(self, event):
         build_id = event.control.value.strip().split("-")[-1].strip()
         if build := await BuildConfig.find_one(BuildConfig.build_id == build_id):
             self.config = build
-            self.setup_controls()
-            await self.page.update_async()
+            await self.update_builds()
 
     async def copy_build_string(self, _):
         current = None
@@ -1065,8 +1049,7 @@ class GemBuildsController(Controller):
             self.selected_build = event.control.data
         self.page.snack_bar.content.value = "Ability build changed"
         self.page.snack_bar.open = True
-        self.setup_controls()
-        await self.page.update_async()
+        await self.update_builds()
 
     async def copy_to_clipboard(self, event):
         if value := event.control.content.value:
@@ -1104,18 +1087,24 @@ class GemBuildsController(Controller):
         if build_id == "none":
             self.config.star_chart = None
             self.star_chart_abilities = []
-            self.setup_controls()
-            await self.page.update_async()
+            await self.update_builds()
             return
         if await self.star_chart.from_string(build_id):
             self.page.snack_bar.content.value = f"Loaded build with id {build_id}"
             self.page.snack_bar.open = True
             self.config.star_chart = build_id
             self.star_chart_abilities = self.star_chart.activated_abilities_stats
-            self.setup_controls()
-            await self.page.update_async()
+            await self.update_builds()
 
     async def switch_star_buff(self, event):
         event.control.data["active"] = event.control.value
-        self.setup_controls()
+
+    async def update_builds(self):
+        for control in self.page.controls:
+            control.disabled = True
         await self.page.update_async()
+        self.setup_controls()
+        for control in self.page.controls:
+            control.disabled = False
+        await self.page.update_async()
+
