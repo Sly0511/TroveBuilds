@@ -1088,7 +1088,7 @@ class GemBuildsController(Controller):
         string += f"Damage: {round(data[5], 2)}\n"
         string += f"Critical Damage: {data[2]}\n"
         if data[6] is not None:
-            string += f"Class Bonus: {data[6]}"
+            string += f"Class Bonus: {data[6]}\n"
         string += f"Coefficient: {data[7]}"
         return string
 
