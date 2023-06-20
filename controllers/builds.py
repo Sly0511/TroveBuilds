@@ -40,8 +40,8 @@ from models.objects.builds import (
     DamageType,
     AbilityType,
 )
-from utils.controls import ScrollingFrame
-from utils.functions import get_attr, throttle, chunks
+from utils.controls import ScrollingFrame, AutoNumberField
+from utils.functions import get_attr, chunks
 from utils.star_chart import get_star_chart
 
 
@@ -348,10 +348,10 @@ class GemBuildsController(Controller):
                                     for k, v in self.star_chart.activated_gem_stats.items()
                                 ],
                                 *[
-                                    TextField(
+                                    AutoNumberField(
                                         label="Light",
                                         value=str(self.config.light),
-                                        on_submit=self.set_light,
+                                        on_change=self.set_light,
                                     )
                                     for _ in range(1)
                                     if self.config.build_type != BuildType.light
@@ -556,7 +556,7 @@ class GemBuildsController(Controller):
         if self.config.character:
             self.coeff_table.rows.clear()
             builds = self.calculate_results()
-            builds.sort(key=lambda x: [abs(x[4] - self.config.light), -x[-1]])
+            builds = sorted(builds, key=lambda x: [abs(x[3] - self.config.light), -x[-1]])
             best = builds[0]
             builds = [[i] + b for i, b in enumerate(builds, 1)]
             paged_builds = chunks(builds, 15)
@@ -826,8 +826,7 @@ class GemBuildsController(Controller):
         # Crystal 5 (will implement later)
         ...
         builder = self.generate_combinations(
-            farm=self.config.build_type in [BuildType.farm],
-            coeff=self.config.build_type in [BuildType.health],
+            farm=self.config.build_type in [BuildType.farm]
         )
         # Star Chart stats
         data = self.star_chart.activated_gem_stats
@@ -934,7 +933,7 @@ class GemBuildsController(Controller):
             second = second * 1.1 + cosmic_second
         return first, second, third
 
-    def generate_combinations(self, farm=False, coeff=False):
+    def generate_combinations(self, farm=False):
         first_set = [[i, 9 - i] for i in range(10)]
         second_set = [[i, 18 - i] for i in range(19)]
         third_set = [
@@ -942,14 +941,14 @@ class GemBuildsController(Controller):
             for x in range(4)
             for y in range(4)
             for z in range(4)
-            if x + y + z == 3 and (not farm or x + y == 3) and (coeff or farm or z == 3)
+            if x + y + z == 3 and (z == 0 if not farm else True)
         ]
         fourth_set = [
             [x, y, z]
             for x in range(7)
             for y in range(7)
             for z in range(7)
-            if x + y + z == 6 and (not farm or x + y == 6) and (coeff or farm or z == 6)
+            if x + y + z == 6 and (z == 0 if not farm else True)
         ]
         return itertools.product(first_set, second_set, third_set, fourth_set)
 
@@ -976,6 +975,10 @@ class GemBuildsController(Controller):
 
     async def set_build_type(self, event):
         self.config.build_type = BuildType[event.control.value]
+        if self.config.build_type is BuildType.farm:
+            self.config.light = 12000
+        else:
+            self.config.light = 0
         self.setup_controls()
         await self.page.update_async()
 
@@ -1024,17 +1027,10 @@ class GemBuildsController(Controller):
         self.setup_controls()
         await self.page.update_async()
 
-    @throttle
     async def set_light(self, event):
-        event.control.border_color = None
-        try:
-            value = int(event.control.value)
-            self.config.light = value
-            self.setup_controls()
-            await event.control.update_async()
-        except ValueError:
-            event.control.border_color = "red"
-            return await event.control.update_async()
+        self.config.light = int(event.control.value)
+        self.setup_controls()
+        await self.page.update_async()
 
     async def change_build_page(self, event):
         self.build_page = event.control.data
