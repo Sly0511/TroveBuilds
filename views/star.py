@@ -6,7 +6,7 @@ from controllers import StarChartController
 
 class StarView(View):
     route = "/star_chart"
-    title = Text("[WIP] Star Chart")
+    title = Text("Star Chart")
     icon = STARS_SHARP
 
     def __init__(self, page):
