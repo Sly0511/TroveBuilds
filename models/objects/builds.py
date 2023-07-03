@@ -139,7 +139,7 @@ class BuildConfig(Document):
     subclass_active: bool = False
     star_chart: Optional[str] = None
     # Prediction based
-    cosmic_primordial: bool = False
+    cosmic_primordial: bool = True
     crystal_5: bool = False
 
     def __eq__(self, other):
@@ -158,7 +158,7 @@ class BuildConfig(Document):
             "subclass_active",
             "star_chart",
             "cosmic_primordial",
-            "crystal_5"
+            "crystal_5",
         ]
         for key in keys:
             if getattr(self, key) != getattr(other, key):

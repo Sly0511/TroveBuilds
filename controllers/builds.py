@@ -365,14 +365,14 @@ class GemBuildsController(Controller):
                                                 Switch(
                                                     data=ability,
                                                     value=ability["active"],
-                                                    on_change=self.switch_star_buff
-                                                )
+                                                    on_change=self.switch_star_buff,
+                                                ),
                                             ],
-                                            col={"xxl": 6}
+                                            col={"xxl": 6},
                                         )
                                         for ability in self.star_chart_abilities
                                     ]
-                                )
+                                ),
                             ],
                             spacing=11,
                         )
@@ -559,7 +559,8 @@ class GemBuildsController(Controller):
             builds.sort(
                 key=lambda x: (
                     [abs(x[3] - self.config.light), -x[-1]]
-                    if self.config.light else -x[-1]
+                    if self.config.light
+                    else -x[-1]
                 )
             )
             best = builds[0]
@@ -722,6 +723,7 @@ class GemBuildsController(Controller):
                     ]
                 ]
             )
+        self.features.controls.append(self.abilities_table)
 
     def setup_events(self):
         ...
@@ -828,6 +830,9 @@ class GemBuildsController(Controller):
         # Berserker battler stats
         if self.config.berserker_battler:
             third += 750
+        # Add passive buff of light from Cosmic Primordial
+        if self.config.cosmic_primordial:
+            third += 25
         # Crystal 5 (will implement later)
         ...
         builder = self.generate_combinations(
@@ -1019,6 +1024,7 @@ class GemBuildsController(Controller):
     async def toggle_star_chart(self, _):
         self.config.star_chart = not self.config.star_chart
         await self.update_builds()
+
     async def set_light(self, event):
         self.config.light = int(event.control.value)
         await self.update_builds()
@@ -1113,4 +1119,3 @@ class GemBuildsController(Controller):
         for control in self.page.controls:
             control.disabled = False
         await self.page.update_async()
-
