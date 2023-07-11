@@ -448,7 +448,7 @@ class GemBuildsController(Controller):
                                                     on_change=self.toggle_cosmic_primordial,
                                                 ),
                                                 Text(
-                                                    "Cosmic Primordial",
+                                                    "Cosmic Primordial Buff",
                                                     text_align="center",
                                                 ),
                                             ],
@@ -934,13 +934,13 @@ class GemBuildsController(Controller):
         cosmic_second += second_lesser[1] * build[3][1]
         third += third_lesser[1] * build[3][2]
         # Cosmic primordial dragon
-        if self.config.cosmic_primordial:
-            first = (first + cosmic_first) * 1.1
-            second = (second + cosmic_second) * 1.1
-            third = third * 1.1
-        else:
-            first = first * 1.1 + cosmic_first
-            second = second * 1.1 + cosmic_second
+        # if self.config.cosmic_primordial:
+        first = (first + cosmic_first) * 1.1
+        second = (second + cosmic_second) * 1.1
+        third = third * 1.1
+        # else:
+        #     first = first * 1.1 + cosmic_first
+        #     second = second * 1.1 + cosmic_second
         return first, second, third
 
     def generate_combinations(self, farm=False):

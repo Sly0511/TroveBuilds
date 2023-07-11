@@ -139,7 +139,7 @@ class BuildConfig(Document):
     subclass_active: bool = False
     star_chart: Optional[str] = None
     # Prediction based
-    cosmic_primordial: bool = True
+    cosmic_primordial: bool = False
     crystal_5: bool = False
 
     def __eq__(self, other):
