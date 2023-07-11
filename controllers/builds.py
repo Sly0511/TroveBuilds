@@ -832,7 +832,7 @@ class GemBuildsController(Controller):
             third += 750
         # Add passive buff of light from Cosmic Primordial
         if self.config.cosmic_primordial:
-            third += 25
+            third += 50
         # Crystal 5 (will implement later)
         ...
         builder = self.generate_combinations(
