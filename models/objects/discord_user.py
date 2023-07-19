@@ -28,4 +28,14 @@ class DiscordUser(BaseModel):
         return "@" + self.username + f" [{self.id}]"
 
     def avatar_url(self, size=64):
-        return "https://cdn.discordapp.com/avatars/" + str(self.id) + "/" + self.avatar + f".png?size={size}"
+        if self.avatar:
+            avatar = (
+                "https://cdn.discordapp.com/avatars/"
+                + str(self.id)
+                + "/"
+                + self.avatar
+                + f".png?size={size}"
+            )
+        else:
+            avatar = ""
+        return avatar
