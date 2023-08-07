@@ -618,7 +618,16 @@ class GemBuildsController(Controller):
                             ),
                             DataCell(content=Text(f"{third:,}")),
                             DataCell(content=Text(f"{round(first, 2):,}")),
-                            DataCell(content=Text(f"{round(fourth, 2):,}%")),
+                            DataCell(
+                                content=Text(
+                                    f"{round(fourth, 2):,}%"
+                                    + (
+                                        f" + {round(class_bonus, 1)}%"
+                                        if class_bonus
+                                        else ""
+                                    )
+                                )
+                            ),
                             DataCell(content=Text(f"{round(final, 2):,}")),
                             DataCell(content=Text(f"{round(second, 2):,}%")),
                             DataCell(
