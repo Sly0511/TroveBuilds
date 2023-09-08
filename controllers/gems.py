@@ -26,7 +26,7 @@ from flet import (
     DataCell,
     Tabs,
     Tab,
-    Stack
+    Stack,
 )
 from i18n import t
 
@@ -82,17 +82,17 @@ class GemSetController(Controller):
                                     ElevatedButton(
                                         t("buttons.all_radiant"),
                                         on_click=self.on_full_radiant,
-                                        col=4
+                                        col=4,
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_stellar"),
                                         on_click=self.on_full_stellar,
-                                        col=4
+                                        col=4,
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_crystal"),
                                         on_click=self.on_full_crystal,
-                                        col=4
+                                        col=4,
                                     ),
                                 ],
                                 col={"xxl": 2},
@@ -103,27 +103,21 @@ class GemSetController(Controller):
                                     ElevatedButton(
                                         t("buttons.min_level"),
                                         on_click=self.on_min_level,
-                                        col=6
+                                        col=6,
                                     ),
                                     ElevatedButton(
                                         t("buttons.max_level"),
                                         on_click=self.on_max_level,
-                                        col=6
+                                        col=6,
                                     ),
                                     ElevatedButton(
-                                        "5",
-                                        on_click=self.on_five_level,
-                                        col=4
+                                        "5", on_click=self.on_five_level, col=4
                                     ),
                                     ElevatedButton(
-                                        "10",
-                                        on_click=self.on_ten_level,
-                                        col=4
+                                        "10", on_click=self.on_ten_level, col=4
                                     ),
                                     ElevatedButton(
-                                        "15",
-                                        on_click=self.on_fifteen_level,
-                                        col=4
+                                        "15", on_click=self.on_fifteen_level, col=4
                                     ),
                                 ],
                                 col={"xxl": 2},
@@ -134,17 +128,17 @@ class GemSetController(Controller):
                                     ElevatedButton(
                                         t("buttons.zero_augmentation"),
                                         on_click=self.zero_augmentation,
-                                        col=4
+                                        col=4,
                                     ),
                                     ElevatedButton(
                                         t("buttons.min_augmentation"),
                                         on_click=self.on_min_augmentation,
-                                        col=4
+                                        col=4,
                                     ),
                                     ElevatedButton(
                                         t("buttons.max_augmentation"),
                                         on_click=self.on_max_augmentation,
-                                        col=4
+                                        col=4,
                                     ),
                                 ],
                                 col={"xxl": 2},
@@ -155,22 +149,22 @@ class GemSetController(Controller):
                                     ElevatedButton(
                                         t("buttons.all_magic"),
                                         on_click=self.on_all_magic,
-                                        col=6
+                                        col=6,
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_physical"),
                                         on_click=self.on_all_physical,
-                                        col=6
+                                        col=6,
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_damage"),
                                         on_click=self.on_full_damage,
-                                        col=6
+                                        col=6,
                                     ),
                                     ElevatedButton(
                                         t("buttons.all_health"),
                                         on_click=self.on_full_health,
-                                        col=6
+                                        col=6,
                                     ),
                                 ],
                                 col={"xxl": 2},
@@ -181,7 +175,7 @@ class GemSetController(Controller):
                     ResponsiveRow(
                         controls=[
                             Switch(
-                                value=True if element != element.cosmic else False,
+                                value=True,
                                 label=t("gem_dragons." + element.value),
                                 data=element,
                                 on_change=self.on_primordial_change,
@@ -479,7 +473,10 @@ class GemSetController(Controller):
                 stat_row = ResponsiveRow(
                     controls=[
                         Dropdown(label=t("strings.Change Stat"), col={"xxl": 6}),
-                        Text(value=f"0" + t("strings.% Augmentation Progress"), col={"xxl": 2, "xs": 6}),
+                        Text(
+                            value=f"0" + t("strings.% Augmentation Progress"),
+                            col={"xxl": 2, "xs": 6},
+                        ),
                         Row(
                             controls=[
                                 Container(
