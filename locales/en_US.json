@@ -57,10 +57,10 @@
         "Cosmic": "Cosmic"
     },
     "gem_dragons": {
-        "Fire": "Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
-        "Water": "Water Primordial Dragon: Palashien, Soul of the Sea",
-        "Air": "Air Primordial Dragon: Scintilla, Spark of the Sky",
-        "Cosmic": "Cosmic Primordial Dragon: Taeryn Veernok, Progenitor of the Cosmos"
+        "Fire": "Fire Primordial: Za'Hadeen, Heart of the Flame",
+        "Water": "Water Primordial: Palashien, Soul of the Sea",
+        "Air": "Air Primordial: Scintilla, Spark of the Sky",
+        "Cosmic": "Cosmic Primordial: Taeryn Veernok, Progenitor of the Cosmos"
     },
     "gem_abilities": {
         "Explosive Epilogue": "Explosive Epilogue",
