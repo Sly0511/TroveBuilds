@@ -92,6 +92,7 @@ class StarChart(BaseModel):
         return build.build
 
     async def from_string(self, build_id):
+        build_id = build_id.strip().split("-")[-1].strip()
         build = await StarBuild.find_one(StarBuild.build == build_id)
         if build is None:
             return False
@@ -220,7 +221,7 @@ class StarChart(BaseModel):
                     "name": star.full_name,
                     "description": "\n".join(star.abilities),
                     "active": False,
-                    "values": star.ability_values
+                    "values": star.ability_values,
                 }
         for star in self.activated_stars:
             for ow in star.ability_overwrites:

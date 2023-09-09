@@ -1,6 +1,9 @@
+import re
+
 from flet import Page, View, AppBar
 from utils.functions import get_attr
 from typing import Type
+from urllib.parse import urlparse
 
 
 class Routing:
@@ -28,7 +31,14 @@ class Routing:
         await self.change_view_async(view)
 
     def get_view(self, event):
-        view = get_attr(self.views, route=event.route)
+        url = urlparse("https://trovetools.slynx.xyz" + event.route, scheme="https")
+        params = {
+            k: v
+            for kv in url.query.split("&")
+            for k, v in re.findall(r"^(.*?)=(.*?)$", kv)
+        }
+        self.page.params = params
+        view = get_attr(self.views, route=url.path)
         if view is None:
             view = self.not_found
         return view(self.page)

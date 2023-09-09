@@ -1,3 +1,5 @@
+import asyncio
+
 from flet import (
     ElevatedButton,
     Stack,
@@ -37,6 +39,10 @@ class StarChartController(Controller):
             self.star_chart = get_star_chart()
             self.map = ResponsiveRow()
             self.star_details = Column(col={"xxl": 2})
+            asyncio.create_task(
+                self.start_with_build_id(self.page.params.get("id", None))
+            )
+            return
         self.map.controls.clear()
         self.star_buttons = Stack(
             controls=[
@@ -331,7 +337,7 @@ class StarChartController(Controller):
         await self.page.snack_bar.update_async()
 
     async def set_star_chart_build(self, event):
-        build_id = event.control.value.strip().split("-")[-1].strip()
+        build_id = event.control.value
         self.star_chart = get_star_chart()
         if await self.star_chart.from_string(build_id):
             event.control.value = None
@@ -339,4 +345,9 @@ class StarChartController(Controller):
             self.page.snack_bar.open = True
             self.setup_controls()
             await self.page.snack_bar.update_async()
+            await self.map.update_async()
+
+    async def start_with_build_id(self, build_id):
+        if await self.star_chart.from_string(build_id):
+            self.setup_controls()
             await self.map.update_async()
