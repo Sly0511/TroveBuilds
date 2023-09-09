@@ -350,4 +350,9 @@ class StarChartController(Controller):
     async def start_with_build_id(self, build_id):
         if await self.star_chart.from_string(build_id):
             self.setup_controls()
-            await self.map.update_async()
+            while True:
+                try:
+                    await self.map.update_async()
+                    break
+                except AssertionError:
+                    ...
