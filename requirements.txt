@@ -1,8 +1,7 @@
 python-dotenv
-flet==0.7.2
+flet
 python-i18n
-pydantic
-pyinstaller
+pydantic==1.10.12
 beanie
 cryptography
 requests

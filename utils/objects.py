@@ -1,11 +1,12 @@
-from flet.auth.oauth_provider import OAuthProvider
+from flet_runtime.auth.oauth_provider import OAuthProvider
 
 
 class DiscordOAuth2(OAuthProvider):
-    def __init__(self,
+    def __init__(
+        self,
         client_id: str,
         client_secret: str,
-        redirect_url: str = "https://trovetools.slynx.xyz/api/oauth/redirect"
+        redirect_url: str = "https://trovetools.slynx.xyz/api/oauth/redirect",
     ):
         super().__init__(
             client_id=client_id,
@@ -16,5 +17,5 @@ class DiscordOAuth2(OAuthProvider):
             scopes=["identify"],
             user_endpoint="https://discord.com/api/users/@me",
             user_scopes=["identify"],
-            user_id_fn=lambda u: u["id"]
+            user_id_fn=lambda u: u["id"],
         )

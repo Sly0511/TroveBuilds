@@ -12,6 +12,7 @@ class GemSetView(View):
 
     def __init__(self, page):
         ctrl = GemSetController(page=page)
+        page.appbar.leading.controls[0].name = self.icon
         super().__init__(
             route=self.route,
             controls=[ctrl.gem_report, ctrl.general_controls, ctrl.gem_altar],

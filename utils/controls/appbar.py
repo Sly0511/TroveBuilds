@@ -13,7 +13,7 @@ from flet import (
     AlertDialog,
     TextButton,
     MainAxisAlignment,
-    Icon
+    Icon,
 )
 from flet_core.colors import SURFACE_VARIANT
 from flet_core.icons import (
@@ -38,6 +38,16 @@ class TroveToolsAppBar(AppBar):
         self.page = kwargs["page"]
         del kwargs["views"]
         del kwargs["page"]
+        actions = self.build_actions(kwargs)
+        super().__init__(
+            leading_width=40,
+            bgcolor=SURFACE_VARIANT,
+            actions=actions,
+            center_title=True,
+            **kwargs,
+        )
+
+    def build_actions(self, kwargs):
         actions = []
         if self.page.route != "/":
             actions.append(IconButton(icon=HOME, on_click=self.change_home))
@@ -81,7 +91,7 @@ class TroveToolsAppBar(AppBar):
                             on_click=self.change_route,
                         )
                         for view in self.views
-                        if view.route != "/"
+                        if view.route != "/" and self.page.route != view.route
                     ],
                     tooltip="Change tool",
                 ),
@@ -178,13 +188,7 @@ class TroveToolsAppBar(AppBar):
             ]
         )
         actions.extend(kwargs.get("actions", []))
-        super().__init__(
-            leading_width=40,
-            bgcolor=SURFACE_VARIANT,
-            actions=actions,
-            center_title=True,
-            **kwargs,
-        )
+        return actions
 
     async def change_theme(self, _):
         self.page.theme_mode = "LIGHT" if self.page.theme_mode == "DARK" else "DARK"
@@ -211,14 +215,16 @@ class TroveToolsAppBar(AppBar):
         await self.page.restart(True)
 
     async def change_route(self, event):
-        if self.page.route == event.control.data:
-            return
-        self.page.route = event.control.data
-        await self.page.update_async()
+        await self.page.go_async(event.control.data)
+        await self.update_appbar()
 
     async def change_home(self, _):
-        self.page.route = "/"
-        await self.page.update_async()
+        await self.page.go_async("/")
+        await self.update_appbar()
+
+    async def update_appbar(self):
+        self.actions = self.build_actions(dict())
+        await self.update_async()
 
     async def login(self, _=None):
         await self.page.login_async(
@@ -247,7 +253,7 @@ class TroveToolsAppBar(AppBar):
             ],
             actions_alignment=MainAxisAlignment.END,
             content=Text(
-                "This application was made by Sly.\n\nI am coding this as an hobby with the goal of"
+                "This application was developed by Sly. Interface design improved by Cr0nicl3 D3str0y3r.\n\nI am coding this as an hobby with the goal of"
                 " achieving greater front-end building skills, at the same time I also improve code"
                 " making and organization skills\n\nI have the goal to not only build something"
                 " that is usable but mostly updatable with little effort or code knowledge"

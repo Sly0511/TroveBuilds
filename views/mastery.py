@@ -1,4 +1,4 @@
-from flet import View, Icon, Row, VerticalDivider, Text
+from flet import View, Row, VerticalDivider, Text
 from flet_core.icons import MENU_BOOK_SHARP
 
 from controllers import MasteryController
@@ -11,6 +11,7 @@ class MasteryView(View):
 
     def __init__(self, page):
         ctrl = MasteryController(page=page)
+        page.appbar.leading.controls[0].name = self.icon
         super().__init__(
             route=self.route,
             controls=[

@@ -1,4 +1,4 @@
-from flet import View, Icon, Text, Column
+from flet import View, Text, Column
 from flet_core.icons import TABLE_VIEW
 
 from controllers import GemBuildsController
@@ -11,9 +11,8 @@ class GemBuildsView(View):
 
     def __init__(self, page):
         ctrl = GemBuildsController(page)
+        page.appbar.leading.controls[0].name = self.icon
         super().__init__(
             route=self.route,
-            controls=[
-                Column(controls=[ctrl.interface])
-            ],
+            controls=[Column(controls=[ctrl.interface])],
         )

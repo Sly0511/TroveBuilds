@@ -1,4 +1,4 @@
-from flet import View, Icon, Column, Text
+from flet import View, Column, Text
 from flet_core.icons import QUESTION_MARK
 
 
@@ -8,6 +8,7 @@ class View404(View):
     icon = QUESTION_MARK
 
     def __init__(self, page):
+        page.appbar.leading.controls[0].name = self.icon
         super().__init__(
             route=self.route,
             controls=[

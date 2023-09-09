@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from beanie import init_beanie
 from dotenv import get_key
-from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Column, Row, Icon
+from flet import app, Page, SnackBar, Text, WEB_BROWSER, Theme, Row, Icon
 from flet.security import encrypt, decrypt
 from httpx import HTTPStatusError
 from i18n import t
@@ -19,6 +19,7 @@ from utils.controls import TroveToolsAppBar
 from utils.localization import LocalizationManager, Locale
 from utils.logger import Logger
 from utils.objects import DiscordOAuth2
+from utils.routing import Routing
 from views import (
     GemSetView,
     GemView,
@@ -72,7 +73,6 @@ class TroveBuilds:
         # Setup Events
         page.on_login = self.on_login
         page.on_logout = self.on_logout
-        page.on_route_change = self.route_change
         page.on_keyboard_event = self.keyboard_shortcut
         # Setup app interface data
         page.theme = Theme()
@@ -86,7 +86,6 @@ class TroveBuilds:
         await self.check_login()
         if not hasattr(page, "all_views") or translate:
             page.all_views = [
-                View404,
                 HomeView,
                 GemSetView,
                 GemView,
@@ -95,18 +94,14 @@ class TroveBuilds:
                 MagicFindView,
                 GemBuildsView,
             ]
-        # Push UI elements into view
-        await page.clean_async()
-        view = page.all_views[0](page)
-        for v in page.all_views[1:]:
-            if v.route == page.route:
-                view = v(page)
         page.appbar = TroveToolsAppBar(
-            leading=Row(controls=[Icon(view.icon), page.clock]),
+            leading=Row(controls=[Icon("Star"), page.clock]),
             views=page.all_views[1:],
             page=page,
         )
-        await page.add_async(Column(controls=view.controls))
+        # Setup routing
+        Routing(page, page.all_views, not_found=View404, is_async=True)
+        await page.go_async(self.page.route)
         if not self.update_clock.is_running():
             self.update_clock.start()
 
@@ -177,9 +172,6 @@ class TroveBuilds:
 
         if e.key.isnumeric() and not e.ctrl and not e.shift and e.alt and not e.meta:
             await switch_tabs(e)
-
-    async def route_change(self, route):
-        await self.start(self.page, True)
 
     async def load_configuration(self):
         if (

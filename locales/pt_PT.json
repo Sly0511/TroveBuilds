@@ -57,10 +57,10 @@
         "Cosmic": "# TRANSLATION ERROR: Cosmic"
     },
     "gem_dragons": {
-        "Fire": "# TRANSLATION ERROR: Fire Primordial Dragon: Za'Hadeen, Heart of the Flame",
-        "Water": "# TRANSLATION ERROR: Water Primordial Dragon: Palashien, Soul of the Sea",
-        "Air": "# TRANSLATION ERROR: Air Primordial Dragon: Scintilla, Spark of the Sky",
-        "Cosmic": "# TRANSLATION ERROR: Cosmic Primordial Dragon: ..."
+        "Fire": "# TRANSLATION ERROR: Fire Primordial: Za'Hadeen, Heart of the Flame",
+        "Water": "# TRANSLATION ERROR: Water Primordial: Palashien, Soul of the Sea",
+        "Air": "# TRANSLATION ERROR: Air Primordial: Scintilla, Spark of the Sky",
+        "Cosmic": "# TRANSLATION ERROR: Cosmic Primordial: Taeryn Veernok, Progenitor of the Cosmos"
     },
     "gem_abilities": {
         "Explosive Epilogue": "# TRANSLATION ERROR: Explosive Epilogue",

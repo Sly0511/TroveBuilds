@@ -53,7 +53,7 @@ class MarketplaceSettings:
     create_word = None
     create_amount = None
     create_price = None
-    search_word = None
+    search_word = "t" # None
     listing_statuses = [ListingStatus.pending, ListingStatus.listed]
     listings_max_pages = 0
     listings_page = 0
@@ -93,7 +93,7 @@ class MarketplaceController(Controller):
             )
             self.market = MarketplaceSettings()
             self.main = ResponsiveRow(
-                disabled=True  # not bool(self.page.constants.discord_user)
+                disabled=not bool(self.page.constants.discord_user)
             )
             self.listings = DataTable(
                 columns=[
