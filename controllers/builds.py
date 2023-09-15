@@ -839,9 +839,6 @@ class GemBuildsController(Controller):
         # Berserker battler stats
         if self.config.berserker_battler:
             third += 750
-        # Add passive buff of light from Cosmic Primordial
-        if self.config.cosmic_primordial:
-            third += 50
         # Crystal 5 (will implement later)
         ...
         builder = self.generate_combinations(
