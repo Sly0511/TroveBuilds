@@ -411,7 +411,7 @@ class GemBuildsController(Controller):
                                                 ),
                                             ],
                                             alignment="center",
-                                            col={"xxl": 3},
+                                            col={"xxl": 4},
                                         ),
                                         ResponsiveRow(
                                             controls=[
@@ -425,7 +425,7 @@ class GemBuildsController(Controller):
                                                 ),
                                             ],
                                             alignment="center",
-                                            col={"xxl": 3},
+                                            col={"xxl": 4},
                                         ),
                                         ResponsiveRow(
                                             controls=[
@@ -439,21 +439,7 @@ class GemBuildsController(Controller):
                                                 ),
                                             ],
                                             alignment="center",
-                                            col={"xxl": 3},
-                                        ),
-                                        ResponsiveRow(
-                                            controls=[
-                                                Switch(
-                                                    value=self.config.cosmic_primordial,
-                                                    on_change=self.toggle_cosmic_primordial,
-                                                ),
-                                                Text(
-                                                    "Cosmic Primordial Buff",
-                                                    text_align="center",
-                                                ),
-                                            ],
-                                            alignment="center",
-                                            col={"xxl": 3},
+                                            col={"xxl": 4},
                                         ),
                                     ],
                                 ),
@@ -939,14 +925,9 @@ class GemBuildsController(Controller):
         cosmic_first += first_lesser[1] * build[3][0]
         cosmic_second += second_lesser[1] * build[3][1]
         third += third_lesser[1] * build[3][2]
-        # Cosmic primordial dragon
-        # if self.config.cosmic_primordial:
         first = (first + cosmic_first) * 1.1
         second = (second + cosmic_second) * 1.1
         third = third * 1.1
-        # else:
-        #     first = first * 1.1 + cosmic_first
-        #     second = second * 1.1 + cosmic_second
         return first, second, third
 
     def generate_combinations(self, farm=False):
@@ -1005,10 +986,6 @@ class GemBuildsController(Controller):
 
     async def toggle_subclass_active(self, _):
         self.config.subclass_active = not self.config.subclass_active
-        await self.update_builds()
-
-    async def toggle_cosmic_primordial(self, _):
-        self.config.cosmic_primordial = not self.config.cosmic_primordial
         await self.update_builds()
 
     async def toggle_crystal_5(self, _):
